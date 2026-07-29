@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ARKILA — Fleet Services PH · Template C</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ TEMPLATE C — "ARKILA" ============
+   Direction: Bold block-based / bento, mobile-first, high-energy.
+   Style:  Vibrant & Block-based + Bento Grid, offset shadows, thick borders
+   Colors: Marketplace trust indigo + jeepney yellow + category color-coding
+   Type:   Space Grotesk (display) + Inter (body)
+   Best for: mobile-first PH mass market, strong brand recall, app-like feel
+================================================== */
+:root{
+  --ink:#12131A; --ink-2:#4A4F63; --ink-3:#8A90A6;
+  --bg:#FBFAF7; --surface:#FFFFFF; --line:#12131A;
+  --indigo:#4F46E5; --indigo-2:#6366F1;
+  --yellow:#FACC15; --yellow-2:#FDE047;
+  --coral:#FB6B4A; --teal:#14B8A6; --violet:#8B5CF6;
+  --ok:#16A34A;
+  --r-sm:10px; --r:16px; --r-lg:24px; --r-pill:999px;
+  --bd:2.5px solid var(--ink);
+  --off:5px 5px 0 var(--ink);
+  --off-sm:3px 3px 0 var(--ink);
+  --off-lift:8px 8px 0 var(--ink);
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--s8:72px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:Inter,system-ui,-apple-system,'Segoe UI',sans-serif;
+  background:var(--bg);color:var(--ink);font-size:16px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,.dsp{font-family:'Space Grotesk',Inter,sans-serif;letter-spacing:-.03em}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:3px solid var(--indigo);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 var(--s5)}
+
+/* ---------- NAV ---------- */
+nav{position:sticky;top:0;z-index:80;background:var(--bg);border-bottom:var(--bd)}
+.nbar{display:flex;align-items:center;gap:var(--s4);height:70px}
+.logo{display:flex;align-items:center;gap:9px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:21px;letter-spacing:-.04em;flex-shrink:0}
+.logo .m{width:36px;height:36px;border-radius:11px;background:var(--yellow);border:var(--bd);display:grid;place-items:center;box-shadow:var(--off-sm)}
+.nlinks{display:flex;gap:var(--s5);margin-left:var(--s6);font-size:14.5px;font-weight:600}
+.nlinks a{padding:5px 0;border-bottom:2.5px solid transparent}
+.nlinks a:hover,.nlinks a.on{border-bottom-color:var(--ink)}
+.nright{margin-left:auto;display:flex;align-items:center;gap:var(--s3);flex-shrink:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 20px;border-radius:var(--r-pill);font-weight:700;font-size:14.5px;border:var(--bd);transition:transform .16s var(--ease),box-shadow .16s var(--ease)}
+.btn-y{background:var(--yellow);box-shadow:var(--off-sm)}
+.btn-i{background:var(--indigo);color:#fff;box-shadow:var(--off-sm)}
+.btn-w{background:#fff;box-shadow:var(--off-sm)}
+.btn-y:hover,.btn-i:hover,.btn-w:hover{transform:translate(-2px,-2px);box-shadow:var(--off)}
+.btn-y:active,.btn-i:active,.btn-w:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--ink)}
+.btn-lg{height:54px;padding:0 28px;font-size:16px;box-shadow:var(--off)}
+.btn-lg:hover{box-shadow:var(--off-lift)}
+
+/* ---------- AI GEO STRIP ---------- */
+.geo{background:var(--indigo);color:#fff;border-bottom:var(--bd)}
+.geo .wrap{display:flex;align-items:center;gap:var(--s3);padding:11px var(--s5);flex-wrap:wrap;font-size:14px}
+.geo .tag{background:var(--yellow);color:var(--ink);font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:var(--r-pill);border:2px solid var(--ink)}
+.geo b{font-weight:700}
+.geo .chg{margin-left:auto;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.4);border-radius:var(--r-pill);padding:4px 14px;font-size:13px;font-weight:700}
+.geo .chg:hover{background:#fff;color:var(--indigo);border-color:#fff}
+
+/* ---------- HERO BENTO ---------- */
+.hero{padding:var(--s7) 0 var(--s6)}
+.hero h1{font-size:clamp(34px,5.4vw,62px);line-height:1.03;margin:0 0 var(--s4);max-width:15ch}
+.hero h1 .hl{background:var(--yellow);padding:0 .14em;border-radius:8px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.hero p{font-size:18px;color:var(--ink-2);max-width:52ch;margin:0 0 var(--s5)}
+.herotop{display:grid;grid-template-columns:1.25fr .75fr;gap:var(--s6);align-items:center;margin-bottom:var(--s6)}
+.statbox{background:var(--surface);border:var(--bd);border-radius:var(--r-lg);box-shadow:var(--off);padding:var(--s5);display:grid;grid-template-columns:1fr 1fr;gap:var(--s4)}
+.stat .n{font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;line-height:1;letter-spacing:-.04em}
+.stat .l{font-size:12.5px;color:var(--ink-2);font-weight:600;margin-top:3px}
+.stat.a .n{color:var(--indigo)} .stat.b .n{color:var(--coral)} .stat.c .n{color:var(--teal)} .stat.d .n{color:var(--violet)}
+
+/* category bento */
+.catgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s4)}
+.catcard{position:relative;border:var(--bd);border-radius:var(--r-lg);padding:var(--s5);min-height:184px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--off);transition:transform .18s var(--ease),box-shadow .18s var(--ease);text-align:left;overflow:hidden}
+.catcard:hover{transform:translate(-3px,-3px);box-shadow:var(--off-lift)}
+.catcard.on{transform:translate(-3px,-3px);box-shadow:var(--off-lift)}
+.catcard.on::after{content:'';position:absolute;inset:0;border:5px solid var(--ink);border-radius:calc(var(--r-lg) - 2px);pointer-events:none}
+.catcard .ico{width:52px;height:52px;border-radius:14px;background:rgba(18,19,26,.1);border:2px solid var(--ink);display:grid;place-items:center}
+.catcard h3{margin:var(--s4) 0 2px;font-size:20px}
+.catcard p{margin:0;font-size:13.5px;font-weight:600;opacity:.78}
+.catcard .cnt{position:absolute;top:var(--s4);right:var(--s4);background:var(--ink);color:#fff;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;border-radius:var(--r-pill);padding:4px 11px}
+.catcard.v{background:var(--indigo);color:#fff}
+.catcard.v .ico{background:rgba(255,255,255,.18);border-color:#fff}
+.catcard.e{background:var(--yellow)}
+.catcard.t{background:var(--coral);color:#fff}
+.catcard.t .ico{background:rgba(255,255,255,.2);border-color:#fff}
+
+/* ---------- SEARCH BLOCK ---------- */
+.searchblock{background:var(--surface);border:var(--bd);border-radius:var(--r-lg);box-shadow:var(--off);padding:var(--s4);display:grid;grid-template-columns:1.3fr 1fr 1fr auto;gap:var(--s3);margin-top:var(--s6)}
+.field{display:flex;flex-direction:column;gap:3px;padding:6px 12px;border-radius:var(--r);background:var(--bg);border:2px solid #E6E3DC;min-width:0}
+.field:focus-within{border-color:var(--indigo)}
+.field label{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3)}
+.field input,.field select{border:0;background:transparent;font:inherit;font-size:15px;font-weight:600;padding:0;color:var(--ink);width:100%}
+.field input::placeholder{color:var(--ink-3);font-weight:500}
+
+/* ---------- RESULTS ---------- */
+.section{padding:var(--s8) 0 0}
+.shead{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s4);margin-bottom:var(--s5);flex-wrap:wrap}
+.shead h2{margin:0;font-size:clamp(24px,3vw,34px)}
+.shead p{margin:5px 0 0;color:var(--ink-2);font-size:15px}
+.sortrow{display:flex;gap:var(--s2);flex-wrap:wrap}
+.tab{height:38px;padding:0 16px;border:var(--bd);border-radius:var(--r-pill);background:#fff;font-weight:700;font-size:13.5px;transition:all .16s var(--ease)}
+.tab:hover{box-shadow:var(--off-sm)}
+.tab.on{background:var(--ink);color:#fff}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(288px,1fr));gap:var(--s5)}
+.co{background:var(--surface);border:var(--bd);border-radius:var(--r-lg);box-shadow:var(--off);overflow:hidden;transition:transform .18s var(--ease),box-shadow .18s var(--ease);cursor:pointer;display:flex;flex-direction:column}
+.co:hover{transform:translate(-3px,-3px);box-shadow:var(--off-lift)}
+.cotop{position:relative;height:150px;display:grid;place-items:center;font-size:58px;border-bottom:var(--bd)}
+.cotag{position:absolute;top:11px;left:11px;background:#fff;border:2px solid var(--ink);border-radius:var(--r-pill);font-size:11px;font-weight:700;padding:3px 10px;display:inline-flex;align-items:center;gap:5px}
+.cotag.ok{background:var(--ok);color:#fff;border-color:var(--ink)}
+.cotag.now{background:var(--yellow)}
+.cofav{position:absolute;top:9px;right:9px;width:36px;height:36px;border-radius:50%;background:#fff;border:2px solid var(--ink);display:grid;place-items:center}
+.cofav:hover{background:var(--coral);color:#fff}
+.cobody{padding:var(--s4);flex:1;display:flex;flex-direction:column}
+.coname{display:flex;justify-content:space-between;gap:var(--s3);align-items:flex-start;margin-bottom:5px}
+.coname h3{margin:0;font-size:17px;line-height:1.25}
+.corate{flex-shrink:0;display:inline-flex;align-items:center;gap:4px;background:var(--ink);color:#fff;border-radius:var(--r-pill);padding:3px 9px;font-size:12px;font-weight:700}
+.corate svg{width:11px;height:11px;color:var(--yellow)}
+.coloc{margin:0 0 var(--s3);font-size:13.5px;color:var(--ink-2);font-weight:500;display:flex;align-items:center;gap:6px}
+.cotags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:var(--s4)}
+.t{font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:var(--r-pill);border:2px solid var(--ink);background:#fff}
+.cofoot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:var(--s3);padding-top:var(--s3);border-top:2px dashed #E0DDD5}
+.coprice .p{font-family:'Space Grotesk',sans-serif;font-size:21px;font-weight:700;letter-spacing:-.03em}
+.coprice .u{font-size:12px;color:var(--ink-2);font-weight:600}
+.cobtn{height:38px;padding:0 16px;border-radius:var(--r-pill);border:var(--bd);background:var(--yellow);font-weight:700;font-size:13.5px;box-shadow:var(--off-sm)}
+.co:hover .cobtn{background:var(--indigo);color:#fff}
+
+/* ---------- MAP BAND ---------- */
+.mapband{margin-top:var(--s8);background:var(--surface);border:var(--bd);border-radius:var(--r-lg);box-shadow:var(--off);overflow:hidden;display:grid;grid-template-columns:1fr 1.15fr}
+.mapinfo{padding:var(--s6)}
+.mapinfo h2{margin:0 0 var(--s3);font-size:clamp(22px,2.6vw,30px)}
+.mapinfo p{color:var(--ink-2);margin:0 0 var(--s5);font-size:15.5px}
+.howto{display:flex;flex-direction:column;gap:var(--s3);margin-bottom:var(--s5)}
+.how{display:flex;gap:var(--s3);align-items:flex-start}
+.hnum{width:28px;height:28px;border-radius:9px;background:var(--yellow);border:2px solid var(--ink);display:grid;place-items:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;flex-shrink:0}
+.how p{margin:0;font-size:14.5px;color:var(--ink-2)}
+.how p b{color:var(--ink)}
+.mapvis{position:relative;background:#E8EEF6;border-left:var(--bd);min-height:380px}
+.mapvis svg{width:100%;height:100%;display:block;position:absolute;inset:0}
+.mpin{position:absolute;transform:translate(-50%,-50%);background:#fff;border:2.5px solid var(--ink);border-radius:var(--r-pill);padding:5px 12px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;box-shadow:var(--off-sm);transition:transform .16s var(--ease)}
+.mpin:hover,.mpin.on{background:var(--yellow);transform:translate(-50%,-50%) scale(1.1)}
+.mpin.you{background:var(--indigo);color:#fff}
+.mpin.tow{background:var(--coral);color:#fff}
+
+/* ---------- VENDOR ---------- */
+.vendor{margin-top:var(--s8);background:var(--ink);color:#fff;border-top:var(--bd)}
+.vendor .wrap{padding:var(--s8) var(--s5)}
+.vhead{max-width:60ch;margin-bottom:var(--s6)}
+.vhead h2{margin:0 0 var(--s3);font-size:clamp(28px,4vw,44px);line-height:1.08}
+.vhead h2 .hl{background:var(--yellow);color:var(--ink);padding:0 .14em;border-radius:8px}
+.vhead p{margin:0;color:#B9BDCC;font-size:17px}
+.vgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s4);margin-bottom:var(--s6)}
+.vcard{background:#1C1E29;border:2.5px solid #33364A;border-radius:var(--r-lg);padding:var(--s5)}
+.vcard .n{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:var(--yellow);letter-spacing:.06em}
+.vcard h3{margin:8px 0 6px;font-size:19px}
+.vcard p{margin:0;color:#A7ACC0;font-size:14px;line-height:1.5}
+/* storefront preview */
+.sf{background:#fff;color:var(--ink);border:2.5px solid var(--ink);border-radius:var(--r-lg);overflow:hidden;box-shadow:6px 6px 0 var(--yellow)}
+.sfbar{display:flex;align-items:center;gap:6px;padding:10px var(--s4);background:var(--bg);border-bottom:2.5px solid var(--ink)}
+.sfd{width:10px;height:10px;border-radius:50%;border:2px solid var(--ink)}
+.sfurl{margin-left:var(--s3);font-size:12px;font-weight:600;background:#fff;border:2px solid var(--ink);border-radius:var(--r-pill);padding:2px 12px}
+.sfhero{height:92px;background:linear-gradient(115deg,var(--indigo),var(--violet) 60%,var(--coral));border-bottom:2.5px solid var(--ink);position:relative}
+.sfhero .pen{position:absolute;top:9px;right:9px;background:#fff;border:2px solid var(--ink);border-radius:var(--r-pill);font-size:11px;font-weight:700;padding:3px 10px}
+.sfin{padding:var(--s4)}
+.sfid{display:flex;gap:var(--s3);align-items:flex-end;margin-top:-34px;margin-bottom:var(--s4)}
+.sflogo{width:56px;height:56px;border-radius:15px;background:var(--yellow);border:2.5px solid var(--ink);display:grid;place-items:center;font-size:26px}
+.sfnm strong{display:block;font-family:'Space Grotesk',sans-serif;font-size:16px}
+.sfnm span{font-size:12px;color:var(--ink-2);font-weight:600}
+.sfrow{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s2);margin-bottom:var(--s3)}
+.sft{border:2px solid var(--ink);border-radius:var(--r-sm);padding:8px 10px;background:var(--bg)}
+.sft b{display:block;font-family:'Space Grotesk',sans-serif;font-size:15px}
+.sft span{font-size:10.5px;color:var(--ink-2);font-weight:600}
+.sfth{display:flex;align-items:center;gap:7px;padding-top:var(--s3);border-top:2px dashed #E0DDD5;font-size:11.5px;font-weight:600;color:var(--ink-2)}
+.sw{width:19px;height:19px;border-radius:6px;border:2px solid var(--ink)}
+.vbottom{display:grid;grid-template-columns:1fr 1fr;gap:var(--s7);align-items:center}
+
+footer{border-top:var(--bd);padding:var(--s5) 0;font-size:13.5px;color:var(--ink-2)}
+footer .wrap{display:flex;justify-content:space-between;gap:var(--s4);flex-wrap:wrap}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width:1000px){
+  .herotop{grid-template-columns:1fr;gap:var(--s5)}
+  .searchblock{grid-template-columns:1fr 1fr;gap:var(--s3)}
+  .searchblock .btn{grid-column:1/-1;width:100%}
+  .mapband{grid-template-columns:1fr}
+  .mapvis{border-left:0;border-top:var(--bd);min-height:320px}
+  .vgrid{grid-template-columns:1fr}
+  .vbottom{grid-template-columns:1fr;gap:var(--s6)}
+}
+@media (max-width:720px){
+  .wrap{padding:0 var(--s4)}
+  .nlinks{display:none}
+  .nright .btn-w{display:none}
+  .catgrid{grid-template-columns:1fr;gap:var(--s3)}
+  .catcard{min-height:0;flex-direction:row;align-items:center;gap:var(--s4);padding:var(--s4)}
+  .catcard .ico{width:44px;height:44px;flex-shrink:0}
+  .catcard h3{margin:0;font-size:17px}
+  .catcard .cnt{position:static;margin-left:auto}
+  .catcard div:nth-child(2){flex:1}
+  .searchblock{grid-template-columns:1fr}
+  .statbox{grid-template-columns:1fr 1fr}
+  .cards{grid-template-columns:1fr}
+  .hero{padding:var(--s6) 0 var(--s5)}
+  .section{padding-top:var(--s7)}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nbar">
+    <a class="logo" href="#">
+      <span class="m"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#12131A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg></span>
+      ARKILA
+    </a>
+    <div class="nlinks">
+      <a href="#" class="on">Rent</a>
+      <a href="#">How it works</a>
+      <a href="#">For companies</a>
+      <a href="#">Help</a>
+    </div>
+    <div class="nright">
+      <button class="btn btn-w">List your company</button>
+      <button class="btn btn-i">Sign in</button>
+    </div>
+  </div>
+</nav>
+
+<div class="geo">
+  <div class="wrap">
+    <span class="tag">AI Located</span>
+    <span>Nakita ka namin sa <b>Davao City, Region XI</b> — showing <b>147 companies</b> within 50 km.</span>
+    <button class="chg">Change location</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="herotop">
+      <div>
+        <h1>Rent anything on <span class="hl">wheels</span> — anywhere in PH.</h1>
+        <p>One place for vehicles, heavy equipment and 24/7 towing. We find the companies nearest you, automatically.</p>
+        <button class="btn btn-i btn-lg">Find providers near me</button>
+      </div>
+      <div class="statbox">
+        <div class="stat a"><div class="n">1,900+</div><div class="l">Registered companies</div></div>
+        <div class="stat b"><div class="n">17</div><div class="l">Regions covered</div></div>
+        <div class="stat c"><div class="n">24/7</div><div class="l">Towing dispatch</div></div>
+        <div class="stat d"><div class="n">4.86</div><div class="l">Average rating</div></div>
+      </div>
+    </div>
+
+    <!-- CATEGORY BENTO -->
+    <div class="catgrid">
+      <button class="catcard v on" data-cat="vehicles">
+        <span class="cnt">631 units</span>
+        <span class="ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17v-4l2.6-4h12.8L21 13v4"/><path d="M3 17h18"/><circle cx="7.5" cy="17" r="1.9"/><circle cx="16.5" cy="17" r="1.9"/></svg></span>
+        <div><h3>Vehicles</h3><p>Cars · Vans · Trucks · Self-drive or with driver</p></div>
+      </button>
+      <button class="catcard e" data-cat="equipment">
+        <span class="cnt">412 units</span>
+        <span class="ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19h11v-4H3zM6 15V9h5l3 6"/><path d="M14 11l4-5 3 2-3 5"/></svg></span>
+        <div><h3>Heavy Equipment</h3><p>Excavators · Cranes · Backhoes · With operator</p></div>
+      </button>
+      <button class="catcard t" data-cat="towing">
+        <span class="cnt">165 units</span>
+        <span class="ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17h12v-5H6l-2 3H2zM14 8h4l3 4v5h-7z"/><path d="M14 12l5-6"/></svg></span>
+        <div><h3>Towing</h3><p>Emergency · Flatbed · Recovery · 24/7 hotline</p></div>
+      </button>
+    </div>
+
+    <!-- SEARCH -->
+    <form class="searchblock" onsubmit="return false">
+      <div class="field">
+        <label for="c-loc">Location</label>
+        <input id="c-loc" value="Davao City" placeholder="City or municipality">
+      </div>
+      <div class="field">
+        <label for="c-type">Unit type</label>
+        <select id="c-type"><option>Any type</option><option>Excavator</option><option>Van (15-seat)</option><option>Flatbed tow</option></select>
+      </div>
+      <div class="field">
+        <label for="c-when">Needed on</label>
+        <input id="c-when" placeholder="Today · 8:00 AM">
+      </div>
+      <button class="btn btn-y">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        Search
+      </button>
+    </form>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="section">
+    <div class="shead">
+      <div>
+        <h2 id="c-title">Vehicle companies near you</h2>
+        <p id="c-sub">147 verified providers in Davao City · sorted by distance</p>
+      </div>
+      <div class="sortrow">
+        <button class="tab on">Nearest</button>
+        <button class="tab">Top rated</button>
+        <button class="tab">Cheapest</button>
+        <button class="tab">Available now</button>
+      </div>
+    </div>
+    <div class="cards" id="c-cards"></div>
+  </section>
+
+  <!-- MAP -->
+  <section class="mapband">
+    <div class="mapinfo">
+      <h2>Hindi mo kailangang mag-search ng city.</h2>
+      <p>Our matching engine reads your usual booking area, session signals and past rentals to lock your region — then only shows companies that actually serve you.</p>
+      <div class="howto">
+        <div class="how"><span class="hnum">1</span><p><b>We detect your area</b> from usage patterns — no manual setup, no GPS prompt on first visit.</p></div>
+        <div class="how"><span class="hnum">2</span><p><b>We filter by service radius</b> so a Cebu company never shows up for a Davao job.</p></div>
+        <div class="how"><span class="hnum">3</span><p><b>You stay in control</b> — override the region any time, and we remember it.</p></div>
+      </div>
+      <button class="btn btn-w">See how matching works</button>
+    </div>
+    <div class="mapvis">
+      <svg viewBox="0 0 560 460" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <rect width="560" height="460" fill="#E4EBF2"/>
+        <path d="M-20 300 Q120 260 230 320 T580 285 L580 480 L-20 480Z" fill="#CFDDE6"/>
+        <path d="M40 -20 L150 90 L120 230 L250 320 L200 480" stroke="#F4F8FA" stroke-width="22" fill="none" stroke-linecap="round"/>
+        <path d="M-20 150 L160 190 L400 130 L580 180" stroke="#F4F8FA" stroke-width="16" fill="none"/>
+        <path d="M470 -20 L430 160 L510 340" stroke="#F4F8FA" stroke-width="12" fill="none"/>
+        <g fill="#D6E2DC">
+          <rect x="70" y="230" width="56" height="40" rx="4"/><rect x="150" y="255" width="40" height="60" rx="4"/>
+          <rect x="300" y="205" width="64" height="46" rx="4"/><rect x="385" y="270" width="46" height="46" rx="4"/>
+          <rect x="110" y="370" width="72" height="48" rx="4"/><rect x="280" y="390" width="54" height="38" rx="4"/>
+        </g>
+        <circle cx="270" cy="215" r="105" fill="none" stroke="rgba(79,70,229,.22)" stroke-width="2.5" stroke-dasharray="7 7"/>
+      </svg>
+      <button class="mpin you" style="left:48%;top:47%">You</button>
+      <button class="mpin on" style="left:26%;top:25%">₱3,500</button>
+      <button class="mpin" style="left:66%;top:21%">₱12,000</button>
+      <button class="mpin" style="left:33%;top:62%">₱2,800</button>
+      <button class="mpin tow" style="left:74%;top:57%">Tow · 12m</button>
+      <button class="mpin" style="left:55%;top:78%">₱8,400</button>
+    </div>
+  </section>
+</div>
+
+<!-- VENDOR -->
+<section class="vendor">
+  <div class="wrap">
+    <div class="vhead">
+      <h2>May rental business ka? <span class="hl">Ilista mo dito.</span></h2>
+      <p>Free registration. Nationwide reach. And a company page you actually control.</p>
+    </div>
+    <div class="vgrid">
+      <div class="vcard"><span class="n">STEP 01</span><h3>Register &amp; verify</h3><p>Submit your DTI/SEC permit, LTO registration and insurance. Verified badge in around 24 hours.</p></div>
+      <div class="vcard"><span class="n">STEP 02</span><h3>Design your page</h3><p>Pick a layout, upload your logo and cover, set your brand colors, and claim your arkila.ph link.</p></div>
+      <div class="vcard"><span class="n">STEP 03</span><h3>Get geo-matched bookings</h3><p>Set your service radius. Renters in your area see you first — no ads, no bidding.</p></div>
+    </div>
+
+    <div class="vbottom">
+      <div class="sf">
+        <div class="sfbar">
+          <span class="sfd" style="background:var(--coral)"></span>
+          <span class="sfd" style="background:var(--yellow)"></span>
+          <span class="sfd" style="background:var(--ok)"></span>
+          <span class="sfurl">arkila.ph/davao-heavy-lift</span>
+        </div>
+        <div class="sfhero"><span class="pen">✎ Customize</span></div>
+        <div class="sfin">
+          <div class="sfid">
+            <div class="sflogo">🏗️</div>
+            <div class="sfnm"><strong>Davao Heavy Lift Corp.</strong><span>★ 4.90 (218) · Verified · Talomo, Davao City</span></div>
+          </div>
+          <div class="sfrow">
+            <div class="sft"><b>34</b><span>UNITS</span></div>
+            <div class="sft"><b>&lt;15m</b><span>REPLIES</span></div>
+            <div class="sft"><b>50km</b><span>RADIUS</span></div>
+          </div>
+          <div class="sfth">
+            <span>Your theme:</span>
+            <span class="sw" style="background:#4F46E5"></span>
+            <span class="sw" style="background:#8B5CF6"></span>
+            <span class="sw" style="background:#FB6B4A"></span>
+            <span class="sw" style="background:#FACC15"></span>
+            <span style="margin-left:auto">Layout: Bold</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h2 style="font-size:clamp(24px,3vw,34px);margin:0 0 var(--s3)">Every company gets its own storefront.</h2>
+        <p style="color:#B9BDCC;font-size:16px;margin:0 0 var(--s5)">Your logo, your cover photo, your colors, your sections — plus a rate card, live availability calendar, gallery, and reviews. It looks like your brand, not ours.</p>
+        <button class="btn btn-y btn-lg">Create my company page</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Arkila Fleet Services PH · Template C — “Bold block-based / bento”</span>
+    <span>Vibrant &amp; Block-based · Space Grotesk + Inter</span>
+  </div>
+</footer>
+
+<script>
+const C_DATA={
+  vehicles:[
+    {n:"Mindanao Auto Rentals",loc:"Poblacion, Davao City · 2.4 km",r:4.92,c:341,p:"2,800",u:"/ day",em:"🚐",bg:"#EEF2FF",tags:["Self-drive","32 units","Instant book"],st:"Available now",stc:"now"},
+    {n:"SouthPoint Van Hire",loc:"Matina, Davao City · 4.1 km",r:4.87,c:198,p:"3,500",u:"/ day",em:"🚌",bg:"#ECFDF5",tags:["With driver","15-seater","Airport run"],st:"Verified",stc:"ok"},
+    {n:"Bagumbayan Motors",loc:"Buhangin, Davao City · 6.8 km",r:4.74,c:126,p:"1,900",u:"/ day",em:"🚗",bg:"#FEF9C3",tags:["Sedan · SUV","Monthly rate"],st:"Available now",stc:"now"},
+    {n:"Davao Fleet Solutions",loc:"Toril, Davao City · 11.2 km",r:4.95,c:512,p:"4,200",u:"/ day",em:"🚙",bg:"#FFF1EC",tags:["Corporate","Long-term","GPS tracked"],st:"Verified",stc:"ok"}
+  ],
+  equipment:[
+    {n:"Davao Heavy Lift Corp.",loc:"Talomo, Davao City · 3.9 km",r:4.90,c:218,p:"12,000",u:"/ day",em:"🏗️",bg:"#FEF9C3",tags:["Excavator 20T","Operator incl.","Crane 25T"],st:"3 available",stc:"now"},
+    {n:"Mount Apo Equipment",loc:"Calinan, Davao City · 18.4 km",r:4.81,c:94,p:"8,400",u:"/ day",em:"🚜",bg:"#F1F5F9",tags:["Backhoe","Loader 3cbm","Delivery incl."],st:"5 available",stc:"now"},
+    {n:"Sta. Ana Builders Rental",loc:"Agdao, Davao City · 5.2 km",r:4.68,c:73,p:"6,000",u:"/ day",em:"⛏️",bg:"#FEF3C7",tags:["Bulldozer D6","Compactor","Weekly rate"],st:"Verified",stc:"ok"},
+    {n:"Panabo Machinery Hub",loc:"Panabo, Davao del Norte · 32.7 km",r:4.77,c:141,p:"9,800",u:"/ day",em:"🏗️",bg:"#ECFEFF",tags:["Crane 25T","Boom lift","Certified crew"],st:"Book 24h ahead",stc:"ok"}
+  ],
+  towing:[
+    {n:"Rapid Response Towing",loc:"Bajada, Davao City · 1.8 km",r:4.96,c:604,p:"1,500",u:"/ call-out",em:"🛻",bg:"#FFF1EC",tags:["24/7","Flatbed","ETA 12 min"],st:"On standby",stc:"now"},
+    {n:"Davao Roadside Assist",loc:"Lanang, Davao City · 5.6 km",r:4.83,c:287,p:"1,800",u:"/ call-out",em:"🚨",bg:"#F1F5F9",tags:["Heavy duty","Winch-out","Jumpstart"],st:"On standby",stc:"now"},
+    {n:"Bukidnon Tow Express",loc:"Mintal, Davao City · 9.3 km",r:4.71,c:112,p:"2,200",u:"/ call-out",em:"🛞",bg:"#EFF6FF",tags:["Long-haul","Truck recovery"],st:"1 unit busy",stc:"ok"},
+    {n:"Sasa 24H Wrecker",loc:"Sasa, Davao City · 12.1 km",r:4.88,c:355,p:"1,650",u:"/ call-out",em:"🔧",bg:"#F5F3FF",tags:["24/7","Motorcycle tow","Port area"],st:"On standby",stc:"now"}
+  ]
+};
+const C_T={vehicles:["Vehicle companies near you","147 verified providers in Davao City"],equipment:["Heavy equipment providers near you","63 verified providers in Davao City"],towing:["Towing services near you","41 verified providers in Davao City"]};
+const cstar='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z"/></svg>';
+
+function cRender(cat){
+  document.getElementById('c-cards').innerHTML=C_DATA[cat].map(x=>`
+    <article class="co" tabindex="0">
+      <div class="cotop" style="background:${x.bg}">
+        ${x.em}
+        <span class="cotag ${x.stc}">${x.stc==='ok'?'✓ ':'● '}${x.st}</span>
+        <button class="cofav" aria-label="Save ${x.n}">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20.8 8.6c0 5-8.8 9.9-8.8 9.9s-8.8-4.9-8.8-9.9a4.8 4.8 0 0 1 8.8-2.7 4.8 4.8 0 0 1 8.8 2.7z"/></svg>
+        </button>
+      </div>
+      <div class="cobody">
+        <div class="coname">
+          <h3>${x.n}</h3>
+          <span class="corate">${cstar}${x.r.toFixed(2)}</span>
+        </div>
+        <p class="coloc">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          ${x.loc}
+        </p>
+        <div class="cotags">${x.tags.map(t=>`<span class="t">${t}</span>`).join('')}</div>
+        <div class="cofoot">
+          <div class="coprice"><span class="p">₱${x.p}</span> <span class="u">${x.u}</span></div>
+          <button class="cobtn">Book</button>
+        </div>
+      </div>
+    </article>`).join('');
+}
+cRender('vehicles');
+
+document.querySelectorAll('.catcard').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.catcard').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  const c=b.dataset.cat; cRender(c);
+  document.getElementById('c-title').textContent=C_T[c][0];
+  document.getElementById('c-sub').textContent=C_T[c][1]+' · sorted by distance';
+  document.querySelector('.section').scrollIntoView({behavior:'smooth',block:'start'});
+}));
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.tab').forEach(z=>z.classList.remove('on')); t.classList.add('on');
+}));
+document.querySelectorAll('.mpin:not(.you)').forEach(p=>p.addEventListener('click',()=>{
+  document.querySelectorAll('.mpin').forEach(z=>z.classList.remove('on')); p.classList.add('on');
+}));
+</script>
+</body>
+</html>

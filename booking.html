@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Request a booking — FR Services</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/fr.css">
+<style>
+.bkgrid{display:grid;grid-template-columns:1fr 400px;gap:var(--s6);
+  align-items:start;padding-bottom:var(--s8)}
+
+/* unit summary */
+.usum{display:flex;gap:var(--s5);align-items:center;margin-bottom:var(--s6);flex-wrap:wrap}
+.usum .em{width:96px;height:96px;border-radius:22px;background:var(--brand-tint);
+  border:var(--bd);box-shadow:var(--off-sm);display:grid;place-items:center;
+  color:var(--brand);flex-shrink:0}
+.usum .em svg{width:52px;height:52px}
+.usum h1{font-size:clamp(24px,3.4vw,34px);line-height:1.12;margin-bottom:6px}
+.usum .from{font-size:14.5px;color:var(--ink-2);display:flex;align-items:center;
+  gap:8px;flex-wrap:wrap}
+.usum .from a{font-weight:700;text-decoration:underline}
+
+/* steps */
+.steps{display:flex;gap:var(--s2);margin-bottom:var(--s6);flex-wrap:wrap}
+.step{flex:1;min-width:130px;border:var(--bd);border-radius:var(--r);padding:11px 14px;
+  background:var(--surface);display:flex;align-items:center;gap:10px}
+.step .n{width:26px;height:26px;border-radius:8px;background:var(--surface-2);
+  border:var(--bd-thin);display:grid;place-items:center;font-family:'Space Grotesk',sans-serif;
+  font-weight:700;font-size:12.5px;flex-shrink:0}
+.step b{font-size:13.5px}
+.step.on{box-shadow:var(--off-sm)}
+.step.on .n{background:var(--yellow)}
+.step.done .n{background:var(--ok);color:#fff;border-color:var(--ink)}
+.step.todo{opacity:.5}
+
+/* form sections */
+.fsec{margin-bottom:var(--s6)}
+.fsec h2{font-size:20px;margin-bottom:var(--s4)}
+.fgrid2{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3)}
+.fgrid3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s3)}
+
+/* option cards (radio) */
+.opts{display:grid;gap:var(--s3)}
+.opt{display:flex;gap:var(--s3);align-items:flex-start;padding:var(--s4);
+  border:var(--bd);border-radius:var(--r);background:var(--surface);cursor:pointer;
+  transition:box-shadow .16s var(--ease),transform .16s var(--ease)}
+.opt:hover{box-shadow:var(--off-sm)}
+.opt.on{box-shadow:var(--off);transform:translate(-2px,-2px)}
+.opt .rad{width:22px;height:22px;border-radius:50%;border:var(--bd);flex-shrink:0;
+  display:grid;place-items:center;margin-top:1px}
+.opt.on .rad::after{content:'';width:11px;height:11px;border-radius:50%;background:var(--indigo)}
+.opt b{display:block;font-size:15px}
+.opt p{margin:2px 0 0;font-size:13.5px;color:var(--ink-2)}
+.opt .pr{margin-left:auto;font-family:'Space Grotesk',sans-serif;font-weight:700;
+  font-size:15px;white-space:nowrap;padding-left:var(--s3)}
+
+/* addon checkboxes */
+.addon{display:flex;gap:var(--s3);align-items:center;padding:13px var(--s4);
+  border:var(--bd-thin);border-color:var(--hair);border-radius:var(--r);
+  background:var(--surface);cursor:pointer;transition:border-color .16s var(--ease)}
+.addon:hover{border-color:var(--ink)}
+.addon.on{border-color:var(--ink);background:var(--yellow-tint)}
+.addon .box{width:22px;height:22px;border-radius:7px;border:var(--bd);flex-shrink:0;
+  display:grid;place-items:center;background:#fff}
+.addon.on .box{background:var(--ink);color:var(--yellow)}
+.addon b{font-size:14.5px}
+.addon .pr{margin-left:auto;font-weight:700;font-size:14px}
+
+/* summary rail */
+.rail{position:sticky;top:calc(var(--nav-h) + var(--s4))}
+.sumhead{display:flex;gap:var(--s3);align-items:center;padding-bottom:var(--s4);
+  border-bottom:2px dashed var(--hair);margin-bottom:var(--s4)}
+.sumhead .em{width:52px;height:52px;border-radius:14px;background:var(--brand-tint);
+  border:var(--bd-thin);display:grid;place-items:center;color:var(--brand);flex-shrink:0}
+.sumhead .em svg{width:28px;height:28px}
+.sumhead b{display:block;font-size:15px;font-family:'Space Grotesk',sans-serif}
+.sumhead span{font-size:12.5px;color:var(--ink-2)}
+.lines{list-style:none;margin:0 0 var(--s4);padding:0;font-size:14px}
+.lines li{display:flex;justify-content:space-between;gap:var(--s3);padding:7px 0}
+.lines li.sub{color:var(--ink-2);font-size:13px;padding:3px 0 3px var(--s3)}
+.lines .v{font-weight:700;white-space:nowrap}
+.total{display:flex;justify-content:space-between;align-items:baseline;gap:var(--s3);
+  padding-top:var(--s4);border-top:var(--bd-thin);margin-bottom:var(--s3)}
+.total .l{font-weight:700;font-size:15px}
+.total .v{font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:700;
+  letter-spacing:-.035em}
+.paynote{background:var(--yellow-tint);border:var(--bd-thin);border-radius:var(--r);
+  padding:var(--s3) var(--s4);font-size:13px;margin-bottom:var(--s4);
+  display:flex;gap:10px;align-items:flex-start}
+.paynote svg{flex-shrink:0;margin-top:2px}
+.paylogos{display:flex;gap:7px;flex-wrap:wrap;margin-top:var(--s4);
+  padding-top:var(--s4);border-top:2px dashed var(--hair)}
+.paylogo{font-size:11px;font-weight:700;border:var(--bd-thin);border-color:var(--hair);
+  border-radius:7px;padding:5px 9px;color:var(--ink-2)}
+.guard{display:flex;gap:10px;align-items:flex-start;font-size:12.5px;
+  color:var(--ink-2);margin-top:var(--s4)}
+.guard svg{flex-shrink:0;color:var(--ok);margin-top:1px}
+
+/* success state */
+.done-card{display:none;text-align:center;padding:var(--s8) var(--s5)}
+.done-card.on{display:block}
+.done-ic{width:88px;height:88px;border-radius:26px;background:var(--ok);color:#fff;
+  border:var(--bd);box-shadow:var(--off);display:grid;place-items:center;
+  margin:0 auto var(--s5)}
+.done-card h2{font-size:clamp(26px,4vw,38px);margin-bottom:var(--s3)}
+.done-card p{color:var(--ink-2);font-size:16.5px;max-width:52ch;margin:0 auto var(--s5)}
+.done-ref{display:inline-flex;align-items:center;gap:10px;background:var(--surface);
+  border:var(--bd);border-radius:var(--r-pill);padding:9px 20px;
+  font-family:'Space Grotesk',sans-serif;font-weight:700;margin-bottom:var(--s5)}
+
+@media (max-width:1000px){
+  .bkgrid{grid-template-columns:1fr;gap:var(--s5)}
+  .rail{position:static}
+}
+@media (max-width:720px){
+  .fgrid2,.fgrid3{grid-template-columns:1fr}
+  .steps{gap:6px}
+  .step{min-width:0;flex:1;padding:9px 10px}
+  .step b{font-size:12px}
+  .usum .em{width:72px;height:72px;border-radius:18px}
+  .usum .em svg{width:38px;height:38px}
+}
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="wrap nbar">
+    <a class="logo" href="index.html">
+      <span class="m"><img src="logo.png" alt="FR Services"></span>
+      <span class="wm">FR Services<small>Fleet Rental</small></span>
+    </a>
+    <div class="nlinks">
+      <a href="index.html">Rent</a>
+      <a href="index.html#how">How it works</a>
+      <a href="register.html">For companies</a>
+      <a href="tow.html">Emergency tow</a>
+    </div>
+    <div class="nright">
+      <a class="btn btn-i" href="platform.html">Sign in</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="crumb">
+    <a href="index.html">Home</a>
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M9 6l6 6-6 6"/></svg>
+    <a href="#" id="bk-co-link">Company</a>
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M9 6l6 6-6 6"/></svg>
+    <span>Request booking</span>
+  </div>
+
+  <!-- ===== FORM STATE ===== -->
+  <div id="bk-form">
+    <div class="usum">
+      <div class="em" id="bk-em"></div>
+      <div>
+        <h1 id="bk-name">Excavator 20-Ton</h1>
+        <p class="from">
+          from <a href="#" id="bk-co">Davao Heavy Lift Corp.</a>
+          <span class="t t-ok" style="display:inline-flex;align-items:center;gap:4px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l6 6L20 6"/></svg> Verified</span>
+          <span class="t" id="bk-avail">3 available</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step on"><span class="n">1</span><b>Your request</b></div>
+      <div class="step todo"><span class="n">2</span><b>Company confirms</b></div>
+      <div class="step todo"><span class="n">3</span><b>Pay deposit</b></div>
+      <div class="step todo"><span class="n">4</span><b>Handover</b></div>
+    </div>
+
+    <div class="bkgrid">
+      <form onsubmit="return false">
+
+        <!-- WHEN -->
+        <section class="fsec">
+          <h2>When do you need it?</h2>
+          <div class="fgrid2 mb3">
+            <div class="field">
+              <label for="d-start">Start date</label>
+              <input id="d-start" type="date" value="2026-08-03">
+            </div>
+            <div class="field">
+              <label for="d-end">End date</label>
+              <input id="d-end" type="date" value="2026-08-05">
+            </div>
+          </div>
+          <div class="fgrid2">
+            <div class="field">
+              <label for="d-time">Start time on site</label>
+              <select id="d-time">
+                <option>6:00 AM</option><option selected>8:00 AM</option>
+                <option>10:00 AM</option><option>1:00 PM</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="d-hours">Hours per day</label>
+              <select id="d-hours">
+                <option selected>8 hours (standard)</option>
+                <option>10 hours (+₱1,700/day)</option>
+                <option>12 hours (+₱3,400/day)</option>
+              </select>
+            </div>
+          </div>
+          <p class="fhelp">Minimum rental is 1 day (8 hours). Overtime is billed at ₱850/hour.</p>
+        </section>
+
+        <!-- WHERE -->
+        <section class="fsec">
+          <h2>Where is the job site?</h2>
+          <div class="field mb3">
+            <label for="d-addr">Site address</label>
+            <input id="d-addr" placeholder="Barangay, street, landmark" value="Brgy. Catalunan Grande, Davao City">
+          </div>
+          <div class="opts" id="deliv-opts">
+            <label class="opt on" data-price="0">
+              <span class="rad"></span>
+              <span><b>Company delivers to site</b><p id="deliv-terms">Mobilization and demobilization handled by the company.</p></span>
+              <span class="pr" id="deliv-price">₱2,500</span>
+            </label>
+            <!-- only shown when this unit bills mobilisation by distance -->
+            <div class="field" id="deliv-km-wrap" hidden style="margin:0 0 var(--s3) 34px">
+              <label for="d-km">Distance to site (km)</label>
+              <input id="d-km" type="number" min="0" step="1" value="25">
+            </div>
+            <label class="opt" data-price="pickup">
+              <span class="rad"></span>
+              <span><b>I'll arrange my own hauling</b><p>Pick up from the company yard in Talomo, Davao City.</p></span>
+              <span class="pr">Free</span>
+            </label>
+          </div>
+        </section>
+
+        <!-- ADD-ONS -->
+        <section class="fsec">
+          <h2>Add-ons</h2>
+          <div class="opts">
+            <label class="addon on" data-add="8000" data-locked="1">
+              <span class="box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"><path d="M4 12l6 6L20 6"/></svg></span>
+              <span><b>Certified operator</b><br><span class="small muted">Required for this unit — TESDA-certified</span></span>
+              <span class="pr">Included</span>
+            </label>
+            <label class="addon" data-add="4500">
+              <span class="box"></span>
+              <span><b>Fuel supplied by company</b><br><span class="small muted">Est. 150 L/day at prevailing pump rate</span></span>
+              <span class="pr">+₱4,500</span>
+            </label>
+            <label class="addon" data-add="1200">
+              <span class="box"></span>
+              <span><b>On-site safety officer</b><br><span class="small muted">DOLE-compliant for sites over 10 workers</span></span>
+              <span class="pr">+₱1,200</span>
+            </label>
+            <label class="addon" data-add="2000">
+              <span class="box"></span>
+              <span><b>Extended damage waiver</b><br><span class="small muted">Reduces your liability cap to ₱25,000</span></span>
+              <span class="pr">+₱2,000</span>
+            </label>
+          </div>
+        </section>
+
+        <!-- CONTACT -->
+        <section class="fsec">
+          <h2>Your details</h2>
+          <div class="fgrid2 mb3">
+            <div class="field">
+              <label for="d-name">Full name</label>
+              <input id="d-name" placeholder="Juan dela Cruz">
+            </div>
+            <div class="field">
+              <label for="d-phone">Mobile number</label>
+              <input id="d-phone" type="tel" placeholder="0917 123 4567">
+            </div>
+          </div>
+          <div class="field mb3">
+            <label for="d-company">Company / organization <span style="text-transform:none;letter-spacing:0;font-weight:500">(optional)</span></label>
+            <input id="d-company" placeholder="For official receipts and billing">
+          </div>
+          <div class="field">
+            <label for="d-notes">Notes for the company</label>
+            <textarea id="d-notes" rows="3" placeholder="Site access, ground conditions, specific attachment needed…"></textarea>
+          </div>
+          <p class="fhelp">We'll send booking updates by SMS. Your number is only shared with this company after they accept.</p>
+        </section>
+      </form>
+
+      <!-- SUMMARY RAIL -->
+      <aside class="rail">
+        <div class="block">
+          <div class="sumhead">
+            <span class="em" id="sum-em"></span>
+            <span>
+              <b id="sum-name">Excavator 20-Ton</b>
+              <span id="sum-co">Davao Heavy Lift Corp.</span>
+            </span>
+          </div>
+
+          <ul class="lines" id="sum-lines"></ul>
+
+          <div class="total">
+            <span class="l">Estimated total</span>
+            <span class="v" id="sum-total">₱0</span>
+          </div>
+
+          <div class="paynote">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+            <span><b>This is an estimate.</b> Heavy equipment rates vary with site access and duration — the company confirms the final quote before any payment is taken.</span>
+          </div>
+
+          <button class="btn btn-y btn-lg btn-block" id="bk-submit">Send booking request</button>
+
+          <div class="guard">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 3l8 3v6c0 4.6-3.2 8.4-8 9.6C7.2 20.4 4 16.6 4 12V6z"/><path d="m9 12 2 2 4-4"/></svg>
+            <span>No payment now. You only pay the deposit after the company accepts and confirms the final quote.</span>
+          </div>
+
+          <div class="paylogos">
+            <span class="paylogo">GCash</span>
+            <span class="paylogo">Maya</span>
+            <span class="paylogo">GrabPay</span>
+            <span class="paylogo">Card</span>
+            <span class="paylogo">Bank transfer</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- ===== SUCCESS STATE ===== -->
+  <div class="done-card" id="bk-done">
+    <div class="done-ic">
+      <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l6 6L20 6"/></svg>
+    </div>
+    <h2>Request sent!</h2>
+    <p>We've forwarded your request to <b id="done-co">Davao Heavy Lift Corp.</b> They usually reply within <b id="done-reply">8 minutes</b>. You'll get an SMS the moment they accept.</p>
+    <div class="done-ref">
+      <span class="muted small" style="font-family:Inter,sans-serif;font-weight:600">Reference</span>
+      <span id="done-ref">ARK-2026-08X4K</span>
+    </div>
+    <div class="row gap3" style="justify-content:center;flex-wrap:wrap">
+      <a class="btn btn-i btn-lg" href="index.html">Browse more providers</a>
+      <a class="btn btn-w btn-lg" href="#" id="done-back">Back to company</a>
+    </div>
+  </div>
+</div>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="fbot" style="border-top:0;padding-top:0">
+      <span>© 2026 FR Services Fleet Services PH · Static prototype — demo data only</span>
+      <span><a href="index.html" style="text-decoration:underline">Back to search</a></span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/theme.js"></script>
+<script src="assets/data.js"></script>
+<script>
+const co   = byId(qs('c') || 'davao-heavy-lift') || FR_COMPANIES[4];
+/* the owner's edited fleet wins, exactly as on the storefront — otherwise
+   a unit they created in the admin cannot be booked */
+const list = loadFleet(co.id) || FR_UNITS[co.id] || FR_UNITS['davao-heavy-lift'];
+const unit = list.find(u => u.id === qs('u')) || list[0];
+/* owner units store operator as a mode string, seeded ones as a boolean */
+const hasOperator = typeof unit.operator === 'string'
+  ? unit.operator === 'included' : !!unit.operator;
+
+/* header */
+document.title = 'Book ' + unit.name + ' — FR Services';
+document.getElementById('bk-em').innerHTML     = unitIcon(unit.name, co.cat);
+document.getElementById('bk-name').textContent = unit.name;
+/* seeded units call it `avail`, owner-created ones `qty` */
+const unitAvail = (unit.qty !== undefined ? unit.qty : unit.avail) || 0;
+document.getElementById('bk-avail').textContent = unitAvail + ' available';
+document.getElementById('sum-em').innerHTML     = unitIcon(unit.name, co.cat);
+document.getElementById('sum-name').textContent = unit.name;
+['bk-co','sum-co','done-co'].forEach(id => document.getElementById(id).textContent = co.name);
+document.getElementById('bk-co').href      = 'company.html?c=' + co.id;
+document.getElementById('bk-co-link').href = 'company.html?c=' + co.id;
+document.getElementById('bk-co-link').textContent = co.name;
+document.getElementById('done-back').href  = 'company.html?c=' + co.id;
+document.getElementById('done-reply').textContent = co.reply;
+/* Delivery may be a flat fee, billed per km, or quoted per site. Only the
+   per-km case needs a distance from the renter. */
+const delMode = unit.deliveryMode || 'flat';
+if (delMode === 'perkm'){
+  document.getElementById('deliv-km-wrap').hidden = false;
+  document.getElementById('deliv-terms').textContent = deliveryText(unit);
+}
+function delivFee(){
+  if (delMode === 'quoted') return 0;             // billed after the company quotes
+  const km = Number((document.getElementById('d-km') || {}).value) || 0;
+  return deliveryCost(unit, km) || 0;
+}
+function paintDelivPrice(){
+  document.getElementById('deliv-price').textContent =
+    delMode === 'quoted' ? 'Quoted'
+    : (delivFee() ? peso(delivFee()) : 'Free');
+}
+paintDelivPrice();
+
+/* ---- live cost estimate ---- */
+function days(){
+  const a = new Date(document.getElementById('d-start').value);
+  const b = new Date(document.getElementById('d-end').value);
+  const n = Math.round((b - a) / 86400000) + 1;
+  return (isNaN(n) || n < 1) ? 1 : n;
+}
+function recalc(){
+  const n = days();
+  const base = unit.price * n;
+
+  const delivSel = document.querySelector('#deliv-opts .opt.on');
+  const selfHaul = delivSel && delivSel.dataset.price === 'pickup';
+  const deliv = selfHaul ? 0 : delivFee();
+  paintDelivPrice();
+
+  let addons = 0;
+  const addonLines = [];
+  document.querySelectorAll('.addon.on').forEach(a => {
+    if (a.dataset.locked) return;               // operator is bundled, not extra
+    const amt = +a.dataset.add * n;
+    addons += amt;
+    addonLines.push([a.querySelector('b').textContent, amt]);
+  });
+
+  const sub = base + deliv + addons;
+  const vat = Math.round(sub * 0.12);
+  const total = sub + vat;
+
+  const rows = [
+    [`${peso(unit.price)} × ${n} ${n === 1 ? 'day' : 'days'}`, base],
+    ...(deliv ? [['Mobilization / delivery', deliv]] : []),
+    ...addonLines,
+    ['VAT (12%)', vat]
+  ];
+  document.getElementById('sum-lines').innerHTML = rows.map(([l, v]) =>
+    `<li><span>${l}</span><span class="v">${peso(v)}</span></li>`).join('');
+  document.getElementById('sum-total').textContent = peso(total);
+}
+
+/* delivery radio */
+document.querySelectorAll('#deliv-opts .opt').forEach(o => o.addEventListener('click', () => {
+  document.querySelectorAll('#deliv-opts .opt').forEach(x => x.classList.remove('on'));
+  o.classList.add('on'); recalc();
+}));
+/* addon checkboxes — the locked operator row is informational only */
+document.querySelectorAll('.addon').forEach(a => a.addEventListener('click', e => {
+  e.preventDefault();
+  if (a.dataset.locked) return;
+  a.classList.toggle('on');
+  a.querySelector('.box').innerHTML = a.classList.contains('on')
+    ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"><path d="M4 12l6 6L20 6"/></svg>'
+    : '';
+  recalc();
+}));
+['d-start','d-end'].forEach(id =>
+  document.getElementById(id).addEventListener('change', recalc));
+const kmField = document.getElementById('d-km');
+if (kmField) kmField.addEventListener('input', recalc);
+recalc();
+
+/* submit */
+document.getElementById('bk-submit').addEventListener('click', () => {
+  const ref = 'ARK-2026-' + Math.random().toString(36).slice(2, 7).toUpperCase();
+  document.getElementById('done-ref').textContent = ref;
+  document.getElementById('bk-form').style.display = 'none';
+  document.getElementById('bk-done').classList.add('on');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+</script>
+</body>
+</html>

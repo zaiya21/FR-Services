@@ -1,0 +1,427 @@
+
+/* =====================================================================
+   SPLIT HERO — three vertical panels, one per category.
+   Images are AI-generated originals (assets/img/), deliberately dark and
+   neutral so the category color tint and the headline scrim do the work.
+   ===================================================================== */
+/* No overflow:hidden here — it would clip the location dropdown. Each
+   .panel clips its own scaled photo, so nothing escapes regardless. */
+.hero3{position:relative;width:100%;height:clamp(620px,92vh,900px);
+  border-bottom:var(--bd);background:var(--ink)}
+.panels{position:absolute;inset:0;display:flex}
+
+/* flex-basis MUST be 0 — with a % basis the panels fill the row exactly,
+   leaving no free space for flex-grow to distribute, and hover does nothing. */
+.panel{position:relative;flex:1 1 0%;min-width:0;overflow:hidden;
+  border-right:var(--bd);text-align:left;padding:0;
+  transition:flex-grow .45s var(--ease);
+  /* per-panel hover accent: yellow is invisible on the yellow-tinted
+     equipment panel, so that one accents indigo instead */
+  --acc:var(--yellow); --acc-ink:var(--ink);
+  /* Colour grade. The source photos were generated with overcast skies,
+     so sepia+hue-rotate warms the grey cloud toward golden hour and
+     brightness lifts it out of the gloom. Replace with a proper regen
+     when credits allow — see ARCHITECTURE.md for the prompts. */
+  --grade:saturate(1.35) contrast(1.04) brightness(1.16) sepia(.24) hue-rotate(-12deg);
+  --grade-hi:saturate(1.5) contrast(1.05) brightness(1.28) sepia(.13) hue-rotate(-9deg)}
+.panel.p-eq{--acc:var(--indigo); --acc-ink:#fff}
+/* towing stays moodier on purpose — a dark wet highway suits emergency
+   recovery, which is exactly when someone needs this category */
+.panel.p-tow{--grade:saturate(1.18) contrast(1.06) brightness(1.02) sepia(.10) hue-rotate(-6deg);
+  --grade-hi:saturate(1.32) contrast(1.06) brightness(1.14) sepia(.05) hue-rotate(-4deg)}
+.panel:last-child{border-right:0}
+.panel:hover{flex-grow:1.9}
+
+/* photo layer — brightness lift reads on any hue, unlike a color shift */
+.pimg{position:absolute;inset:0;background-size:cover;background-position:center;
+  transform:scale(1.04);transition:transform .7s var(--ease),filter .45s var(--ease);
+  filter:var(--grade)}
+.panel:hover .pimg{transform:scale(1.11);filter:var(--grade-hi)}
+
+/* warm light wash over the sky — fakes late-afternoon sun on flat cloud */
+.pimg::after{content:'';position:absolute;inset:0;mix-blend-mode:soft-light;
+  background:linear-gradient(180deg,rgba(255,196,92,.55) 0%,
+    rgba(255,158,66,.28) 38%,rgba(255,255,255,0) 70%)}
+
+/* category color tint — lighter now that the photos are brighter,
+   otherwise the tint turns muddy over the warmed-up image */
+.ptint{position:absolute;inset:0;mix-blend-mode:overlay;opacity:.24;
+  transition:opacity .45s var(--ease)}
+.panel:hover .ptint{opacity:.12}
+.panel.p-veh .ptint{background:var(--c-vehicle)}
+.panel.p-eq  .ptint{background:var(--c-equip)}
+.panel.p-tow .ptint{background:var(--c-tow)}
+
+/* readability scrim: dark at top for the headline, dark at bottom for panel label */
+/* Only as dark as the text actually needs: strong at the very top behind
+   the headline, fully open through the middle so the photo can breathe,
+   then back down for the panel label. */
+.pscrim{position:absolute;inset:0;background:linear-gradient(180deg,
+  rgba(10,11,16,.80) 0%, rgba(10,11,16,.36) 27%, rgba(10,11,16,0) 52%,
+  rgba(10,11,16,.44) 78%, rgba(10,11,16,.88) 100%)}
+
+/* panel label, sits in the bottom third */
+.pbody{position:absolute;left:0;right:0;bottom:0;padding:var(--s5);color:#fff;
+  display:flex;flex-direction:column;align-items:flex-start;gap:var(--s2);
+  transition:opacity .45s var(--ease)}
+.pico{width:46px;height:46px;border-radius:13px;background:rgba(255,255,255,.14);
+  border:2px solid rgba(255,255,255,.5);display:grid;place-items:center;
+  backdrop-filter:blur(6px);margin-bottom:var(--s2);
+  transition:background .3s var(--ease),border-color .3s var(--ease)}
+.panel:hover .pico{background:var(--acc);border-color:var(--ink);color:var(--acc-ink)}
+.pcount{font-family:'Space Grotesk',sans-serif;font-size:11.5px;font-weight:700;
+  letter-spacing:.09em;text-transform:uppercase;background:rgba(255,255,255,.16);
+  border:1.5px solid rgba(255,255,255,.4);border-radius:var(--r-pill);
+  padding:3px 11px;backdrop-filter:blur(6px)}
+.ptitle{display:block;font-family:'Space Grotesk',sans-serif;letter-spacing:-.03em;
+  font-weight:700;font-size:clamp(21px,2.2vw,29px);line-height:1.1;
+  text-shadow:0 2px 18px rgba(0,0,0,.6)}
+.psub{display:block;font-size:13.5px;font-weight:600;color:rgba(255,255,255,.82);
+  text-shadow:0 1px 10px rgba(0,0,0,.7)}
+.pgo{display:inline-flex;align-items:center;gap:8px;margin-top:var(--s3);
+  font-weight:700;font-size:13.5px;background:#fff;color:var(--ink);
+  border:var(--bd);border-radius:var(--r-pill);padding:9px 17px;
+  box-shadow:var(--off-sm);transition:transform .16s var(--ease),box-shadow .16s var(--ease)}
+.panel:hover .pgo{transform:translate(-2px,-2px);box-shadow:var(--off);
+  background:var(--acc);color:var(--acc-ink)}
+
+/* selected state — grows less than hover so hovering always reads as
+   the stronger signal, even against the already-selected panel */
+.panel.on{flex-grow:1.45}
+.panel.on .ptint{opacity:.12}
+.panel.on .pimg{transform:scale(1.11);filter:var(--grade-hi)}
+.panel.on .pico{background:var(--acc);border-color:var(--ink);color:var(--acc-ink)}
+.panel.on .pgo{background:var(--acc);color:var(--acc-ink);box-shadow:var(--off)}
+
+/* ---- focus exchange ----------------------------------------------------
+   While any panel is hovered, every OTHER panel pulls back: its photo zooms
+   out, dims and desaturates, and its label fades. So one panel zooming in
+   is matched by the others shrinking away, not just losing width.
+   The :not(:hover) chain is deliberate — it raises specificity above
+   .panel.on .pimg so the currently-selected panel recedes too.        */
+.panels:hover .panel:not(:hover) .pimg{
+  transform:scale(.94);
+  filter:var(--grade) brightness(.62) saturate(.55)}
+.panels:hover .panel:not(:hover) .ptint{opacity:.38}
+.panels:hover .panel:not(:hover) .pbody{opacity:.6}
+.panels:hover .panel:not(:hover) .pgo{box-shadow:var(--off-sm);transform:none}
+.panel.on::after{content:'';position:absolute;inset:0;pointer-events:none;
+  border:5px solid var(--yellow);border-radius:2px}
+
+/* headline overlaid on the sky area of all three photos */
+.heroover{position:absolute;left:0;right:0;top:0;z-index:3;
+  padding-top:clamp(var(--s5),6vh,var(--s7));pointer-events:none}
+.heroover h1{font-size:clamp(32px,5vw,60px);line-height:1.02;color:#fff;
+  max-width:16ch;margin-bottom:var(--s4);text-shadow:0 3px 26px rgba(0,0,0,.65)}
+.heroover .lede{font-size:clamp(15px,1.4vw,18.5px);color:rgba(255,255,255,.9);
+  max-width:48ch;margin:0 0 var(--s5);text-shadow:0 2px 14px rgba(0,0,0,.75)}
+.heroover .searchblock,.heroover .btn{pointer-events:auto}
+.searchblock{display:grid;grid-template-columns:1.3fr 1fr 1fr auto;
+  gap:var(--s3);padding:var(--s4);max-width:940px;margin-inline:auto}
+
+/* stat strip below the hero */
+.statstrip{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s4);
+  padding:var(--s5);margin-top:var(--s6)}
+.stat .n{font-family:'Space Grotesk',sans-serif;font-size:clamp(24px,2.6vw,32px);
+  font-weight:700;line-height:1;letter-spacing:-.04em}
+.stat .l{font-size:12.5px;color:var(--ink-2);font-weight:600;margin-top:3px}
+.stat.a .n{color:var(--indigo)} .stat.b .n{color:var(--c-tow)}
+.stat.c .n{color:var(--teal)}  .stat.d .n{color:var(--violet)}
+
+/* =====================================================================
+   FILTER TOOLBAR — sticky under the nav. Every control here writes to the
+   single FILTERS object; nothing filters on its own.
+   ===================================================================== */
+.filterbar{position:sticky;top:var(--nav-h);z-index:40;background:var(--bg);
+  border-top:var(--bd);border-bottom:var(--bd);margin-top:var(--s7)}
+.fbin{display:flex;align-items:center;gap:var(--s3);padding:var(--s3) var(--s5);
+  flex-wrap:wrap}
+.fbcount{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;
+  flex-shrink:0;white-space:nowrap}
+.fbcount b{font-size:20px;letter-spacing:-.03em}
+.fbrule{width:2px;height:24px;background:var(--hair);flex-shrink:0}
+.fchip{height:36px;padding:0 14px;border:var(--bd-thin);border-color:var(--hair);
+  border-radius:var(--r-pill);background:#fff;font-weight:600;font-size:13px;
+  white-space:nowrap;transition:all .16s var(--ease)}
+.fchip:hover{border-color:var(--ink)}
+.fchip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.fbsel{display:inline-flex;align-items:center;gap:7px;height:36px;
+  padding:0 10px 0 13px;border:var(--bd-thin);border-color:var(--hair);
+  border-radius:var(--r-pill);background:#fff;flex-shrink:0}
+.fbsel > span{font-size:10.5px;font-weight:700;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--ink-3)}
+.fbsel select{border:0;background:transparent;font:inherit;font-weight:700;
+  font-size:13px;padding:0;color:var(--ink);cursor:pointer}
+.fbsel select:focus{outline:none}
+.fbclear{margin-left:auto;font-size:13px;font-weight:700;color:var(--ink-2);
+  text-decoration:underline;text-underline-offset:3px;flex-shrink:0}
+.fbclear:hover{color:var(--danger)}
+
+/* applied search terms — what the hero form put in, shown so it's
+   obvious why results are narrowed, and individually removable */
+.applied{display:flex;gap:var(--s2);flex-wrap:wrap;margin-bottom:var(--s4)}
+.achip{display:inline-flex;align-items:center;gap:9px;height:34px;
+  padding:0 7px 0 13px;border:var(--bd);border-radius:var(--r-pill);
+  background:var(--yellow);font-weight:700;font-size:13px;box-shadow:var(--off-sm)}
+.achip .k{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  color:rgba(18,19,26,.55)}
+.achip .x{width:21px;height:21px;border-radius:50%;background:rgba(18,19,26,.13);
+  display:grid;place-items:center;flex-shrink:0}
+.achip .x:hover{background:var(--ink);color:var(--yellow)}
+
+/* toolbar already provides the separation, so results needs less top air */
+#results{padding-top:var(--s6)}
+
+/* =====================================================================
+   LOCATION COMBOBOX — all 1,634 PSGC cities and municipalities.
+   A <datalist> can't group, can't show province context, and can't mark
+   which places we actually have providers in, so this is hand-rolled.
+   ===================================================================== */
+/* geo-bar button now carries a pin icon */
+.geo .chg{display:inline-flex;align-items:center;gap:7px}
+
+/* =====================================================================
+   SPLIT FIELDS — all three search fields share one shape: a value zone on
+   the left, a divider, and a dedicated control zone on the right. A
+   decorative arrow just puts a text caret under the cursor, so each of
+   these is a real hit area.
+   ===================================================================== */
+.split{position:relative;flex-direction:row;align-items:stretch;
+  padding:0 0 0 13px;gap:0}
+.ctext{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;
+  justify-content:center;padding:7px 8px 7px 0;cursor:text}
+.cbtn{width:46px;flex-shrink:0;display:grid;place-items:center;cursor:pointer;
+  border-left:2px solid var(--hair);
+  border-radius:0 calc(var(--r) - 2px) calc(var(--r) - 2px) 0;
+  color:var(--ink-2);transition:background .16s var(--ease),color .16s var(--ease)}
+.cbtn:hover{background:var(--yellow-tint);color:var(--ink)}
+.cbtn svg{transition:transform .22s var(--ease)}
+.combo.open .cbtn{background:var(--indigo);color:#fff;border-left-color:var(--ink)}
+.combo.open .cbtn svg{transform:rotate(180deg)}
+
+/* ---- Unit type ----
+   A native <select> is genuinely better on mobile (OS wheel picker) and
+   can't be opened programmatically across browsers. So keep it, lay it
+   transparently over the whole field, and paint our own chrome beneath:
+   a click anywhere — arrow included — opens the real picker. */
+.pick select{position:absolute;inset:0;width:100%;height:100%;
+  opacity:0;cursor:pointer;z-index:2;font:inherit;-webkit-appearance:none;appearance:none}
+.pick .cval{font-size:15px;font-weight:600;color:var(--ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* NOT .empty — that class is the results empty-state, which carries a
+   dashed border and 72px of padding and would blow the field open */
+.pick .cval.none{color:var(--ink-3);font-weight:500}
+.pick .ctext{cursor:pointer}
+.pick .cbtn{pointer-events:none}          /* the select above owns the click */
+.pick:hover .cbtn{background:var(--yellow-tint);color:var(--ink)}
+.pick:focus-within{border-color:var(--indigo)}
+.pick:focus-within .cbtn{background:var(--indigo);color:#fff;border-left-color:var(--ink)}
+
+/* ---- Needed on ----
+   Hide the browser's tiny calendar glyph and drive the native picker from
+   our own button, which is the same size and position as the others. */
+.dateish input::-webkit-calendar-picker-indicator{display:none}
+.dateish input{font-size:15px}
+.dateish:focus-within .cbtn{background:var(--indigo);color:#fff;border-left-color:var(--ink)}
+/* wider than its field — "General Luna, Surigao del Norte · Caraga" does
+   not fit in a third of a search bar */
+.combolist{position:absolute;left:0;right:auto;min-width:100%;width:382px;
+  max-width:92vw;top:calc(100% + 10px);z-index:70;
+  background:var(--surface);border:var(--bd);border-radius:var(--r);
+  box-shadow:var(--off);max-height:342px;overflow-y:auto;padding:6px;
+  overscroll-behavior:contain}
+.combolist[hidden]{display:none}
+.cgroup{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-3);padding:10px 12px 5px}
+.copt{display:flex;align-items:center;gap:11px;padding:9px 11px;width:100%;
+  border-radius:var(--r-sm);text-align:left}
+.copt:hover,.copt.active{background:var(--yellow-tint)}
+.copt .ci{width:31px;height:31px;border-radius:9px;background:var(--surface-2);
+  border:2px solid var(--hair);display:grid;place-items:center;flex-shrink:0;
+  color:var(--ink-3)}
+.copt.has .ci{background:var(--ok-tint);border-color:var(--ok);color:var(--ok)}
+.copt .ct{min-width:0;flex:1}
+.copt b{display:block;font-size:14.5px;font-weight:700;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.copt small{display:block;font-size:11.5px;color:var(--ink-3);white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.copt .cnt{margin-left:auto;flex-shrink:0;font-size:11px;font-weight:700;
+  background:var(--ok);color:#fff;border-radius:var(--r-pill);padding:3px 9px}
+.copt mark{background:var(--yellow);color:inherit;border-radius:3px;padding:0 1px}
+.cnone{padding:20px 12px;text-align:center;color:var(--ink-2);font-size:14px}
+.cnone b{display:block;color:var(--ink);margin-bottom:4px}
+/* tells the user the list isn't the limit — the whole country is */
+.chint{position:sticky;bottom:-6px;margin:6px -6px -6px;padding:10px 14px;
+  background:var(--yellow-tint);border-top:2px solid var(--hair);
+  font-size:12px;font-weight:600;color:var(--ink-2);text-align:center}
+/* flip above the field when there isn't room below */
+.combolist.up{top:auto;bottom:calc(100% + 10px)}
+
+/* ---- location modal (geo-bar override) ---- */
+.locmodal{position:fixed;inset:0;z-index:200;display:grid;place-items:start center;
+  padding:var(--s6) var(--s4)}
+.locmodal[hidden]{display:none}
+.lm-bd{position:absolute;inset:0;background:rgba(10,11,16,.62);backdrop-filter:blur(3px)}
+.lm-card{position:relative;width:100%;max-width:560px;background:var(--surface);
+  border:var(--bd);border-radius:var(--r-lg);box-shadow:var(--off-lift);
+  padding:var(--s5);max-height:calc(100vh - var(--s7))}
+.lm-head{display:flex;gap:var(--s4);align-items:flex-start;margin-bottom:var(--s4)}
+.lm-head h2{font-size:23px;margin-bottom:6px}
+.lm-head p{margin:0;font-size:14px;color:var(--ink-2);max-width:46ch}
+.lm-x{width:38px;height:38px;border-radius:12px;border:var(--bd-thin);background:var(--bg);
+  display:grid;place-items:center;flex-shrink:0;margin-left:auto}
+.lm-x:hover{background:var(--c-tow);color:#fff;border-color:var(--ink)}
+.lm-field{display:flex;align-items:center;gap:10px;height:52px;padding:0 var(--s4);
+  border:var(--bd);border-radius:var(--r-pill);background:var(--bg);margin-bottom:var(--s3)}
+.lm-field:focus-within{background:#fff;box-shadow:var(--off-sm)}
+.lm-field svg{color:var(--ink-3);flex-shrink:0}
+.lm-field input{flex:1;border:0;background:transparent;font:inherit;font-size:16px;
+  font-weight:600;color:var(--ink);min-width:0}
+.lm-field input:focus{outline:none}
+/* the modal's list is a panel, not a floating dropdown */
+.lm-list{position:static;width:auto;min-width:0;max-width:none;
+  box-shadow:none;border-color:var(--hair);max-height:min(48vh,380px);margin:0}
+
+/* empty state */
+.empty{grid-column:1/-1;text-align:center;padding:var(--s8) var(--s5);
+  border:3px dashed var(--hair);border-radius:var(--r-lg);background:var(--surface)}
+.empty .ic{width:64px;height:64px;border-radius:19px;background:var(--surface-2);
+  border:var(--bd);display:grid;place-items:center;margin:0 auto var(--s4)}
+.empty h3{font-size:21px;margin-bottom:var(--s2)}
+.empty p{color:var(--ink-2);margin:0 auto var(--s5);max-width:46ch;font-size:15px}
+
+/* emergency tow strip */
+.sos{margin-top:var(--s6);background:var(--ink);color:#fff;border:var(--bd);
+  border-radius:var(--r-lg);box-shadow:5px 5px 0 var(--c-tow);padding:var(--s5);
+  display:flex;align-items:center;gap:var(--s5);flex-wrap:wrap}
+.sos .ic{width:54px;height:54px;border-radius:15px;background:var(--c-tow);
+  border:var(--bd-thin);border-color:#fff;display:grid;place-items:center;flex-shrink:0}
+.sos h3{font-size:21px;margin-bottom:3px}
+.sos p{margin:0;color:#B9BDCC;font-size:14.5px}
+.sos .btn{margin-left:auto}
+
+/* map band */
+.mapband{margin-top:var(--s8);background:var(--surface);border:var(--bd);
+  border-radius:var(--r-lg);box-shadow:var(--off);overflow:hidden;
+  display:grid;grid-template-columns:1fr 1.15fr}
+.mapinfo{padding:var(--s6)}
+.mapinfo h2{margin-bottom:var(--s3);font-size:clamp(22px,2.6vw,30px)}
+.mapinfo p{color:var(--ink-2);margin:0 0 var(--s5);font-size:15.5px}
+.howto{display:flex;flex-direction:column;gap:var(--s3);margin-bottom:var(--s5)}
+.how{display:flex;gap:var(--s3);align-items:flex-start}
+.hnum{width:28px;height:28px;border-radius:9px;background:var(--yellow);
+  border:var(--bd-thin);display:grid;place-items:center;
+  font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;flex-shrink:0}
+.how p{margin:0;font-size:14.5px;color:var(--ink-2)}
+.how p b{color:var(--ink)}
+.mapband .mapvis{border-left:var(--bd)}
+
+/* ---- live map ----
+   Leaflet + OpenStreetMap. Markers are plain anchors in a divIcon, so a
+   price pin is a real link: keyboard-reachable, middle-clickable, and it
+   survives the map being swapped for Google (see ARCHITECTURE.md §12). */
+#fleetmap{position:absolute;inset:0;z-index:0;background:#E4EBF2}
+.leaflet-container{font:inherit}
+.leaflet-div-icon{background:transparent;border:0}
+.gpin{display:inline-block;white-space:nowrap;position:relative;
+  transform:translate(-50%,-50%);background:#fff;color:var(--ink);
+  border:var(--bd);border-radius:var(--r-pill);padding:5px 12px;
+  font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;
+  box-shadow:var(--off-sm);text-decoration:none;
+  transition:transform .16s var(--ease),background .16s var(--ease)}
+.gpin:hover,.gpin:focus-visible{background:var(--accent);
+  transform:translate(-50%,-50%) scale(1.09);z-index:600}
+.gpin.tow{background:var(--c-tow);color:#fff}
+.gpin.tow:hover{background:#991B1B}
+.gpin.you{background:var(--brand);color:#fff;cursor:default;box-shadow:var(--off-sm)}
+.gpin.you:hover{background:var(--brand);transform:translate(-50%,-50%)}
+.mapnote{position:absolute;left:var(--s4);bottom:var(--s4);z-index:500;margin:0;
+  background:rgba(255,255,255,.94);border:var(--bd-thin);border-radius:var(--r-pill);
+  padding:5px 13px;font-size:12px;font-weight:600;color:var(--ink-2);
+  backdrop-filter:blur(4px);pointer-events:none}
+.mapempty{position:absolute;inset:0;z-index:500;display:grid;place-items:center;
+  text-align:center;padding:var(--s5);background:rgba(251,250,247,.94);font-size:14px;
+  color:var(--ink-2)}
+
+/* vendor */
+.vendor{margin-top:var(--s8);background:var(--ink);color:#fff;border-top:var(--bd)}
+.vendor .wrap{padding:var(--s8) var(--s5)}
+.vhead{max-width:60ch;margin-bottom:var(--s6)}
+.vhead h2{margin-bottom:var(--s3);font-size:clamp(28px,4vw,44px);line-height:1.08}
+.vhead h2 .hl{color:var(--ink)}
+.vhead p{margin:0;color:#B9BDCC;font-size:17px}
+.vgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s4);margin-bottom:var(--s6)}
+.vcard{background:#1C1E29;border:2.5px solid #33364A;border-radius:var(--r-lg);padding:var(--s5)}
+.vcard .n{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;
+  color:var(--yellow);letter-spacing:.06em}
+.vcard h3{margin:8px 0 6px;font-size:19px}
+.vcard p{margin:0;color:#A7ACC0;font-size:14px;line-height:1.5}
+.vbottom{display:grid;grid-template-columns:1fr 1fr;gap:var(--s7);align-items:center}
+/* storefront mock */
+.sf{background:#fff;color:var(--ink);border:var(--bd);border-radius:var(--r-lg);
+  overflow:hidden;box-shadow:6px 6px 0 var(--yellow)}
+.sfbar{display:flex;align-items:center;gap:6px;padding:10px var(--s4);
+  background:var(--bg);border-bottom:var(--bd)}
+.sfd{width:10px;height:10px;border-radius:50%;border:var(--bd-thin)}
+.sfurl{margin-left:var(--s3);font-size:12px;font-weight:600;background:#fff;
+  border:var(--bd-thin);border-radius:var(--r-pill);padding:2px 12px}
+.sfhero{height:92px;background:linear-gradient(115deg,#057A2F,#2E9A33 55%,#F2B705);
+  border-bottom:var(--bd);position:relative}
+.sfhero .pen{position:absolute;top:9px;right:9px;background:#fff;border:var(--bd-thin);
+  border-radius:var(--r-pill);font-size:11px;font-weight:700;padding:3px 10px}
+.sfin{padding:var(--s4)}
+.sfid{display:flex;gap:var(--s3);align-items:flex-end;margin-top:-34px;margin-bottom:var(--s4)}
+.sflogo{width:56px;height:56px;border-radius:15px;background:var(--accent);
+  border:var(--bd);display:grid;place-items:center;color:var(--ink)}
+.sflogo svg{width:30px;height:30px}
+.sfnm span svg{width:11px;height:11px;vertical-align:-1px;color:var(--accent)}
+.sfhero .pen svg{width:11px;height:11px;vertical-align:-1px}
+.sfnm strong{display:block;font-family:'Space Grotesk',sans-serif;font-size:16px}
+.sfnm span{font-size:12px;color:var(--ink-2);font-weight:600}
+.sfth{display:flex;align-items:center;gap:7px;padding-top:var(--s3);
+  border-top:2px dashed var(--hair);font-size:11.5px;font-weight:600;color:var(--ink-2)}
+.sw{width:19px;height:19px;border-radius:6px;border:var(--bd-thin)}
+
+@media (max-width:1000px){
+  .searchblock{grid-template-columns:1fr 1fr}
+  .searchblock .btn{grid-column:1/-1;width:100%}
+  .statstrip{grid-template-columns:repeat(2,1fr)}
+  .mapband{grid-template-columns:1fr}
+  .mapband .mapvis{border-left:0;border-top:var(--bd);min-height:320px}
+  .vgrid{grid-template-columns:1fr}
+  .vbottom{grid-template-columns:1fr;gap:var(--s6)}
+  /* headline no longer overlays — panels shrink, text gets its own band */
+  .hero3{height:auto;display:flex;flex-direction:column}
+  .heroover{order:-1}
+  .panels{position:static;flex-direction:column}
+  .panel{flex:none;height:210px;border-right:0;border-bottom:var(--bd)}
+  .panel:hover,.panel.on{flex-grow:0}
+  /* no focus exchange when stacked — touch leaves :hover stuck on the
+     last-tapped panel, which would permanently dim the other two */
+  .panels:hover .panel:not(:hover) .pimg{transform:scale(1.04);filter:var(--grade)}
+  .panels:hover .panel:not(:hover) .ptint{opacity:.24}
+  .panels:hover .panel:not(:hover) .pbody{opacity:1}
+  .panel:last-child{border-bottom:0}
+  .pbody{padding:var(--s4)}
+  .pico{width:40px;height:40px;margin-bottom:0}
+  .pscrim{background:linear-gradient(180deg,rgba(10,11,16,.35) 0%,
+    rgba(10,11,16,.55) 45%,rgba(10,11,16,.92) 100%)}
+  .heroover{position:static;padding:var(--s6) 0 var(--s6);background:var(--ink)}
+  .heroover h1{max-width:20ch}
+}
+@media (max-width:720px){
+  .searchblock{grid-template-columns:1fr}
+  .statstrip{padding:var(--s4)}
+  /* toolbar scrolls sideways rather than stacking into a tall block
+     that would eat most of a phone screen while sticky */
+  .fbin{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;
+    padding:var(--s3) var(--s4);gap:var(--s2)}
+  .fbin::-webkit-scrollbar{display:none}
+  .fbcount,.fbrule{display:none}
+  .fbclear{margin-left:var(--s2);white-space:nowrap}
+  .panel{height:172px}
+  .ptitle{font-size:20px}
+  .psub{display:none}
+  .sos{flex-direction:column;align-items:flex-start;gap:var(--s4)}
+  .sos .btn{margin-left:0;width:100%}
+}

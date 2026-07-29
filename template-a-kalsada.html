@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kalsada — Fleet Services PH · Template A</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============ TEMPLATE A — "KALSADA" ============
+   Direction: Airbnb-style consumer marketplace.
+   Style:  Minimalism + photo-first, soft radii, generous whitespace
+   Colors: Hyperlocal Services palette — location green + action orange
+   Type:   Plus Jakarta Sans (friendly geometric, high legibility)
+   Best for: mass-market renters, mobile-heavy PH traffic, trust-building
+=================================================== */
+:root{
+  --brand:#059669; --brand-hover:#047857; --brand-tint:#ECFDF5; --brand-ring:#A7F3D0;
+  --accent:#EA580C; --accent-tint:#FFF7ED;
+  --ink:#0B1F17; --ink-2:#475467; --ink-3:#98A2B3;
+  --bg:#FFFFFF; --surface:#FFFFFF; --surface-2:#F8FAFC; --line:#E4E7EC;
+  --danger:#DC2626; --star:#F59E0B;
+  --r-sm:10px; --r:14px; --r-lg:20px; --r-pill:999px;
+  --sh-1:0 1px 2px rgba(16,24,40,.06),0 1px 3px rgba(16,24,40,.10);
+  --sh-2:0 8px 24px rgba(16,24,40,.10);
+  --sh-3:0 20px 48px rgba(16,24,40,.16);
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--s8:64px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  background:var(--bg); color:var(--ink); font-size:16px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:3px solid var(--brand-ring);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1280px;margin:0 auto;padding:0 var(--s5)}
+
+/* ---------- HEADER ---------- */
+header{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.hbar{display:flex;align-items:center;gap:var(--s5);height:76px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:-.02em;flex-shrink:0}
+.logo .mark{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,var(--brand),#10B981);display:grid;place-items:center;color:#fff}
+/* search pill */
+.searchpill{
+  flex:1;max-width:560px;display:flex;align-items:center;border:1px solid var(--line);
+  border-radius:var(--r-pill);box-shadow:var(--sh-1);height:56px;padding:0 6px 0 var(--s5);
+  transition:box-shadow .2s var(--ease);background:#fff;
+}
+.searchpill:hover{box-shadow:var(--sh-2)}
+.sp-seg{display:flex;flex-direction:column;justify-content:center;padding:0 var(--s4);flex:1;min-width:0;border-right:1px solid var(--line)}
+.sp-seg:last-of-type{border-right:0}
+.sp-seg label{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-2)}
+.sp-seg input{border:0;padding:0;font-size:14px;color:var(--ink);width:100%;background:transparent}
+.sp-seg input::placeholder{color:var(--ink-3)}
+.sp-go{width:44px;height:44px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;flex-shrink:0;transition:background .18s var(--ease),transform .18s var(--ease)}
+.sp-go:hover{background:var(--brand-hover);transform:scale(1.05)}
+.hactions{display:flex;align-items:center;gap:var(--s3);margin-left:auto;flex-shrink:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 18px;border-radius:var(--r-pill);font-weight:600;font-size:14.5px;transition:all .18s var(--ease)}
+.btn-ghost:hover{background:var(--surface-2)}
+.btn-primary{background:var(--brand);color:#fff}
+.btn-primary:hover{background:var(--brand-hover);box-shadow:var(--sh-2)}
+.btn-outline{border:1px solid var(--line)}
+.btn-outline:hover{border-color:var(--ink);box-shadow:var(--sh-1)}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--brand-tint);color:var(--brand);display:grid;place-items:center;font-weight:700;font-size:13px}
+
+/* ---------- AI LOCATION BANNER ---------- */
+.geobar{background:var(--brand-tint);border-bottom:1px solid var(--brand-ring)}
+.geobar .wrap{display:flex;align-items:center;gap:var(--s3);padding-top:11px;padding-bottom:11px;flex-wrap:wrap}
+.geodot{position:relative;width:9px;height:9px;border-radius:50%;background:var(--brand);flex-shrink:0}
+.geodot::after{content:'';position:absolute;inset:-5px;border-radius:50%;border:2px solid var(--brand);opacity:.35;animation:ping 2s var(--ease) infinite}
+@keyframes ping{0%{transform:scale(.6);opacity:.6}100%{transform:scale(1.5);opacity:0}}
+.geotext{font-size:14px;color:#064E3B}
+.geotext b{font-weight:700}
+.geotag{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:#fff;color:var(--brand);padding:3px 9px;border-radius:var(--r-pill);border:1px solid var(--brand-ring)}
+.geolink{margin-left:auto;font-size:14px;font-weight:700;color:var(--brand);text-decoration:underline;text-underline-offset:3px}
+
+/* ---------- CATEGORY RAIL ---------- */
+.catrail{border-bottom:1px solid var(--line);background:#fff;position:sticky;top:76px;z-index:50}
+.cats{display:flex;gap:var(--s7);padding:var(--s4) 0;overflow-x:auto;scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.cat{display:flex;flex-direction:column;align-items:center;gap:7px;padding-bottom:11px;color:var(--ink-2);
+  border-bottom:2.5px solid transparent;opacity:.65;transition:all .2s var(--ease);flex-shrink:0;min-width:88px}
+.cat svg{width:26px;height:26px}
+.cat span{font-size:12.5px;font-weight:600;white-space:nowrap}
+.cat:hover{opacity:1;border-bottom-color:var(--line)}
+.cat.on{opacity:1;color:var(--ink);border-bottom-color:var(--ink)}
+.filterbtn{margin-left:auto;align-self:center;display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 16px;border:1px solid var(--line);border-radius:var(--r-sm);font-size:14px;font-weight:600;flex-shrink:0}
+.filterbtn:hover{border-color:var(--ink)}
+.chipcount{background:var(--ink);color:#fff;border-radius:var(--r-pill);font-size:11px;font-weight:700;padding:1px 7px}
+
+/* ---------- FILTER CHIPS ---------- */
+.chips{display:flex;gap:var(--s2);padding:var(--s4) 0;flex-wrap:wrap}
+.chip{height:36px;padding:0 15px;border:1px solid var(--line);border-radius:var(--r-pill);font-size:13.5px;font-weight:600;color:var(--ink-2);transition:all .16s var(--ease)}
+.chip:hover{border-color:var(--ink);color:var(--ink)}
+.chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
+
+/* ---------- SPLIT LAYOUT ---------- */
+.split{display:grid;grid-template-columns:1fr 42%;gap:0;align-items:start}
+.results{padding:0 var(--s5) var(--s8);max-width:100%}
+.rhead{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s4);margin-bottom:var(--s5);flex-wrap:wrap}
+.rhead h1{font-size:26px;font-weight:800;letter-spacing:-.025em;margin:0}
+.rhead p{margin:4px 0 0;font-size:14px;color:var(--ink-2)}
+.sortsel{border:1px solid var(--line);border-radius:var(--r-sm);height:40px;padding:0 12px;font:inherit;font-size:14px;font-weight:600;background:#fff}
+
+/* company cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:var(--s5) var(--s4)}
+.card{cursor:pointer;transition:transform .22s var(--ease)}
+.card:hover{transform:translateY(-3px)}
+.card:hover .thumb img{transform:scale(1.06)}
+.thumb{position:relative;aspect-ratio:20/15;border-radius:var(--r);overflow:hidden;background:var(--surface-2);margin-bottom:var(--s3)}
+.thumb img{width:100%;height:100%;object-fit:cover;transition:transform .5s var(--ease)}
+.badge{position:absolute;top:11px;left:11px;background:#fff;border-radius:var(--r-pill);padding:5px 11px;font-size:11.5px;font-weight:700;box-shadow:var(--sh-1);display:inline-flex;align-items:center;gap:5px}
+.badge.verified{color:var(--brand)}
+.heart{position:absolute;top:9px;right:9px;width:34px;height:34px;display:grid;place-items:center;color:#fff;filter:drop-shadow(0 1px 3px rgba(0,0,0,.5))}
+.heart:hover{transform:scale(1.12)}
+.ctitle{display:flex;justify-content:space-between;gap:var(--s2);align-items:baseline}
+.ctitle h3{margin:0;font-size:15.5px;font-weight:700;letter-spacing:-.01em}
+.rate{display:inline-flex;align-items:center;gap:4px;font-size:14px;font-weight:600;flex-shrink:0}
+.rate svg{width:13px;height:13px;color:var(--star)}
+.rate .n{color:var(--ink-3);font-weight:500}
+.cmeta{margin:3px 0 0;font-size:14px;color:var(--ink-2)}
+.cprice{margin:6px 0 0;font-size:14.5px}
+.cprice b{font-weight:700}
+.cprice span{color:var(--ink-2)}
+.cfleet{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
+.pill{font-size:11px;font-weight:600;padding:3px 9px;border-radius:var(--r-pill);background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line)}
+.pill.live{background:var(--brand-tint);color:#064E3B;border-color:var(--brand-ring)}
+.pill.urgent{background:var(--accent-tint);color:#9A3412;border-color:#FED7AA}
+
+/* ---------- MAP ---------- */
+.mapcol{position:sticky;top:158px;height:calc(100vh - 158px);background:#E8EDF2;border-left:1px solid var(--line);overflow:hidden}
+.mapcanvas{position:absolute;inset:0}
+.mapcanvas svg{width:100%;height:100%;display:block}
+.mappin{position:absolute;transform:translate(-50%,-50%);background:#fff;border-radius:var(--r-pill);padding:7px 13px;font-size:13px;font-weight:700;box-shadow:var(--sh-2);white-space:nowrap;transition:all .2s var(--ease);border:1px solid rgba(16,24,40,.06)}
+.mappin:hover,.mappin.on{background:var(--ink);color:#fff;transform:translate(-50%,-50%) scale(1.1);z-index:5}
+.mappin.you{background:var(--brand);color:#fff;padding:8px 14px}
+.mapctl{position:absolute;top:var(--s4);right:var(--s4);display:flex;flex-direction:column;gap:1px;background:var(--line);border-radius:var(--r-sm);overflow:hidden;box-shadow:var(--sh-1)}
+.mapctl button{width:40px;height:40px;background:#fff;display:grid;place-items:center;font-size:18px;font-weight:600}
+.mapctl button:hover{background:var(--surface-2)}
+.maptoggle{position:absolute;bottom:var(--s5);left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;border-radius:var(--r-pill);height:44px;padding:0 20px;font-weight:600;font-size:14px;box-shadow:var(--sh-3);display:none;align-items:center;gap:8px}
+
+/* ---------- VENDOR CTA ---------- */
+.vendor{background:var(--ink);color:#fff;margin-top:var(--s8)}
+.vendor .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:var(--s8);padding-top:var(--s8);padding-bottom:var(--s8);align-items:center}
+.vendor h2{font-size:36px;line-height:1.15;font-weight:800;letter-spacing:-.03em;margin:0 0 var(--s4)}
+.vendor p{color:#C9D3CE;font-size:16.5px;margin:0 0 var(--s5);max-width:46ch}
+.vsteps{display:flex;flex-direction:column;gap:var(--s3);margin-bottom:var(--s6)}
+.vstep{display:flex;gap:var(--s3);align-items:flex-start}
+.vnum{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.12);display:grid;place-items:center;font-size:12.5px;font-weight:700;flex-shrink:0;margin-top:1px}
+.vstep p{margin:0;color:#E4E9E7;font-size:14.5px}
+.btn-accent{background:var(--accent);color:#fff;height:52px;padding:0 26px;font-size:15.5px}
+.btn-accent:hover{background:#C2410C}
+/* storefront preview */
+.storefront{background:#fff;border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-3);color:var(--ink)}
+.sf-bar{display:flex;align-items:center;gap:6px;padding:11px var(--s4);background:var(--surface-2);border-bottom:1px solid var(--line)}
+.sf-dot{width:9px;height:9px;border-radius:50%;background:#D0D5DD}
+.sf-url{margin-left:var(--s3);font-size:11.5px;color:var(--ink-2);background:#fff;border:1px solid var(--line);border-radius:var(--r-pill);padding:3px 11px}
+.sf-hero{height:96px;background:linear-gradient(120deg,#0F766E,#059669 60%,#34D399)}
+.sf-body{padding:var(--s4)}
+.sf-id{display:flex;gap:var(--s3);align-items:flex-end;margin-top:-38px;margin-bottom:var(--s4)}
+.sf-logo{width:56px;height:56px;border-radius:15px;background:#fff;border:3px solid #fff;box-shadow:var(--sh-1);display:grid;place-items:center;font-weight:800;color:var(--brand);font-size:18px}
+.sf-name{padding-bottom:5px}
+.sf-name strong{display:block;font-size:15px;font-weight:800}
+.sf-name span{font-size:12px;color:var(--ink-2)}
+.sf-row{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s2);margin-bottom:var(--s3)}
+.sf-tile{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:9px 10px}
+.sf-tile b{display:block;font-size:14px}
+.sf-tile span{font-size:10.5px;color:var(--ink-2)}
+.sf-theme{display:flex;gap:6px;align-items:center;padding-top:var(--s3);border-top:1px dashed var(--line);font-size:11px;color:var(--ink-2)}
+.sw{width:17px;height:17px;border-radius:5px;border:1.5px solid #fff;box-shadow:0 0 0 1px var(--line)}
+
+/* ---------- TRUST STRIP ---------- */
+.trust{border-top:1px solid var(--line);background:var(--surface-2)}
+.trust .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s5);padding-top:var(--s7);padding-bottom:var(--s7)}
+.tcard{display:flex;gap:var(--s3);align-items:flex-start}
+.ticon{width:40px;height:40px;border-radius:11px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;color:var(--brand);flex-shrink:0}
+.tcard h4{margin:0 0 3px;font-size:14.5px;font-weight:700}
+.tcard p{margin:0;font-size:13.5px;color:var(--ink-2);line-height:1.5}
+footer{border-top:1px solid var(--line);padding:var(--s5) 0;font-size:13.5px;color:var(--ink-2)}
+footer .wrap{display:flex;justify-content:space-between;gap:var(--s4);flex-wrap:wrap}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width:1080px){
+  .split{grid-template-columns:1fr}
+  .mapcol{display:none}
+  .maptoggle{display:inline-flex;position:fixed;bottom:24px;z-index:70}
+  .vendor .wrap{grid-template-columns:1fr;gap:var(--s6)}
+  .trust .wrap{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:760px){
+  .wrap{padding:0 var(--s4)}
+  .hbar{height:64px;gap:var(--s3)}
+  .searchpill{height:48px}
+  .sp-seg:nth-child(2),.sp-seg:nth-child(3){display:none}
+  .hactions .btn-outline,.hactions .btn-ghost{display:none}
+  .catrail{top:64px}
+  .cats{gap:var(--s5)}
+  .rhead h1{font-size:21px}
+  .vendor h2{font-size:27px}
+  .trust .wrap{grid-template-columns:1fr}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:var(--s4) var(--s3)}
+  .results{padding:0 var(--s4) var(--s7)}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap hbar">
+    <a class="logo" href="#">
+      <span class="mark"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg></span>
+      Kalsada
+    </a>
+
+    <form class="searchpill" role="search" onsubmit="return false">
+      <div class="sp-seg">
+        <label for="a-where">Where</label>
+        <input id="a-where" value="Davao City" placeholder="Any city in PH">
+      </div>
+      <div class="sp-seg">
+        <label for="a-what">What</label>
+        <input id="a-what" placeholder="Backhoe, van, tow truck…">
+      </div>
+      <div class="sp-seg">
+        <label for="a-when">When</label>
+        <input id="a-when" placeholder="Add dates">
+      </div>
+      <button class="sp-go" aria-label="Search rentals">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      </button>
+    </form>
+
+    <div class="hactions">
+      <button class="btn btn-ghost">List your company</button>
+      <button class="btn btn-outline">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+        <span class="avatar">BG</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- AI LOCATION DETECTION -->
+<div class="geobar">
+  <div class="wrap">
+    <span class="geodot"></span>
+    <span class="geotag">AI Located</span>
+    <span class="geotext">Showing <b>147 verified providers</b> near <b>Davao City, Region XI</b> — inferred from your usual booking area.</span>
+    <a class="geolink" href="#">Not right? Set location</a>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<nav class="catrail" aria-label="Service categories">
+  <div class="wrap cats">
+    <button class="cat on" data-cat="vehicles">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M3 17v-4.2a2 2 0 0 1 .4-1.2L5.8 8.2A2 2 0 0 1 7.4 7.4h9.2a2 2 0 0 1 1.6.8l2.4 3.4a2 2 0 0 1 .4 1.2V17"/><circle cx="7.5" cy="17" r="2"/><circle cx="16.5" cy="17" r="2"/></svg>
+      <span>Vehicles</span>
+    </button>
+    <button class="cat" data-cat="equipment">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19h11v-4H3zM6 15V9h5l3 6"/><path d="M14 11l4-5 3 2-3 5"/><circle cx="6" cy="19" r="1.6"/><circle cx="11" cy="19" r="1.6"/></svg>
+      <span>Heavy Equipment</span>
+    </button>
+    <button class="cat" data-cat="towing">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17h12v-5H6l-2 3H2zM14 8h4l3 4v5h-7z"/><path d="M14 12l5-6"/><circle cx="6" cy="17.5" r="1.7"/><circle cx="17" cy="17.5" r="1.7"/></svg>
+      <span>Towing</span>
+    </button>
+    <button class="cat" data-cat="all"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg><span>All</span></button>
+    <button class="filterbtn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+      Filters <span class="chipcount">2</span>
+    </button>
+  </div>
+</nav>
+
+<div class="split">
+  <!-- RESULTS -->
+  <main class="results">
+    <div class="chips">
+      <button class="chip on">Available today</button>
+      <button class="chip on">With operator</button>
+      <button class="chip">Delivery included</button>
+      <button class="chip">Instant book</button>
+      <button class="chip">₱ Under 5k/day</button>
+      <button class="chip">Verified only</button>
+    </div>
+
+    <div class="rhead">
+      <div>
+        <h1>Rental companies in Davao City</h1>
+        <p>147 providers · 1,208 units listed · updated 4 min ago</p>
+      </div>
+      <select class="sortsel" aria-label="Sort results">
+        <option>Recommended for you</option>
+        <option>Nearest first</option>
+        <option>Highest rated</option>
+        <option>Lowest daily rate</option>
+      </select>
+    </div>
+
+    <div class="grid" id="a-grid"></div>
+  </main>
+
+  <!-- MAP -->
+  <aside class="mapcol" aria-label="Map of providers">
+    <div class="mapcanvas">
+      <svg viewBox="0 0 600 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <rect width="600" height="800" fill="#DCE6EC"/>
+        <path d="M0 0h600v800H0z" fill="#E9EFF2"/>
+        <path d="M-40 520 Q140 470 250 540 T620 500 L620 840 L-40 840Z" fill="#CFE0E6"/>
+        <path d="M60 -20 L200 120 L160 300 L300 420 L240 620 L400 760 L360 840" stroke="#F5F8F9" stroke-width="26" fill="none" stroke-linecap="round"/>
+        <path d="M-20 200 L180 260 L420 180 L640 250" stroke="#F5F8F9" stroke-width="18" fill="none"/>
+        <path d="M520 -20 L470 200 L560 420 L470 640" stroke="#F5F8F9" stroke-width="14" fill="none"/>
+        <g fill="#DCE6E1">
+          <rect x="80" y="330" width="60" height="46" rx="5"/><rect x="170" y="360" width="46" height="70" rx="5"/>
+          <rect x="330" y="300" width="70" height="52" rx="5"/><rect x="420" y="380" width="52" height="52" rx="5"/>
+          <rect x="120" y="600" width="80" height="56" rx="5"/><rect x="300" y="640" width="60" height="44" rx="5"/>
+        </g>
+      </svg>
+    </div>
+    <button class="mappin you" style="left:47%;top:44%">You</button>
+    <button class="mappin on" style="left:27%;top:26%">₱3,500</button>
+    <button class="mappin" style="left:64%;top:20%">₱12,000</button>
+    <button class="mappin" style="left:34%;top:57%">₱2,800</button>
+    <button class="mappin" style="left:71%;top:52%">₱1,900</button>
+    <button class="mappin" style="left:52%;top:71%">₱8,400</button>
+    <button class="mappin" style="left:20%;top:66%">₱4,200</button>
+    <button class="mappin" style="left:78%;top:76%">₱6,000</button>
+    <div class="mapctl">
+      <button aria-label="Zoom in">+</button>
+      <button aria-label="Zoom out">−</button>
+    </div>
+  </aside>
+</div>
+
+<button class="maptoggle">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3 3 6v15l6-3 6 3 6-3V3l-6 3z"/><path d="M9 3v15M15 6v15"/></svg>
+  Show map
+</button>
+
+<!-- VENDOR ONBOARDING + STOREFRONT -->
+<section class="vendor">
+  <div class="wrap">
+    <div>
+      <h2>Your company. Your page.<br>Our nationwide traffic.</h2>
+      <p>Register your rental business once and get discovered by renters in your city — from Laoag to General Santos. You keep your brand, your rates, and your booking rules.</p>
+      <div class="vsteps">
+        <div class="vstep"><span class="vnum">1</span><p><b>Register &amp; verify</b> — DTI/SEC permit, LTO registration, insurance. Verified badge in ~24 hours.</p></div>
+        <div class="vstep"><span class="vnum">2</span><p><b>Customize your storefront</b> — logo, cover, brand colors, sections, and your own <code>kalsada.ph/your-company</code> link.</p></div>
+        <div class="vstep"><span class="vnum">3</span><p><b>Add your fleet &amp; go live</b> — set rates, service radius, operator options, and availability calendar.</p></div>
+      </div>
+      <button class="btn btn-accent">List your company — free</button>
+    </div>
+
+    <div class="storefront" aria-label="Company storefront preview">
+      <div class="sf-bar">
+        <span class="sf-dot"></span><span class="sf-dot"></span><span class="sf-dot"></span>
+        <span class="sf-url">kalsada.ph/davao-heavy-lift</span>
+      </div>
+      <div class="sf-hero"></div>
+      <div class="sf-body">
+        <div class="sf-id">
+          <div class="sf-logo">DH</div>
+          <div class="sf-name">
+            <strong>Davao Heavy Lift Corp.</strong>
+            <span>★ 4.9 (218) · Verified · Talomo, Davao City</span>
+          </div>
+        </div>
+        <div class="sf-row">
+          <div class="sf-tile"><b>34</b><span>Units</span></div>
+          <div class="sf-tile"><b>&lt;15m</b><span>Reply time</span></div>
+          <div class="sf-tile"><b>50km</b><span>Service radius</span></div>
+        </div>
+        <div class="sf-row">
+          <div class="sf-tile"><b>Excavators</b><span>12 available</span></div>
+          <div class="sf-tile"><b>Dump trucks</b><span>9 available</span></div>
+          <div class="sf-tile"><b>Cranes</b><span>4 available</span></div>
+        </div>
+        <div class="sf-theme">
+          <span>Owner theme:</span>
+          <span class="sw" style="background:#0F766E"></span>
+          <span class="sw" style="background:#059669"></span>
+          <span class="sw" style="background:#EA580C"></span>
+          <span class="sw" style="background:#0F172A"></span>
+          <span style="margin-left:auto">Layout: Gallery-first</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST -->
+<section class="trust">
+  <div class="wrap">
+    <div class="tcard">
+      <span class="ticon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.6-3.2 8.4-8 9.6C7.2 20.4 4 16.6 4 12V6z"/><path d="m9 12 2 2 4-4"/></svg></span>
+      <div><h4>Verified operators</h4><p>DTI/SEC permits, LTO registration and insurance checked before any company goes live.</p></div>
+    </div>
+    <div class="tcard">
+      <span class="ticon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg></span>
+      <div><h4>Protected payments</h4><p>GCash, Maya, cards and bank transfer. Funds released to the company after handover.</p></div>
+    </div>
+    <div class="tcard">
+      <span class="ticon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg></span>
+      <div><h4>Nationwide coverage</h4><p>1,900+ companies across all 17 regions — matched to you by city, not by guesswork.</p></div>
+    </div>
+    <div class="tcard">
+      <span class="ticon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
+      <div><h4>24/7 towing dispatch</h4><p>Emergency roadside requests are routed to the nearest available unit automatically.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Kalsada Fleet Services PH · Template A — “Airbnb-style consumer marketplace”</span>
+    <span>Design system: Minimalism + Hyperlocal palette · Plus Jakarta Sans</span>
+  </div>
+</footer>
+
+<script>
+const A_DATA = {
+  vehicles:[
+    {n:"Mindanao Auto Rentals",loc:"Poblacion, Davao City",d:"2.4 km away",r:4.92,c:341,p:"2,800",u:"day",tags:["Instant book","Self-drive","32 units"],img:"linear-gradient(135deg,#334155,#64748B)",em:"🚐"},
+    {n:"SouthPoint Van Hire",loc:"Matina, Davao City",d:"4.1 km away",r:4.87,c:198,p:"3,500",u:"day",tags:["With driver","Airport pickup"],img:"linear-gradient(135deg,#0F766E,#14B8A6)",em:"🚌"},
+    {n:"Bagumbayan Motors",loc:"Buhangin, Davao City",d:"6.8 km away",r:4.74,c:126,p:"1,900",u:"day",tags:["Monthly rates","Sedan · SUV"],img:"linear-gradient(135deg,#1E3A8A,#3B82F6)",em:"🚗"},
+    {n:"Davao Fleet Solutions",loc:"Toril, Davao City",d:"11.2 km away",r:4.95,c:512,p:"4,200",u:"day",tags:["Corporate","Long-term"],img:"linear-gradient(135deg,#7C2D12,#EA580C)",em:"🚙"}
+  ],
+  equipment:[
+    {n:"Davao Heavy Lift Corp.",loc:"Talomo, Davao City",d:"3.9 km away",r:4.90,c:218,p:"12,000",u:"day",tags:["Operator incl.","Excavator · Crane"],img:"linear-gradient(135deg,#78350F,#F59E0B)",em:"🏗️"},
+    {n:"Mount Apo Equipment",loc:"Calinan, Davao City",d:"18.4 km away",r:4.81,c:94,p:"8,400",u:"day",tags:["Backhoe","Delivery incl."],img:"linear-gradient(135deg,#3F3F46,#A1A1AA)",em:"🚜"},
+    {n:"Sta. Ana Builders Rental",loc:"Agdao, Davao City",d:"5.2 km away",r:4.68,c:73,p:"6,000",u:"day",tags:["Bulldozer","Weekly rate"],img:"linear-gradient(135deg,#713F12,#CA8A04)",em:"⛏️"},
+    {n:"Panabo Machinery Hub",loc:"Panabo, Davao del Norte",d:"32.7 km away",r:4.77,c:141,p:"9,800",u:"day",tags:["Crane 25T","Certified crew"],img:"linear-gradient(135deg,#164E63,#0891B2)",em:"🏗️"}
+  ],
+  towing:[
+    {n:"Rapid Response Towing",loc:"Bajada, Davao City",d:"1.8 km away",r:4.96,c:604,p:"1,500",u:"call-out",tags:["24/7","ETA 12 min"],img:"linear-gradient(135deg,#7F1D1D,#EF4444)",em:"🛻"},
+    {n:"Davao Roadside Assist",loc:"Lanang, Davao City",d:"5.6 km away",r:4.83,c:287,p:"1,800",u:"call-out",tags:["Flatbed","Heavy duty"],img:"linear-gradient(135deg,#1E293B,#475569)",em:"🚨"},
+    {n:"Bukidnon Tow Express",loc:"Mintal, Davao City",d:"9.3 km away",r:4.71,c:112,p:"2,200",u:"call-out",tags:["Long-haul","Truck recovery"],img:"linear-gradient(135deg,#0C4A6E,#0EA5E9)",em:"🛞"},
+    {n:"Sasa 24H Wrecker",loc:"Sasa, Davao City",d:"12.1 km away",r:4.88,c:355,p:"1,650",u:"call-out",tags:["24/7","Motorcycle tow"],img:"linear-gradient(135deg,#4C1D95,#8B5CF6)",em:"🔧"}
+  ]
+};
+
+const star = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z"/></svg>';
+
+function aRender(cat){
+  const list = cat==='all' ? [].concat(A_DATA.vehicles,A_DATA.equipment,A_DATA.towing) : A_DATA[cat];
+  document.getElementById('a-grid').innerHTML = list.map((x,i)=>`
+    <article class="card" tabindex="0">
+      <div class="thumb">
+        <div style="width:100%;height:100%;background:${x.img};display:grid;place-items:center;font-size:52px">${x.em}</div>
+        <span class="badge verified">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 1.8 3-.2.9 2.9 2.5 1.7-1.2 2.8 1.2 2.8-2.5 1.7-.9 2.9-3-.2L12 22l-2.4-1.8-3 .2-.9-2.9L3.2 15.8 4.4 13 3.2 10.2l2.5-1.7.9-2.9 3 .2z"/></svg>
+          Verified
+        </span>
+        <button class="heart" aria-label="Save ${x.n}">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="rgba(0,0,0,.32)" stroke="currentColor" stroke-width="2"><path d="M20.8 8.6c0 5-8.8 9.9-8.8 9.9s-8.8-4.9-8.8-9.9a4.8 4.8 0 0 1 8.8-2.7 4.8 4.8 0 0 1 8.8 2.7z"/></svg>
+        </button>
+      </div>
+      <div class="ctitle">
+        <h3>${x.n}</h3>
+        <span class="rate">${star}${x.r.toFixed(2)}<span class="n">(${x.c})</span></span>
+      </div>
+      <p class="cmeta">${x.loc} · ${x.d}</p>
+      <p class="cprice"><b>₱${x.p}</b> <span>/ ${x.u}</span></p>
+      <div class="cfleet">${x.tags.map((t,j)=>`<span class="pill ${j===0?(cat==='towing'?'urgent':'live'):''}">${t}</span>`).join('')}</div>
+    </article>`).join('');
+}
+aRender('vehicles');
+
+document.querySelectorAll('.cat').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.cat').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  aRender(b.dataset.cat);
+  const h=document.querySelector('.rhead h1');
+  const names={vehicles:'Rental companies',equipment:'Heavy equipment providers',towing:'Towing &amp; recovery services',all:'All fleet providers'};
+  h.innerHTML = names[b.dataset.cat]+' in Davao City';
+}));
+document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>c.classList.toggle('on')));
+document.querySelectorAll('.mappin:not(.you)').forEach(p=>p.addEventListener('click',()=>{
+  document.querySelectorAll('.mappin').forEach(x=>x.classList.remove('on')); p.classList.add('on');
+}));
+</script>
+</body>
+</html>

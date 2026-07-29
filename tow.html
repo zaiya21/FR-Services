@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Emergency tow — FR Services</title>
+<meta name="description" content="24/7 emergency towing dispatch. We broadcast to the nearest available trucks and the first to accept is sent to you.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/fr.css">
+<style>
+/* =====================================================================
+   EMERGENCY TOW — dispatch flow, NOT a rental booking flow.
+   Deliberately different from booking.html: one screen, few decisions,
+   large targets, broadcast-and-accept instead of quote-and-confirm.
+   ===================================================================== */
+body{background:var(--ink);color:#fff}
+.sos-head{border-bottom:2.5px solid #33364A;background:var(--c-tow)}
+.sos-head .wrap{display:flex;align-items:center;gap:var(--s4);
+  padding:var(--s4) var(--s5);flex-wrap:wrap}
+.sos-head .ic{width:48px;height:48px;border-radius:14px;background:var(--ink);
+  border:2.5px solid #fff;display:grid;place-items:center;flex-shrink:0}
+.sos-head h1{font-size:clamp(21px,3vw,28px);line-height:1.1}
+.sos-head p{margin:2px 0 0;font-size:14px;color:rgba(255,255,255,.85)}
+.sos-head .hot{margin-left:auto;display:flex;align-items:center;gap:10px;
+  background:var(--ink);border:2.5px solid #fff;border-radius:var(--r-pill);
+  padding:9px 18px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px}
+
+.tgrid{display:grid;grid-template-columns:1fr 460px;gap:var(--s6);
+  padding:var(--s6) 0 var(--s8);align-items:start}
+
+/* dark surfaces */
+.dblock{background:#1C1E29;border:2.5px solid #33364A;border-radius:var(--r-lg);
+  padding:var(--s5)}
+.dblock h2{font-size:19px;margin-bottom:var(--s4)}
+.dfield{display:flex;flex-direction:column;gap:3px;padding:9px 14px;border-radius:var(--r);
+  background:#12131A;border:2.5px solid #33364A;transition:border-color .16s var(--ease)}
+.dfield:focus-within{border-color:var(--c-tow)}
+.dfield label{font-size:10.5px;font-weight:700;letter-spacing:.09em;
+  text-transform:uppercase;color:#8A90A6}
+.dfield input,.dfield select,.dfield textarea{border:0;background:transparent;font:inherit;
+  font-size:15px;font-weight:600;color:#fff;padding:0;width:100%;resize:vertical}
+.dfield input:focus,.dfield select:focus,.dfield textarea:focus{outline:none}
+.dfield input::placeholder,.dfield textarea::placeholder{color:#6B7089;font-weight:500}
+.dfield select option{background:#1C1E29}
+
+/* location card */
+.loccard{display:flex;gap:var(--s4);align-items:center;background:#12131A;
+  border:2.5px solid var(--c-tow);border-radius:var(--r);padding:var(--s4);margin-bottom:var(--s4)}
+.loccard .p{width:44px;height:44px;border-radius:13px;background:var(--c-tow);
+  display:grid;place-items:center;flex-shrink:0;position:relative}
+.loccard .p::after{content:'';position:absolute;inset:-6px;border-radius:16px;
+  border:2px solid var(--c-tow);opacity:.4;animation:ping 2s var(--ease) infinite}
+@keyframes ping{0%{transform:scale(.7);opacity:.6}100%{transform:scale(1.35);opacity:0}}
+.loccard b{display:block;font-size:15.5px;font-family:'Space Grotesk',sans-serif}
+.loccard span{font-size:13px;color:#8A90A6}
+.loccard button{margin-left:auto;background:#33364A;border-radius:var(--r-pill);
+  padding:7px 15px;font-size:13px;font-weight:700;flex-shrink:0}
+.loccard button:hover{background:#4A4F63}
+
+/* vehicle type picker */
+.vtypes{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s2)}
+.vtype{border:2.5px solid #33364A;border-radius:var(--r);padding:var(--s4) var(--s2);
+  text-align:center;background:#12131A;transition:all .16s var(--ease)}
+.vtype .e{display:block;margin-bottom:6px;color:#C3C7D6}
+.vtype .e svg{width:30px;height:30px}
+.vtype.on .e{color:var(--accent)}
+.vtype b{font-size:12.5px;display:block;color:#C3C7D6}
+.vtype:hover{border-color:#5A5F78}
+.vtype.on{border-color:var(--yellow);background:#25272F}
+.vtype.on b{color:#fff}
+
+/* problem chips */
+.probs{display:flex;gap:var(--s2);flex-wrap:wrap}
+.prob{border:2.5px solid #33364A;border-radius:var(--r-pill);padding:9px 16px;
+  font-size:13.5px;font-weight:600;color:#C3C7D6;background:#12131A;
+  transition:all .16s var(--ease)}
+.prob:hover{border-color:#5A5F78;color:#fff}
+.prob.on{background:var(--yellow);color:var(--ink);border-color:var(--yellow)}
+
+/* big dispatch button */
+.dispatch{width:100%;height:68px;border-radius:var(--r-lg);background:var(--c-tow);
+  color:#fff;border:2.5px solid #fff;font-family:'Space Grotesk',sans-serif;
+  font-weight:700;font-size:20px;letter-spacing:-.02em;margin-top:var(--s5);
+  box-shadow:0 0 0 0 rgba(251,107,74,.5);
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  transition:transform .16s var(--ease),box-shadow .3s var(--ease)}
+.dispatch:hover{transform:translateY(-2px);box-shadow:0 0 0 10px rgba(251,107,74,.16)}
+.dispatch:active{transform:translateY(1px)}
+
+/* map panel */
+.tmap{position:relative;height:340px;background:#0D1219;border:2.5px solid #33364A;
+  border-radius:var(--r-lg);overflow:hidden;margin-bottom:var(--s4)}
+.tmap svg{width:100%;height:100%;display:block;position:absolute;inset:0}
+.tpin{position:absolute;transform:translate(-50%,-50%);width:13px;height:13px;
+  border-radius:50%;background:var(--yellow);border:2px solid var(--ink);
+  box-shadow:0 0 12px rgba(250,204,21,.7)}
+.tpin.you{width:17px;height:17px;background:var(--c-tow);
+  box-shadow:0 0 0 5px rgba(251,107,74,.25),0 0 18px rgba(251,107,74,.8)}
+.tpin.you::after{content:'';position:absolute;inset:-10px;border-radius:50%;
+  border:2px solid var(--c-tow);opacity:.45;animation:ping 2.4s var(--ease) infinite}
+.tmapstat{position:absolute;left:var(--s4);bottom:var(--s4);background:rgba(10,14,19,.82);
+  border:2px solid #33364A;border-radius:var(--r-sm);padding:7px 12px;font-size:12px;
+  color:#C3C7D6;backdrop-filter:blur(6px)}
+.tmapstat b{color:var(--yellow);font-family:'Space Grotesk',sans-serif}
+
+/* nearby unit rows */
+.nearby{display:flex;flex-direction:column;gap:var(--s2)}
+.nrow{display:flex;gap:var(--s3);align-items:center;background:#1C1E29;
+  border:2.5px solid #33364A;border-radius:var(--r);padding:var(--s3) var(--s4)}
+.nrow .e{width:42px;height:42px;border-radius:12px;background:#12131A;
+  border:2px solid #33364A;display:grid;place-items:center;color:var(--accent);flex-shrink:0}
+.nrow .e svg{width:22px;height:22px}
+.nrow b{display:block;font-size:14.5px}
+.nrow span{font-size:12.5px;color:#8A90A6}
+.nrow .eta{margin-left:auto;text-align:right;flex-shrink:0}
+.nrow .eta b{font-family:'Space Grotesk',sans-serif;font-size:17px;color:var(--yellow)}
+.nrow .eta span{font-size:11px}
+.standby{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;
+  letter-spacing:.05em;text-transform:uppercase;color:var(--ok);margin-top:2px}
+.standby .d{width:6px;height:6px;border-radius:50%;background:var(--ok)}
+
+/* price note */
+.pricenote{background:#12131A;border:2.5px solid #33364A;border-radius:var(--r);
+  padding:var(--s4);margin-top:var(--s4);font-size:13.5px;color:#B9BDCC}
+.pricenote ul{margin:var(--s3) 0 0;padding-left:18px}
+.pricenote li{margin-bottom:5px}
+.pricenote b{color:#fff}
+
+/* ---- DISPATCHING / MATCHED states ---- */
+.stage{display:none}
+.stage.on{display:block}
+.searching{text-align:center;padding:var(--s8) var(--s5)}
+.radar{width:150px;height:150px;margin:0 auto var(--s5);position:relative}
+.radar .ring{position:absolute;inset:0;border-radius:50%;border:2.5px solid var(--c-tow);
+  opacity:0;animation:radar 2.2s var(--ease) infinite}
+.radar .ring:nth-child(2){animation-delay:.7s}
+.radar .ring:nth-child(3){animation-delay:1.4s}
+.radar .core{position:absolute;inset:38%;border-radius:50%;background:var(--c-tow);
+  display:grid;place-items:center}
+@keyframes radar{0%{transform:scale(.3);opacity:.9}100%{transform:scale(1);opacity:0}}
+.searching h2{font-size:clamp(24px,3.6vw,32px);margin-bottom:var(--s3)}
+.searching p{color:#8A90A6;font-size:16px;max-width:44ch;margin:0 auto var(--s5)}
+.pinged{max-width:420px;margin:0 auto;text-align:left}
+.ping{display:flex;gap:var(--s3);align-items:center;padding:11px 0;
+  border-bottom:1px solid #33364A;font-size:14px;opacity:0;
+  animation:slidein .4s var(--ease) forwards}
+@keyframes slidein{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
+.ping .d{width:8px;height:8px;border-radius:50%;background:var(--yellow);flex-shrink:0}
+.ping .s{margin-left:auto;font-size:12px;color:#8A90A6}
+
+/* matched */
+.matched{text-align:center;padding:var(--s7) var(--s5)}
+.matched .ok{width:82px;height:82px;border-radius:24px;background:var(--ok);
+  border:2.5px solid #fff;display:grid;place-items:center;margin:0 auto var(--s5)}
+.matched h2{font-size:clamp(24px,3.6vw,34px);margin-bottom:var(--s3)}
+.matched > p{color:#8A90A6;font-size:16px;margin:0 auto var(--s5);max-width:46ch}
+.drivercard{max-width:440px;margin:0 auto;background:#1C1E29;border:2.5px solid var(--ok);
+  border-radius:var(--r-lg);padding:var(--s5);text-align:left}
+.drow{display:flex;gap:var(--s4);align-items:center;margin-bottom:var(--s4);
+  padding-bottom:var(--s4);border-bottom:2px dashed #33364A}
+.drow .e{width:60px;height:60px;border-radius:16px;background:#12131A;
+  border:2.5px solid #33364A;display:grid;place-items:center;color:var(--accent);flex-shrink:0}
+.drow .e svg{width:30px;height:30px}
+.drow span svg{width:13px;height:13px;vertical-align:-2px;color:var(--accent)}
+.drow b{display:block;font-size:17px;font-family:'Space Grotesk',sans-serif}
+.drow span{font-size:13px;color:#8A90A6}
+.detabs{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s2);margin-bottom:var(--s4)}
+.detab{background:#12131A;border:2px solid #33364A;border-radius:var(--r-sm);
+  padding:10px;text-align:center}
+.detab b{display:block;font-family:'Space Grotesk',sans-serif;font-size:18px;color:var(--yellow)}
+.detab span{font-size:10.5px;color:#8A90A6;font-weight:600;letter-spacing:.04em}
+
+@media (max-width:1000px){ .tgrid{grid-template-columns:1fr;gap:var(--s5)} }
+@media (max-width:720px){
+  .vtypes{grid-template-columns:repeat(2,1fr)}
+  .sos-head .hot{margin-left:0;width:100%;justify-content:center}
+  .tgrid{padding-top:var(--s5)}
+}
+</style>
+</head>
+<body>
+
+<nav class="top" style="background:var(--ink);border-bottom-color:#33364A">
+  <div class="wrap nbar">
+    <a class="logo" href="index.html" style="color:#fff">
+      <span class="m"><img src="logo.png" alt="FR Services"></span>
+      <span class="wm">FR Services<small>Fleet Rental</small></span>
+    </a>
+    <div class="nlinks" style="color:#C3C7D6">
+      <a href="index.html">Rent</a>
+      <a href="index.html#how">How it works</a>
+      <a href="register.html">For companies</a>
+      <a href="tow.html" class="on" style="color:#fff">Emergency tow</a>
+    </div>
+    <div class="nright">
+      <a class="btn btn-y" href="tel:+63288887777">Call hotline</a>
+    </div>
+  </div>
+</nav>
+
+<div class="sos-head">
+  <div class="wrap">
+    <span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></span>
+    <div>
+      <h1>Emergency tow dispatch</h1>
+      <p>We broadcast to every available truck near you. First to accept gets sent.</p>
+    </div>
+    <a class="hot" href="tel:+63288887777">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>
+      (02) 8888-7777
+    </a>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ===== STAGE 1: REQUEST ===== -->
+  <div class="stage on" id="stage-form">
+    <div class="tgrid">
+      <div>
+        <div class="dblock mb4">
+          <h2>Where are you?</h2>
+          <div class="loccard">
+            <span class="p"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.3"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg></span>
+            <span>
+              <b id="loc-main">Quirino Ave, Poblacion, Davao City</b>
+              <span>Detected automatically · accurate to ~40 m</span>
+            </span>
+            <button id="loc-edit">Edit</button>
+          </div>
+          <div class="dfield">
+            <label for="t-landmark">Nearest landmark</label>
+            <input id="t-landmark" placeholder="e.g. across Victoria Plaza, near the flyover">
+          </div>
+        </div>
+
+        <div class="dblock mb4">
+          <h2>What are we towing?</h2>
+          <div class="vtypes mb4">
+            <button class="vtype" data-v="motorcycle"><span class="e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="16" r="3"/><circle cx="19" cy="16" r="3"/><path d="M8 16h3l4-6h3"/><path d="M12 10h4"/><path d="M15 10 13 6h-2"/></svg></span><b>Motorcycle</b></button>
+            <button class="vtype on" data-v="car"><span class="e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17v-4l2.6-4h12.8L21 13v4"/><path d="M3 17h18"/><circle cx="7.5" cy="17" r="1.9"/><circle cx="16.5" cy="17" r="1.9"/><path d="M6 13h12"/></svg></span><b>Car / SUV</b></button>
+            <button class="vtype" data-v="van"><span class="e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 16V8.5A1.5 1.5 0 0 1 3.5 7h10l4.5 4.5V16"/><path d="M2 16h20"/><circle cx="7" cy="16" r="1.9"/><circle cx="17" cy="16" r="1.9"/><path d="M13.5 7v4.5H18"/></svg></span><b>Van / Pickup</b></button>
+            <button class="vtype" data-v="truck"><span class="e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="12" height="9" rx="1.5"/><path d="M14 10h4l3 3.5V16h-7z"/><path d="M2 16h19"/><circle cx="7" cy="16.5" r="1.8"/><circle cx="17.5" cy="16.5" r="1.8"/></svg></span><b>Truck / Bus</b></button>
+          </div>
+          <span class="flabel" style="color:#8A90A6;display:block;margin-bottom:9px">What happened?</span>
+          <div class="probs">
+            <button class="prob on">Engine won't start</button>
+            <button class="prob">Flat tire</button>
+            <button class="prob">Accident</button>
+            <button class="prob">Overheating</button>
+            <button class="prob">Out of fuel</button>
+            <button class="prob">Stuck / ditch</button>
+            <button class="prob">Other</button>
+          </div>
+        </div>
+
+        <div class="dblock">
+          <h2>Where should we take it?</h2>
+          <div class="dfield mb3">
+            <label for="t-drop">Drop-off destination</label>
+            <input id="t-drop" placeholder="Casa / shop name or address" value="Toyota Davao — Bajada">
+          </div>
+          <div class="grid2">
+            <div class="dfield">
+              <label for="t-name">Your name</label>
+              <input id="t-name" placeholder="Juan dela Cruz">
+            </div>
+            <div class="dfield">
+              <label for="t-phone">Mobile number</label>
+              <input id="t-phone" type="tel" placeholder="0917 123 4567">
+            </div>
+          </div>
+          <button class="dispatch" id="btn-dispatch">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17h12v-5H6l-2 3H2zM14 8h4l3 4v5h-7z"/><path d="M14 12l5-6"/></svg>
+            Dispatch a tow truck
+          </button>
+          <p class="small" style="color:#8A90A6;text-align:center;margin:var(--s3) 0 0">
+            No charge until a driver accepts and you confirm the quoted fare.
+          </p>
+        </div>
+      </div>
+
+      <!-- side: live map + nearby -->
+      <aside>
+        <div class="tmap">
+          <svg viewBox="0 0 460 340" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <rect width="460" height="340" fill="#0D1219"/>
+            <g stroke="#1A2430" stroke-width="1">
+              <path d="M0 50h460M0 110h460M0 170h460M0 230h460M0 290h460"/>
+              <path d="M60 0v340M140 0v340M220 0v340M300 0v340M380 0v340"/>
+            </g>
+            <path d="M-20 210 Q100 180 190 220 T480 195 L480 360 L-20 360Z" fill="#111A22"/>
+            <path d="M30 -10 L120 80 L100 190 L200 260 L170 360" stroke="#1F2C3A" stroke-width="9" fill="none" stroke-linecap="round"/>
+            <path d="M-10 130 L140 160 L320 115 L480 155" stroke="#1F2C3A" stroke-width="7" fill="none"/>
+            <circle cx="225" cy="165" r="88" fill="none" stroke="rgba(251,107,74,.18)" stroke-width="1.5" stroke-dasharray="5 6"/>
+            <circle cx="225" cy="165" r="132" fill="none" stroke="rgba(251,107,74,.1)" stroke-width="1.5" stroke-dasharray="5 6"/>
+          </svg>
+          <span class="tpin you" style="left:49%;top:48.5%"></span>
+          <span class="tpin" style="left:29%;top:30%"></span>
+          <span class="tpin" style="left:68%;top:26%"></span>
+          <span class="tpin" style="left:36%;top:69%"></span>
+          <span class="tpin" style="left:74%;top:62%"></span>
+          <span class="tpin" style="left:57%;top:80%"></span>
+          <div class="tmapstat"><b>6</b> trucks on standby within <b>15 km</b></div>
+        </div>
+
+        <div class="dblock">
+          <h2>Nearest available now</h2>
+          <div class="nearby" id="nearby-list"></div>
+          <div class="pricenote">
+            <b>How towing is priced</b>
+            <ul>
+              <li>Base call-out fee covers the first 10 km</li>
+              <li>Extra distance billed per km (₱55–₱120 by vehicle size)</li>
+              <li>Winch-out, night and expressway surcharges shown before you confirm</li>
+            </ul>
+            <p style="margin:var(--s3) 0 0"><b>ETAs are estimates,</b> not guarantees — traffic and weather affect arrival.</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- ===== STAGE 2: SEARCHING ===== -->
+  <div class="stage" id="stage-search">
+    <div class="searching">
+      <div class="radar">
+        <span class="ring"></span><span class="ring"></span><span class="ring"></span>
+        <span class="core"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17h12v-5H6l-2 3H2zM14 8h4l3 4v5h-7z"/><path d="M14 12l5-6"/></svg></span>
+      </div>
+      <h2>Broadcasting to nearby trucks…</h2>
+      <p>We've pinged every available unit within 15 km of Quirino Ave. The first driver to accept will be assigned to you.</p>
+      <div class="pinged" id="ping-list"></div>
+    </div>
+  </div>
+
+  <!-- ===== STAGE 3: MATCHED ===== -->
+  <div class="stage" id="stage-matched">
+    <div class="matched">
+      <div class="ok"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l6 6L20 6"/></svg></div>
+      <h2>Driver on the way!</h2>
+      <p><b style="color:#fff">Rapid Response Towing</b> accepted your request. Stay with your vehicle and keep your hazards on.</p>
+
+      <div class="drivercard">
+        <div class="drow">
+          <span class="e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 17h12v-5H6l-2 3H2z"/><path d="M14 8h4l3 4v5h-7z"/><path d="M14 12l5-6"/><circle cx="6" cy="17.5" r="1.7"/><circle cx="17" cy="17.5" r="1.7"/></svg></span>
+          <span>
+            <b>Rapid Response Towing</b>
+            <span>Flatbed · Plate LAB-4821 · <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z"/></svg> 4.96 (604)</span>
+            <span class="standby"><span class="d"></span>En route</span>
+          </span>
+        </div>
+        <div class="detabs">
+          <div class="detab"><b>14 min</b><span>ETA</span></div>
+          <div class="detab"><b>4.2 km</b><span>DISTANCE</span></div>
+          <div class="detab"><b>₱1,500</b><span>QUOTED FARE</span></div>
+        </div>
+        <a class="btn btn-y btn-block mb3" href="tel:+639171234567">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>
+          Call driver
+        </a>
+        <button class="btn btn-w btn-block" style="background:#33364A;color:#fff;border-color:#5A5F78;box-shadow:none">Cancel request</button>
+        <p class="small" style="color:#8A90A6;margin:var(--s4) 0 0;text-align:center">
+          Fare is confirmed on arrival after the driver assesses the vehicle. Pay by GCash, Maya or cash.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="site" style="background:#12131A;border-top-color:#33364A">
+  <div class="wrap">
+    <div class="fbot" style="border-top:0;padding-top:0;color:#8A90A6">
+      <span>© 2026 FR Services Fleet Services PH · Static prototype — demo data only</span>
+      <span><a href="index.html" style="text-decoration:underline;color:#C3C7D6">Back to search</a></span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/data.js"></script>
+<script>
+/* nearby towing units from shared data */
+const tows = inCategory('towing').slice().sort((a,b) => a.km - b.km);
+document.getElementById('nearby-list').innerHTML = tows.map(t => `
+  <div class="nrow">
+    <span class="e">${unitIcon(t.name, "towing")}</span>
+    <span>
+      <b>${t.name}</b>
+      <span>${t.loc} · ${t.km} km</span>
+      <span class="standby"><span class="d"></span>${t.status}</span>
+    </span>
+    <span class="eta"><b>${Math.round(t.km * 2.4 + 6)} min</b><span>est. arrival</span></span>
+  </div>`).join('');
+
+/* pickers */
+document.querySelectorAll('.vtype').forEach(v => v.addEventListener('click', () => {
+  document.querySelectorAll('.vtype').forEach(x => x.classList.remove('on'));
+  v.classList.add('on');
+}));
+document.querySelectorAll('.prob').forEach(p => p.addEventListener('click', () => {
+  document.querySelectorAll('.prob').forEach(x => x.classList.remove('on'));
+  p.classList.add('on');
+}));
+document.getElementById('loc-edit').addEventListener('click', () => {
+  const v = prompt('Where are you right now?', document.getElementById('loc-main').textContent);
+  if (v && v.trim()) document.getElementById('loc-main').textContent = v.trim();
+});
+
+/* dispatch simulation: broadcast -> accept */
+function stage(id){
+  document.querySelectorAll('.stage').forEach(s => s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.getElementById('btn-dispatch').addEventListener('click', () => {
+  stage('stage-search');
+  const list = document.getElementById('ping-list');
+  list.innerHTML = '';
+  tows.forEach((t, i) => {
+    setTimeout(() => {
+      const row = document.createElement('div');
+      row.className = 'ping';
+      row.innerHTML = `<span class="d"></span><span>Pinged <b>${t.name}</b></span><span class="s">${t.km} km away</span>`;
+      list.appendChild(row);
+    }, 350 + i * 550);
+  });
+  setTimeout(() => stage('stage-matched'), 350 + tows.length * 550 + 1400);
+});
+</script>
+</body>
+</html>

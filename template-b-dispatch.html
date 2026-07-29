@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DISPATCH — Fleet Services PH · Template B</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* ============ TEMPLATE B — "DISPATCH DECK" ============
+   Direction: Dark industrial operator console.
+   Style:  Dark Mode (OLED) + Flat + dense data rows
+   Colors: Construction/Logistics palette — graphite + safety orange + status blues
+   Type:   Inter (tabular numerals) + JetBrains Mono for IDs/specs
+   Best for: B2B buyers, contractors, procurement, spec-driven comparison
+========================================================= */
+:root{
+  --bg:#0A0E13; --surface:#111720; --surface-2:#161D28; --surface-3:#1D2633;
+  --line:#232D3B; --line-2:#2E3A4B;
+  --ink:#E8EEF6; --ink-2:#94A3B8; --ink-3:#64748B;
+  --brand:#F97316; --brand-2:#FB923C; --brand-dim:rgba(249,115,22,.13);
+  --info:#38BDF8; --info-dim:rgba(56,189,248,.13);
+  --ok:#22C55E; --ok-dim:rgba(34,197,94,.13);
+  --warn:#FBBF24; --danger:#F87171;
+  --r-sm:6px; --r:10px; --r-lg:14px;
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:20px;--s6:28px;--s7:40px;--s8:56px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:Inter,system-ui,-apple-system,'Segoe UI',sans-serif;
+  background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;font-feature-settings:"tnum" 1,"cv05" 1;
+}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:4px}
+.mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.86em;letter-spacing:-.02em}
+.lbl{font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3)}
+
+/* ---------- TOP BAR ---------- */
+.topbar{position:sticky;top:0;z-index:70;background:rgba(10,14,19,.93);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);height:60px;display:flex;align-items:center;gap:var(--s5);padding:0 var(--s5)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.02em;font-size:16px;flex-shrink:0}
+.brand .m{width:30px;height:30px;border-radius:8px;background:var(--brand);color:#0A0E13;display:grid;place-items:center}
+.brand small{color:var(--ink-3);font-weight:600;font-size:10px;letter-spacing:.14em;display:block;line-height:1;margin-top:2px}
+.gsearch{flex:1;max-width:520px;position:relative}
+.gsearch input{width:100%;height:38px;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink);padding:0 var(--s4) 0 38px;font:inherit;font-size:14px;transition:border-color .16s var(--ease)}
+.gsearch input:focus{border-color:var(--brand);outline:none}
+.gsearch input::placeholder{color:var(--ink-3)}
+.gsearch svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink-3)}
+.gsearch kbd{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-3);border:1px solid var(--line-2);border-radius:4px;padding:2px 6px}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:var(--s3);flex-shrink:0}
+.status{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--ink-2);background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-sm);height:32px;padding:0 11px}
+.led{width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px var(--ok-dim);animation:pulse 2.4s var(--ease) infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:34px;padding:0 14px;border-radius:var(--r-sm);font-weight:600;font-size:13.5px;transition:all .16s var(--ease)}
+.btn-primary{background:var(--brand);color:#0A0E13}
+.btn-primary:hover{background:var(--brand-2)}
+.btn-line{border:1px solid var(--line-2);color:var(--ink-2)}
+.btn-line:hover{border-color:var(--ink-3);color:var(--ink)}
+.who{width:32px;height:32px;border-radius:var(--r-sm);background:var(--surface-3);border:1px solid var(--line-2);display:grid;place-items:center;font-size:11.5px;font-weight:700;color:var(--ink-2)}
+
+/* ---------- GEO BAR ---------- */
+.geo{background:linear-gradient(90deg,var(--brand-dim),transparent 60%);border-bottom:1px solid var(--line);padding:9px var(--s5);display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;font-size:13px}
+.geo .tag{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--brand);border:1px solid rgba(249,115,22,.35);border-radius:4px;padding:2px 7px;background:rgba(249,115,22,.08)}
+.geo b{color:var(--ink)}
+.geo span{color:var(--ink-2)}
+.geo a{margin-left:auto;color:var(--info);font-weight:600;font-size:12.5px;border-bottom:1px dotted var(--info);padding-bottom:1px}
+
+/* ---------- SHELL ---------- */
+.shell{display:grid;grid-template-columns:236px 1fr 380px;min-height:calc(100vh - 60px)}
+
+/* ---------- LEFT RAIL ---------- */
+.rail{border-right:1px solid var(--line);background:var(--surface);padding:var(--s5) var(--s3);position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
+.rail h4{margin:var(--s5) 0 var(--s2);padding:0 var(--s3)}
+.rail h4:first-child{margin-top:0}
+.navitem{display:flex;align-items:center;gap:10px;width:100%;padding:9px var(--s3);border-radius:var(--r-sm);color:var(--ink-2);font-size:13.5px;font-weight:600;transition:all .14s var(--ease);text-align:left}
+.navitem svg{width:17px;height:17px;flex-shrink:0}
+.navitem .ct{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-3);background:var(--surface-3);border-radius:4px;padding:1px 6px}
+.navitem:hover{background:var(--surface-2);color:var(--ink)}
+.navitem.on{background:var(--brand-dim);color:var(--brand);box-shadow:inset 2px 0 0 var(--brand)}
+.navitem.on .ct{background:rgba(249,115,22,.16);color:var(--brand-2)}
+/* filter block */
+.fgroup{padding:0 var(--s3);margin-bottom:var(--s4)}
+.frow{display:flex;align-items:center;gap:9px;padding:6px 0;font-size:13px;color:var(--ink-2);cursor:pointer}
+.frow:hover{color:var(--ink)}
+.cbx{width:15px;height:15px;border-radius:3.5px;border:1.5px solid var(--line-2);flex-shrink:0;display:grid;place-items:center;transition:all .14s var(--ease)}
+.frow.on .cbx{background:var(--brand);border-color:var(--brand)}
+.frow.on{color:var(--ink)}
+.frow .n{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-3)}
+.slider{margin-top:var(--s2)}
+.slider input{width:100%;accent-color:var(--brand)}
+.srange{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-3);margin-top:2px}
+
+/* ---------- CENTER ---------- */
+.main{padding:var(--s5);min-width:0}
+.mhead{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s4);margin-bottom:var(--s4);flex-wrap:wrap}
+.mhead h1{margin:0;font-size:22px;font-weight:800;letter-spacing:-.02em}
+.mhead p{margin:3px 0 0;font-size:13px;color:var(--ink-3)}
+.viewtoggle{display:flex;border:1px solid var(--line);border-radius:var(--r-sm);overflow:hidden}
+.viewtoggle button{padding:0 13px;height:32px;font-size:12.5px;font-weight:600;color:var(--ink-3);border-right:1px solid var(--line)}
+.viewtoggle button:last-child{border-right:0}
+.viewtoggle button.on{background:var(--surface-3);color:var(--ink)}
+
+/* KPI strip */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s3);margin-bottom:var(--s5)}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:var(--s3) var(--s4)}
+.kpi .v{font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.2}
+.kpi .v.up{color:var(--ok)} .kpi .v.hot{color:var(--brand)}
+.kpi .k{font-size:11px;color:var(--ink-3);font-weight:600;margin-top:1px}
+
+/* provider rows */
+.rows{display:flex;flex-direction:column;gap:var(--s2)}
+.row{display:grid;grid-template-columns:52px 1fr auto;gap:var(--s4);align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:var(--s3) var(--s4);cursor:pointer;transition:all .16s var(--ease)}
+.row:hover{border-color:var(--line-2);background:var(--surface-2);transform:translateX(2px)}
+.row.on{border-color:var(--brand);background:linear-gradient(90deg,var(--brand-dim),var(--surface) 40%)}
+.rlogo{width:52px;height:52px;border-radius:var(--r-sm);display:grid;place-items:center;font-size:24px;border:1px solid var(--line-2)}
+.rmain{min-width:0}
+.rtop{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.rtop h3{margin:0;font-size:15px;font-weight:700;letter-spacing:-.01em}
+.vbadge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--info);background:var(--info-dim);border:1px solid rgba(56,189,248,.28);border-radius:4px;padding:2px 6px}
+.rstar{font-size:12.5px;color:var(--ink-2);font-weight:600}
+.rstar b{color:var(--warn)}
+.rmeta{display:flex;gap:var(--s4);margin-top:5px;font-size:12.5px;color:var(--ink-3);flex-wrap:wrap}
+.rmeta span{display:inline-flex;align-items:center;gap:5px}
+.rspecs{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.spec{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:500;color:var(--ink-2);background:var(--surface-3);border:1px solid var(--line);border-radius:4px;padding:2px 7px}
+.spec.ok{color:var(--ok);border-color:rgba(34,197,94,.25);background:var(--ok-dim)}
+.spec.hot{color:var(--brand);border-color:rgba(249,115,22,.28);background:var(--brand-dim)}
+.rright{text-align:right;flex-shrink:0}
+.rprice{font-size:19px;font-weight:800;letter-spacing:-.02em}
+.rprice small{font-size:11px;font-weight:600;color:var(--ink-3);display:block;margin-top:-2px}
+.rbtn{margin-top:9px;height:30px;padding:0 12px;border-radius:var(--r-sm);border:1px solid var(--line-2);font-size:12.5px;font-weight:600;color:var(--ink-2)}
+.row:hover .rbtn{background:var(--brand);border-color:var(--brand);color:#0A0E13}
+
+/* ---------- RIGHT PANEL ---------- */
+.panel{border-left:1px solid var(--line);background:var(--surface);position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
+.pmap{position:relative;height:280px;background:#0D1219;border-bottom:1px solid var(--line);overflow:hidden}
+.pmap svg{width:100%;height:100%;display:block}
+.pin{position:absolute;transform:translate(-50%,-50%);width:11px;height:11px;border-radius:50%;background:var(--brand);box-shadow:0 0 0 3px rgba(249,115,22,.22),0 0 12px rgba(249,115,22,.6);transition:transform .18s var(--ease)}
+.pin:hover{transform:translate(-50%,-50%) scale(1.5)}
+.pin.you{background:var(--info);box-shadow:0 0 0 4px rgba(56,189,248,.2),0 0 16px rgba(56,189,248,.7)}
+.pin.you::after{content:'';position:absolute;inset:-8px;border-radius:50%;border:1.5px solid var(--info);opacity:.4;animation:ping 2.6s var(--ease) infinite}
+@keyframes ping{0%{transform:scale(.5);opacity:.6}100%{transform:scale(2.2);opacity:0}}
+.mapstat{position:absolute;left:var(--s4);bottom:var(--s4);display:flex;gap:var(--s3);font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-2);background:rgba(10,14,19,.8);border:1px solid var(--line);border-radius:var(--r-sm);padding:6px 10px;backdrop-filter:blur(6px)}
+.mapstat b{color:var(--brand)}
+.pbody{padding:var(--s5)}
+.pblock{margin-bottom:var(--s6)}
+.pblock h4{margin:0 0 var(--s3)}
+/* storefront builder */
+.sfcard{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--surface-2)}
+.sfhero{height:74px;background:linear-gradient(115deg,#7C2D12,#EA580C 55%,#FBBF24);position:relative}
+.sfhero .edit{position:absolute;top:8px;right:8px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:rgba(10,14,19,.72);border:1px solid rgba(255,255,255,.16);border-radius:4px;padding:3px 7px;color:#fff}
+.sfin{padding:var(--s4)}
+.sfid{display:flex;gap:var(--s3);align-items:flex-end;margin-top:-32px;margin-bottom:var(--s4)}
+.sflogo{width:48px;height:48px;border-radius:var(--r-sm);background:var(--surface-3);border:2px solid var(--surface-2);display:grid;place-items:center;font-size:22px}
+.sfnm strong{display:block;font-size:13.5px;font-weight:700}
+.sfnm span{font-size:11px;color:var(--ink-3);font-family:'JetBrains Mono',monospace}
+.sfgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s2);margin-bottom:var(--s3)}
+.sfstat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);padding:8px 9px}
+.sfstat b{display:block;font-size:13.5px;font-weight:700}
+.sfstat span{font-size:10px;color:var(--ink-3)}
+.sfopt{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid var(--line);font-size:12px;color:var(--ink-2)}
+.sw{width:16px;height:16px;border-radius:4px;border:1px solid var(--line-2)}
+.swrow{display:flex;gap:5px}
+.toggle{width:32px;height:18px;border-radius:99px;background:var(--surface-3);border:1px solid var(--line-2);position:relative}
+.toggle.on{background:var(--brand);border-color:var(--brand)}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:var(--ink-2);transition:transform .18s var(--ease)}
+.toggle.on::after{transform:translateX(14px);background:#0A0E13}
+/* live feed */
+.feed{display:flex;flex-direction:column;gap:var(--s2)}
+.fitem{display:flex;gap:10px;align-items:flex-start;font-size:12.5px;color:var(--ink-2);padding:8px 0;border-bottom:1px solid var(--line)}
+.fdot{width:6px;height:6px;border-radius:50%;margin-top:6px;flex-shrink:0}
+.fitem b{color:var(--ink);font-weight:600}
+.ftime{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-3);flex-shrink:0}
+
+/* ---------- VENDOR CTA ---------- */
+.enroll{grid-column:1/-1;border-top:1px solid var(--line);background:var(--surface);padding:var(--s8) var(--s5)}
+.enroll-in{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:var(--s8);align-items:center}
+.enroll h2{margin:0 0 var(--s3);font-size:30px;font-weight:800;letter-spacing:-.03em;line-height:1.18}
+.enroll h2 em{font-style:normal;color:var(--brand)}
+.enroll p{margin:0 0 var(--s5);color:var(--ink-2);font-size:15px;max-width:48ch}
+.esteps{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s3)}
+.estep{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r);padding:var(--s4)}
+.estep .n{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--brand);font-weight:700}
+.estep b{display:block;font-size:13.5px;margin:5px 0 4px}
+.estep p{margin:0;font-size:12px;color:var(--ink-3);line-height:1.45}
+footer{grid-column:1/-1;border-top:1px solid var(--line);padding:var(--s4) var(--s5);display:flex;justify-content:space-between;gap:var(--s4);flex-wrap:wrap;font-size:12px;color:var(--ink-3)}
+
+@media (max-width:1300px){ .shell{grid-template-columns:220px 1fr} .panel{display:none} }
+@media (max-width:900px){
+  .shell{grid-template-columns:1fr}
+  .rail{display:none}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .enroll-in{grid-template-columns:1fr;gap:var(--s6)}
+  .esteps{grid-template-columns:1fr}
+  .row{grid-template-columns:44px 1fr;row-gap:var(--s3)}
+  .rright{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;text-align:left}
+  .rbtn{margin-top:0}
+  .gsearch kbd{display:none}
+  .enroll h2{font-size:23px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <span class="m"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18h9v-5H6l-2 3H3zM12 9h5l4 5v4h-9z"/><circle cx="7" cy="18.5" r="1.6"/><circle cx="17" cy="18.5" r="1.6"/></svg></span>
+    <span>DISPATCH<small>FLEET SERVICES PH</small></span>
+  </div>
+  <div class="gsearch">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <input placeholder="Search providers, units, or specs — e.g. “20T excavator Davao”">
+    <kbd>⌘K</kbd>
+  </div>
+  <div class="tb-right">
+    <span class="status"><span class="led"></span>1,208 units live</span>
+    <button class="btn btn-primary">List your company</button>
+    <span class="who">BG</span>
+  </div>
+</div>
+
+<div class="geo">
+  <span class="tag">AI GEO-MATCH</span>
+  <span>Region locked to <b>Davao Region (XI)</b> — inferred from booking history &amp; session signals · confidence <b>94%</b></span>
+  <a href="#">Override region</a>
+</div>
+
+<div class="shell">
+
+  <!-- LEFT RAIL -->
+  <aside class="rail">
+    <h4 class="lbl">Categories</h4>
+    <button class="navitem on" data-cat="equipment">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19h11v-4H3zM6 15V9h5l3 6"/><path d="M14 11l4-5 3 2-3 5"/></svg>
+      Heavy Equipment <span class="ct">412</span>
+    </button>
+    <button class="navitem" data-cat="vehicles">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17v-4l2.6-4h12.8L21 13v4"/><path d="M3 17h18"/><circle cx="7.5" cy="17" r="1.9"/><circle cx="16.5" cy="17" r="1.9"/></svg>
+      Vehicles <span class="ct">631</span>
+    </button>
+    <button class="navitem" data-cat="towing">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17h12v-5H6l-2 3H2zM14 8h4l3 4v5h-7z"/><path d="M14 12l5-6"/></svg>
+      Towing &amp; Recovery <span class="ct">165</span>
+    </button>
+
+    <h4 class="lbl">Availability</h4>
+    <div class="fgroup">
+      <div class="frow on"><span class="cbx"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#0A0E13" stroke-width="4" stroke-linecap="round"><path d="M4 12l6 6L20 6"/></svg></span>Available now <span class="n">88</span></div>
+      <div class="frow"><span class="cbx"></span>Within 24 hours <span class="n">214</span></div>
+      <div class="frow"><span class="cbx"></span>Scheduled booking <span class="n">412</span></div>
+    </div>
+
+    <h4 class="lbl">Provider</h4>
+    <div class="fgroup">
+      <div class="frow on"><span class="cbx"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#0A0E13" stroke-width="4" stroke-linecap="round"><path d="M4 12l6 6L20 6"/></svg></span>Verified only <span class="n">361</span></div>
+      <div class="frow"><span class="cbx"></span>Operator included <span class="n">189</span></div>
+      <div class="frow"><span class="cbx"></span>Delivery included <span class="n">142</span></div>
+      <div class="frow"><span class="cbx"></span>Insurance covered <span class="n">97</span></div>
+    </div>
+
+    <h4 class="lbl">Distance</h4>
+    <div class="fgroup slider">
+      <input type="range" min="1" max="200" value="50" aria-label="Search radius in kilometers">
+      <div class="srange"><span>0 km</span><span>50 km</span><span>200 km</span></div>
+    </div>
+
+    <h4 class="lbl">Day rate (₱)</h4>
+    <div class="fgroup slider">
+      <input type="range" min="0" max="50000" value="15000" aria-label="Maximum day rate">
+      <div class="srange"><span>₱0</span><span>₱15,000</span><span>₱50k+</span></div>
+    </div>
+  </aside>
+
+  <!-- CENTER -->
+  <main class="main">
+    <div class="mhead">
+      <div>
+        <h1 id="b-title">Heavy Equipment providers</h1>
+        <p id="b-sub">Davao Region XI · 412 units across 63 companies · index refreshed 00:04:12 ago</p>
+      </div>
+      <div class="viewtoggle">
+        <button class="on">List</button>
+        <button>Grid</button>
+        <button>Map</button>
+      </div>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi"><div class="v">63</div><div class="k">Companies in range</div></div>
+      <div class="kpi"><div class="v up">88</div><div class="k">Units available now</div></div>
+      <div class="kpi"><div class="v">₱9,240</div><div class="k">Median day rate</div></div>
+      <div class="kpi"><div class="v hot">11 min</div><div class="k">Avg. response time</div></div>
+    </div>
+
+    <div class="rows" id="b-rows"></div>
+  </main>
+
+  <!-- RIGHT PANEL -->
+  <aside class="panel">
+    <div class="pmap">
+      <svg viewBox="0 0 400 280" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <rect width="400" height="280" fill="#0D1219"/>
+        <g stroke="#1A2430" stroke-width="1">
+          <path d="M0 40h400M0 90h400M0 140h400M0 190h400M0 240h400"/>
+          <path d="M50 0v280M120 0v280M190 0v280M260 0v280M330 0v280"/>
+        </g>
+        <path d="M-20 170 Q90 140 170 180 T420 155 L420 300 L-20 300Z" fill="#111A22"/>
+        <path d="M30 -10 L110 70 L90 150 L180 210 L150 300" stroke="#1F2C3A" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <path d="M-10 100 L120 130 L280 90 L420 125" stroke="#1F2C3A" stroke-width="6" fill="none"/>
+        <path d="M340 -10 L300 110 L360 220" stroke="#1F2C3A" stroke-width="5" fill="none"/>
+        <circle cx="190" cy="130" r="72" fill="none" stroke="rgba(56,189,248,.16)" stroke-width="1" stroke-dasharray="4 5"/>
+        <circle cx="190" cy="130" r="112" fill="none" stroke="rgba(56,189,248,.09)" stroke-width="1" stroke-dasharray="4 5"/>
+      </svg>
+      <span class="pin you" style="left:47.5%;top:46%"></span>
+      <span class="pin" style="left:26%;top:24%"></span>
+      <span class="pin" style="left:63%;top:19%"></span>
+      <span class="pin" style="left:35%;top:60%"></span>
+      <span class="pin" style="left:72%;top:55%"></span>
+      <span class="pin" style="left:54%;top:76%"></span>
+      <span class="pin" style="left:18%;top:70%"></span>
+      <span class="pin" style="left:81%;top:33%"></span>
+      <div class="mapstat">LAT <b>7.0731</b> · LON <b>125.6128</b> · R <b>50km</b> · <b>63</b> HITS</div>
+    </div>
+
+    <div class="pbody">
+      <div class="pblock">
+        <h4 class="lbl">Company storefront builder</h4>
+        <div class="sfcard">
+          <div class="sfhero"><span class="edit">Owner-editable</span></div>
+          <div class="sfin">
+            <div class="sfid">
+              <div class="sflogo">🏗️</div>
+              <div class="sfnm">
+                <strong>Davao Heavy Lift Corp.</strong>
+                <span>/davao-heavy-lift</span>
+              </div>
+            </div>
+            <div class="sfgrid">
+              <div class="sfstat"><b>34</b><span>UNITS</span></div>
+              <div class="sfstat"><b>4.90</b><span>RATING</span></div>
+              <div class="sfstat"><b>50km</b><span>RADIUS</span></div>
+            </div>
+            <div class="sfopt"><span>Brand palette</span><span class="swrow"><span class="sw" style="background:#EA580C"></span><span class="sw" style="background:#FBBF24"></span><span class="sw" style="background:#0A0E13"></span><span class="sw" style="background:#38BDF8"></span></span></div>
+            <div class="sfopt"><span>Instant booking</span><span class="toggle on"></span></div>
+            <div class="sfopt"><span>Show live availability</span><span class="toggle on"></span></div>
+            <div class="sfopt"><span>Public rate card</span><span class="toggle"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pblock">
+        <h4 class="lbl">Live activity — Region XI</h4>
+        <div class="feed">
+          <div class="fitem"><span class="fdot" style="background:var(--ok)"></span><span><b>Rapid Response Towing</b> accepted a call-out in Bajada</span><span class="ftime">00:12</span></div>
+          <div class="fitem"><span class="fdot" style="background:var(--brand)"></span><span><b>Mount Apo Equipment</b> listed 2 new backhoes</span><span class="ftime">03:41</span></div>
+          <div class="fitem"><span class="fdot" style="background:var(--info)"></span><span><b>SouthPoint Van Hire</b> joined — pending verification</span><span class="ftime">11:08</span></div>
+          <div class="fitem"><span class="fdot" style="background:var(--ok)"></span><span><b>Panabo Machinery Hub</b> confirmed a 3-day crane booking</span><span class="ftime">17:55</span></div>
+          <div class="fitem"><span class="fdot" style="background:var(--warn)"></span><span><b>Sta. Ana Builders</b> updated rates (−8%)</span><span class="ftime">24:30</span></div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- VENDOR ENROLLMENT -->
+  <section class="enroll">
+    <div class="enroll-in">
+      <div>
+        <h2>Run one company.<br>Reach <em>all 17 regions.</em></h2>
+        <p>Register your fleet business, pass verification, and your units enter the national index — surfaced automatically to renters whose location matches your service radius. You control pricing, availability, and how your page looks.</p>
+        <button class="btn btn-primary" style="height:44px;padding:0 22px;font-size:15px">Start company registration</button>
+        <button class="btn btn-line" style="height:44px;padding:0 20px;font-size:15px;margin-left:8px">See commission rates</button>
+      </div>
+      <div class="esteps">
+        <div class="estep"><span class="n">01</span><b>Verify</b><p>Upload DTI/SEC, LTO registration, insurance and operator certs. Reviewed in ~24h.</p></div>
+        <div class="estep"><span class="n">02</span><b>Configure</b><p>Set service radius, rate card, operator options and your storefront theme.</p></div>
+        <div class="estep"><span class="n">03</span><b>Dispatch</b><p>Receive geo-matched requests, accept or decline, and get paid after handover.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>© 2026 Fleet Services PH · Template B — “Dark industrial dispatch console”</span>
+    <span class="mono">Dark Mode (OLED) + Flat · Construction palette · Inter + JetBrains Mono</span>
+  </footer>
+</div>
+
+<script>
+const B_DATA={
+  equipment:[
+    {n:"Davao Heavy Lift Corp.",loc:"Talomo, Davao City",km:"3.9 km",r:4.90,c:218,p:"12,000",em:"🏗️",bg:"linear-gradient(135deg,#78350F,#F59E0B)",specs:["EXCAVATOR 20T","CRANE 25T","OPERATOR INCL"],st:"3 AVAILABLE NOW",resp:"8 min"},
+    {n:"Mount Apo Equipment",loc:"Calinan, Davao City",km:"18.4 km",r:4.81,c:94,p:"8,400",em:"🚜",bg:"linear-gradient(135deg,#3F3F46,#A1A1AA)",specs:["BACKHOE","LOADER 3CBM","DELIVERY INCL"],st:"5 AVAILABLE NOW",resp:"14 min"},
+    {n:"Sta. Ana Builders Rental",loc:"Agdao, Davao City",km:"5.2 km",r:4.68,c:73,p:"6,000",em:"⛏️",bg:"linear-gradient(135deg,#713F12,#CA8A04)",specs:["BULLDOZER D6","COMPACTOR","WEEKLY RATE"],st:"2 AVAILABLE NOW",resp:"22 min"},
+    {n:"Panabo Machinery Hub",loc:"Panabo, Davao del Norte",km:"32.7 km",r:4.77,c:141,p:"9,800",em:"🏗️",bg:"linear-gradient(135deg,#164E63,#0891B2)",specs:["CRANE 25T","BOOM LIFT","CERTIFIED CREW"],st:"BOOK 24H AHEAD",resp:"31 min"},
+    {n:"Tagum Aggregate Works",loc:"Tagum City, Davao del Norte",km:"55.1 km",r:4.62,c:58,p:"7,200",em:"🚧",bg:"linear-gradient(135deg,#374151,#6B7280)",specs:["DUMP TRUCK 10W","GRADER","FUEL INCL"],st:"6 AVAILABLE NOW",resp:"19 min"}
+  ],
+  vehicles:[
+    {n:"Mindanao Auto Rentals",loc:"Poblacion, Davao City",km:"2.4 km",r:4.92,c:341,p:"2,800",em:"🚐",bg:"linear-gradient(135deg,#334155,#64748B)",specs:["SELF-DRIVE","32 UNITS","INSTANT BOOK"],st:"12 AVAILABLE NOW",resp:"4 min"},
+    {n:"SouthPoint Van Hire",loc:"Matina, Davao City",km:"4.1 km",r:4.87,c:198,p:"3,500",em:"🚌",bg:"linear-gradient(135deg,#0F766E,#14B8A6)",specs:["WITH DRIVER","15-SEATER","AIRPORT RUN"],st:"7 AVAILABLE NOW",resp:"9 min"},
+    {n:"Bagumbayan Motors",loc:"Buhangin, Davao City",km:"6.8 km",r:4.74,c:126,p:"1,900",em:"🚗",bg:"linear-gradient(135deg,#1E3A8A,#3B82F6)",specs:["SEDAN · SUV","MONTHLY RATE","LTO VERIFIED"],st:"9 AVAILABLE NOW",resp:"16 min"},
+    {n:"Davao Fleet Solutions",loc:"Toril, Davao City",km:"11.2 km",r:4.95,c:512,p:"4,200",em:"🚙",bg:"linear-gradient(135deg,#7C2D12,#EA580C)",specs:["CORPORATE","LONG-TERM","GPS TRACKED"],st:"4 AVAILABLE NOW",resp:"6 min"}
+  ],
+  towing:[
+    {n:"Rapid Response Towing",loc:"Bajada, Davao City",km:"1.8 km",r:4.96,c:604,p:"1,500",em:"🛻",bg:"linear-gradient(135deg,#7F1D1D,#EF4444)",specs:["24/7 DISPATCH","FLATBED","ETA 12 MIN"],st:"ON STANDBY",resp:"2 min"},
+    {n:"Davao Roadside Assist",loc:"Lanang, Davao City",km:"5.6 km",r:4.83,c:287,p:"1,800",em:"🚨",bg:"linear-gradient(135deg,#1E293B,#475569)",specs:["HEAVY DUTY","WINCH-OUT","JUMPSTART"],st:"ON STANDBY",resp:"5 min"},
+    {n:"Bukidnon Tow Express",loc:"Mintal, Davao City",km:"9.3 km",r:4.71,c:112,p:"2,200",em:"🛞",bg:"linear-gradient(135deg,#0C4A6E,#0EA5E9)",specs:["LONG-HAUL","TRUCK RECOVERY","INTER-CITY"],st:"1 UNIT BUSY",resp:"11 min"},
+    {n:"Sasa 24H Wrecker",loc:"Sasa, Davao City",km:"12.1 km",r:4.88,c:355,p:"1,650",em:"🔧",bg:"linear-gradient(135deg,#4C1D95,#8B5CF6)",specs:["24/7 DISPATCH","MOTORCYCLE TOW","PORT AREA"],st:"ON STANDBY",resp:"7 min"}
+  ]
+};
+const B_TITLES={equipment:["Heavy Equipment providers","412 units across 63 companies"],vehicles:["Vehicle rental providers","631 units across 118 companies"],towing:["Towing &amp; Recovery services","165 units across 41 companies"]};
+
+function bRender(cat){
+  document.getElementById('b-rows').innerHTML=B_DATA[cat].map((x,i)=>`
+    <article class="row ${i===0?'on':''}" tabindex="0">
+      <div class="rlogo" style="background:${x.bg}">${x.em}</div>
+      <div class="rmain">
+        <div class="rtop">
+          <h3>${x.n}</h3>
+          <span class="vbadge"><svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 1.8 3-.2.9 2.9 2.5 1.7-1.2 2.8 1.2 2.8-2.5 1.7-.9 2.9-3-.2L12 22l-2.4-1.8-3 .2-.9-2.9-2.5-1.7L4.4 13 3.2 10.2l2.5-1.7.9-2.9 3 .2z"/></svg>Verified</span>
+          <span class="rstar"><b>★</b> ${x.r.toFixed(2)} <span style="color:var(--ink-3)">(${x.c})</span></span>
+        </div>
+        <div class="rmeta">
+          <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>${x.loc} · ${x.km}</span>
+          <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Replies in ${x.resp}</span>
+        </div>
+        <div class="rspecs">
+          <span class="spec ${x.st.includes('AVAILABLE')||x.st.includes('STANDBY')?'ok':'hot'}">${x.st}</span>
+          ${x.specs.map(s=>`<span class="spec">${s}</span>`).join('')}
+        </div>
+      </div>
+      <div class="rright">
+        <div class="rprice">₱${x.p}<small>per day</small></div>
+        <button class="rbtn">Request quote</button>
+      </div>
+    </article>`).join('');
+  document.querySelectorAll('.row').forEach(r=>r.addEventListener('click',()=>{
+    document.querySelectorAll('.row').forEach(z=>z.classList.remove('on')); r.classList.add('on');
+  }));
+}
+bRender('equipment');
+
+document.querySelectorAll('.navitem').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.navitem').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  const c=b.dataset.cat; bRender(c);
+  document.getElementById('b-title').innerHTML=B_TITLES[c][0];
+  document.getElementById('b-sub').textContent='Davao Region XI · '+B_TITLES[c][1]+' · index refreshed 00:04:12 ago';
+}));
+document.querySelectorAll('.frow').forEach(f=>f.addEventListener('click',()=>{
+  f.classList.toggle('on');
+  f.querySelector('.cbx').innerHTML=f.classList.contains('on')?'<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#0A0E13" stroke-width="4" stroke-linecap="round"><path d="M4 12l6 6L20 6"/></svg>':'';
+}));
+document.querySelectorAll('.toggle').forEach(t=>t.addEventListener('click',()=>t.classList.toggle('on')));
+document.querySelectorAll('.viewtoggle button').forEach(v=>v.addEventListener('click',()=>{
+  document.querySelectorAll('.viewtoggle button').forEach(z=>z.classList.remove('on')); v.classList.add('on');
+}));
+</script>
+</body>
+</html>

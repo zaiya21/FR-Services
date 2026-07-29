@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Company storefront — FR Services</title>
+<meta name="description" content="Verified fleet rental company on FR Services. Browse available units, rates and availability.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- JetBrains Mono is only used by the Industrial and Console layouts -->
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/fr.css">
+<style>
+/* =====================================================================
+   COMPANY STOREFRONT
+   The --co-* variables below are the ONLY things a company owner controls.
+   Platform trust elements (verified badge, rating, reviews, report link)
+   deliberately do NOT use them — see ARCHITECTURE.md §4.
+   ===================================================================== */
+/* Defaults only — assets/theme.js overwrites these from the owner's saved
+   theme on load. Declared here so the page renders sanely if that fails. */
+:root{
+  --co-primary:#057A2F; --co-on-primary:#FFFFFF;
+  --co-accent:#F2B705;  --co-on-accent:#12131A;
+  --co-bg:#FBFAF7; --co-surface:#FFFFFF;
+  --co-ink:#12131A; --co-ink-2:#4A4F63; --co-line:#E0DDD5;
+  --co-hero:linear-gradient(115deg,#057A2F,#2E9A33 55%,#F2B705);
+}
+
+/* cover + identity */
+.cover .owner svg{width:12px;height:12px}
+.cover{height:220px;background:var(--co-hero);border-bottom:var(--bd);position:relative}
+.cover .owner{position:absolute;top:var(--s4);right:var(--s4);background:#fff;
+  border:var(--bd-thin);border-radius:var(--r-pill);font-size:11.5px;font-weight:700;
+  padding:5px 13px;display:inline-flex;align-items:center;gap:6px}
+/* Only the logo tile lifts into the cover. Pulling the whole bar up
+   dragged it over the breadcrumb above it. */
+.idbar{display:flex;gap:var(--s5);align-items:flex-end;
+  margin-top:var(--s4);margin-bottom:var(--s5);flex-wrap:wrap}
+.crumb{padding-bottom:var(--s4)}
+.colog{width:104px;height:104px;border-radius:26px;background:var(--co-accent);
+  border:var(--bd);box-shadow:var(--off);display:grid;place-items:center;
+  color:var(--ink);flex-shrink:0;margin-top:-64px}
+.colog svg{width:54px;height:54px}
+.idmain{flex:1;min-width:240px;padding-bottom:var(--s2)}
+.idmain h1{font-size:clamp(26px,3.6vw,38px);line-height:1.1;margin-bottom:8px}
+.idmeta{display:flex;gap:var(--s3);flex-wrap:wrap;align-items:center;font-size:14px;
+  color:var(--ink-2);font-weight:500}
+.idmeta .sep{color:var(--ink-4)}
+/* Platform-owned: fixed colours in every theme, and it is a button so a
+   renter can read exactly what the badge does and does not certify. */
+.verified{background:var(--ok);color:#fff;border:var(--bd-thin);border-radius:var(--r-pill);
+  font-size:11.5px;font-weight:700;padding:3px 9px 3px 11px;display:inline-flex;
+  align-items:center;gap:5px;cursor:pointer}
+.verified:hover{background:#106B33}
+.verified .chev{opacity:.8}
+.vpop{position:absolute;z-index:120;max-width:340px;background:var(--surface);
+  border:var(--bd);border-radius:var(--r);box-shadow:var(--off);padding:var(--s4);
+  color:var(--ink);font-weight:400}
+.vpop[hidden]{display:none}
+.vpop h4{font-size:14.5px;margin-bottom:6px}
+.vpop ul{margin:0 0 var(--s3);padding-left:17px;font-size:13px;color:var(--ink-2)}
+.vpop li{margin-bottom:4px}
+.vpop .no{font-size:12.5px;color:var(--ink-2);padding-top:var(--s3);
+  border-top:1px dashed var(--hair);margin:0}
+.vpop .no b{color:var(--ink)}
+
+.idact{display:flex;gap:var(--s3);align-items:center;padding-bottom:var(--s2);flex-wrap:wrap}
+.idact .btn-brand{background:var(--co-primary);color:var(--co-on-primary);border:var(--bd);
+  box-shadow:var(--off-sm);border-radius:var(--r-pill);height:48px;padding:0 24px;
+  font-weight:700;font-size:15px;display:inline-flex;align-items:center;gap:8px;
+  transition:transform .16s var(--ease),box-shadow .16s var(--ease)}
+.idact .btn-brand:hover{transform:translate(-2px,-2px);box-shadow:var(--off)}
+/* saved state — a filled heart and a solid border, so it reads as ON at a
+   glance rather than only through the word beside it */
+#favBtn.is-on{border-color:var(--danger);color:var(--danger)}
+
+/* stat strip */
+.statstrip{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--s3);
+  margin-bottom:var(--s6)}
+.statstrip .tile{text-align:center;padding:var(--s4) var(--s3);background:var(--surface);
+  border:var(--bd);border-radius:var(--r);box-shadow:var(--off-sm)}
+.statstrip .tile b{font-size:22px}
+
+/* section tabs (owner can reorder these) */
+.cotabs{display:flex;gap:var(--s2);border-bottom:var(--bd);margin-bottom:var(--s5);
+  overflow-x:auto;scrollbar-width:none}
+.cotabs::-webkit-scrollbar{display:none}
+.cotab{height:48px;padding:0 20px;font-weight:700;font-size:15px;color:var(--ink-3);
+  border-bottom:4px solid transparent;margin-bottom:-2.5px;white-space:nowrap;
+  transition:color .16s var(--ease)}
+.cotab:hover{color:var(--ink)}
+.cotab.on{color:var(--ink);border-bottom-color:var(--co-primary)}
+
+/* ---- published documents ----
+   Trust colours here are FIXED, like the verified badge and the star
+   rating. A seller who could restyle "Company-submitted" to look like
+   "Checked by FR Services" would have been handed the one thing the
+   section exists to prevent. */
+.authbar{display:flex;gap:var(--s4);flex-wrap:wrap;align-items:center;
+  background:var(--co-surface-2);border:var(--co-bd);border-radius:var(--r-lg);
+  padding:var(--s4) var(--s5);margin-bottom:var(--s5)}
+.authbar .big{font-family:var(--font-display);font-size:26px;font-weight:700;line-height:1}
+.authbar .lbl{font-size:12.5px;color:var(--co-ink-2);margin-top:3px}
+.authbar .sep{width:1px;align-self:stretch;background:var(--co-line)}
+.authbar .msg{flex:1;min-width:220px;font-size:13.5px;color:var(--co-ink-2);line-height:1.5}
+
+.docgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:var(--s4)}
+.doccard{background:var(--co-surface);border:var(--co-bd);border-radius:var(--r-lg);
+  box-shadow:var(--co-off);padding:var(--s5);display:flex;flex-direction:column;gap:var(--s3)}
+.doccard h4{font-size:16px;margin:0;line-height:1.3}
+.doccard .iss{font-size:13px;color:var(--co-ink-2);margin:0}
+.doccard dl{display:grid;gap:7px;margin:0;font-size:13px}
+.doccard dl > div{display:flex;gap:var(--s3);align-items:baseline}
+.doccard dt{color:var(--co-ink-2);flex-shrink:0;min-width:92px}
+.doccard dd{margin:0;font-weight:600;font-variant-numeric:tabular-nums}
+.doccard .pills{display:flex;gap:7px;flex-wrap:wrap;margin-top:auto;padding-top:var(--s3)}
+.doccard .note{font-size:12.5px;color:var(--co-ink-2);margin:0;line-height:1.5}
+.doccard .open{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;
+  text-decoration:underline;color:var(--co-ink)}
+.doccard .open svg{width:14px;height:14px}
+
+/* platform-owned pills — never themed */
+.dpill{display:inline-flex;align-items:center;gap:5px;border-radius:var(--r-pill);
+  border:2px solid #12131A;font-size:11px;font-weight:700;padding:2px 10px;
+  white-space:nowrap;background:#fff;color:#12131A}
+.dpill svg{width:10px;height:10px}
+.dp-ok{background:#15803D;color:#fff}
+.dp-warn{background:#FEF3C7}
+.dp-soon{background:#FEF3C7}
+.dp-off{background:#EFEFEF;color:#5B6070;border-color:#C3C7D6}
+.dp-cur{background:#DCFCE7}
+
+.docnote{margin-top:var(--s6);border-top:var(--co-bd);padding-top:var(--s5)}
+.docnote h3{font-size:16px;margin-bottom:var(--s3)}
+.docfacts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:var(--s4);margin:0 0 var(--s4)}
+.docfacts dt{margin-bottom:6px}
+.docfacts dd{margin:0;font-size:13px;color:var(--co-ink-2);line-height:1.55}
+.linkish{background:none;border:0;padding:0;font:inherit;font-weight:700;
+  text-decoration:underline;cursor:pointer;color:inherit}
+
+.docempty{border:2px dashed var(--co-line);border-radius:var(--r-lg);
+  padding:var(--s7) var(--s5);text-align:center;color:var(--co-ink-2)}
+.docempty b{display:block;font-size:16px;color:var(--co-ink);margin-bottom:6px}
+
+.pane{display:none}
+.pane.on{display:block;animation:fade .24s var(--ease)}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* fleet grid */
+.fleet{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:var(--s4)}
+.unit{background:var(--surface);border:var(--bd);border-radius:var(--r-lg);
+  box-shadow:var(--off);overflow:hidden;display:flex;flex-direction:column;
+  transition:transform .18s var(--ease),box-shadow .18s var(--ease)}
+.unit:hover{transform:translate(-3px,-3px);box-shadow:var(--off-lift)}
+/* the product photo slot — present in every layout */
+.utop{height:120px;position:relative;border-bottom:var(--bd);
+  background-color:var(--brand-tint);background-size:cover;background-position:center;
+  color:var(--brand);overflow:hidden}
+/* category glyph sits as a small chip so the unit type stays scannable
+   even once a real photo fills the slot */
+.uicon{position:absolute;left:9px;bottom:9px;width:30px;height:30px;border-radius:9px;
+  display:grid;place-items:center;background:rgba(255,255,255,.92);color:var(--ink);
+  border:2px solid var(--ink);backdrop-filter:blur(4px)}
+.uicon svg{width:17px;height:17px}
+/* long-hire saving, so the discount an owner set is visible before booking */
+.usave{position:absolute;left:9px;top:9px;background:var(--ok);color:#fff;
+  border:2px solid var(--ink);border-radius:var(--r-pill);font-size:10.5px;
+  font-weight:700;padding:2px 9px;letter-spacing:.02em}
+.unote{margin:0 0 var(--s3);font-size:12.5px;color:var(--co-ink-2,var(--ink-2));
+  border-left:3px solid var(--co-accent,var(--accent));padding-left:9px}
+.unitnone{grid-column:1/-1;text-align:center;padding:var(--s7);border:3px dashed var(--hair);
+  border-radius:var(--r-lg);color:var(--ink-2);font-size:15px}
+
+/* ---- multi-service companies: one group per service line ---- */
+.fleetline + .fleetline{margin-top:var(--s7)}
+.linehead{display:flex;align-items:center;gap:11px;font-size:20px;margin-bottom:var(--s4)}
+.lineic{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;
+  border:var(--bd-thin);flex-shrink:0}
+.lineic svg{width:19px;height:19px}
+.v-vehicles{background:var(--c-vehicle-tint);color:var(--c-vehicle);border-color:var(--c-vehicle)}
+.v-equipment{background:var(--c-equip-tint);color:var(--c-equip);border-color:var(--c-equip)}
+.v-towing{background:var(--c-tow-tint);color:var(--c-tow);border-color:var(--c-tow)}
+.linecount{margin-left:auto;font-family:Inter,sans-serif;font-size:12px;font-weight:700;
+  letter-spacing:.05em;text-transform:uppercase;color:var(--co-ink-2,var(--ink-2))}
+
+/* ---- services & add-ons ---- */
+.svcgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:var(--lay-gap,var(--s4))}
+.svc{display:flex;gap:var(--s3);align-items:flex-start;padding:var(--lay-pad,var(--s4));
+  background:var(--co-surface);border:var(--lay-border);border-radius:var(--lay-radius);
+  box-shadow:var(--lay-shadow);color:var(--co-ink)}
+.svcic{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;
+  border:var(--bd-thin);flex-shrink:0}
+.svcic svg{width:19px;height:19px}
+.svcmain{flex:1;min-width:0}
+.svcmain b{display:block;font-size:14.5px;margin-bottom:2px}
+.svcmain p{margin:0;font-size:12.5px;color:var(--co-ink-2)}
+.svcprice{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;
+  white-space:nowrap;flex-shrink:0}
+.svcprice small{font-size:11px;font-weight:600;color:var(--co-ink-2);font-family:Inter,sans-serif}
+.uavail{position:absolute;top:10px;right:10px}
+.ubody{padding:var(--s4);flex:1;display:flex;flex-direction:column}
+.ubody h3{font-size:17px;margin-bottom:var(--s3)}
+.uspecs{list-style:none;margin:0 0 var(--s4);padding:0;font-size:13px}
+.uspecs li{display:flex;justify-content:space-between;gap:var(--s3);
+  padding:5px 0;border-bottom:1px dashed var(--hair)}
+.uspecs li:last-child{border-bottom:0}
+.uspecs .k{color:var(--ink-3);font-weight:600}
+.uspecs .v{font-weight:700;text-align:right}
+.ufoot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;
+  gap:var(--s3);padding-top:var(--s3);border-top:2px dashed var(--hair)}
+.uprice{font-family:'Space Grotesk',sans-serif;font-size:21px;font-weight:700;letter-spacing:-.03em}
+.uprice small{font-size:12px;color:var(--ink-2);font-weight:600;font-family:Inter,sans-serif}
+.ubtn{background:var(--co-accent);border:var(--bd);border-radius:var(--r-pill);
+  height:40px;padding:0 18px;font-weight:700;font-size:13.5px;box-shadow:var(--off-sm);
+  transition:transform .16s var(--ease),box-shadow .16s var(--ease)}
+.ubtn:hover{transform:translate(-2px,-2px);box-shadow:var(--off)}
+
+/* about pane */
+.abgrid{display:grid;grid-template-columns:1.4fr 1fr;gap:var(--s5);align-items:start}
+.abtext p{font-size:16px;color:var(--ink-2);margin:0 0 var(--s4)}
+.certs{list-style:none;margin:0;padding:0}
+.certs li{display:flex;gap:var(--s3);align-items:flex-start;padding:11px 0;
+  border-bottom:1px dashed var(--hair);font-size:14.5px}
+.certs li:last-child{border-bottom:0}
+.certs .ck{width:22px;height:22px;border-radius:7px;background:var(--ok-tint);
+  color:var(--ok);display:grid;place-items:center;flex-shrink:0;margin-top:1px}
+
+/* reviews */
+.revsum{display:flex;gap:var(--s6);align-items:center;flex-wrap:wrap;margin-bottom:var(--s5)}
+.revbig{font-family:'Space Grotesk',sans-serif;font-size:56px;font-weight:700;
+  letter-spacing:-.04em;line-height:1}
+.revbars{flex:1;min-width:240px}
+.revbar{display:flex;align-items:center;gap:var(--s3);font-size:13px;
+  color:var(--ink-2);margin-bottom:5px}
+.revtrack{flex:1;height:9px;background:var(--surface-2);border:2px solid var(--ink);
+  border-radius:var(--r-pill);overflow:hidden}
+.revfill{height:100%;background:var(--yellow)}
+.rev{border:var(--bd);border-radius:var(--r);padding:var(--s4);background:var(--surface);
+  margin-bottom:var(--s3)}
+.revhead{display:flex;gap:var(--s3);align-items:center;margin-bottom:var(--s3);flex-wrap:wrap}
+.revav{width:38px;height:38px;border-radius:12px;background:var(--indigo-tint);
+  border:var(--bd-thin);display:grid;place-items:center;font-weight:700;font-size:13px}
+.revwho b{display:block;font-size:14.5px}
+.revwho span{font-size:12.5px;color:var(--ink-3)}
+.revstars{margin-left:auto;color:var(--accent);display:inline-flex;gap:2px}
+.revstars svg{width:15px;height:15px}
+.revstars.big svg{width:19px;height:19px}
+.rev p{margin:0;font-size:14.5px;color:var(--ink-2)}
+
+/* coverage */
+.covgrid{display:grid;grid-template-columns:1fr 1.1fr;gap:var(--s5);align-items:stretch}
+.covgrid .mapvis{border:var(--bd);border-radius:var(--r-lg);min-height:340px;
+  box-shadow:var(--off)}
+.arealist{display:flex;flex-wrap:wrap;gap:var(--s2);margin-top:var(--s4)}
+
+/* sticky booking bar (mobile) */
+.bookbar{position:fixed;left:0;right:0;bottom:0;z-index:70;background:var(--surface);
+  border-top:var(--bd);padding:var(--s3) var(--s4);display:none;
+  align-items:center;gap:var(--s3);box-shadow:0 -4px 0 rgba(18,19,26,.06)}
+.bookbar .p{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:19px}
+.bookbar .p small{display:block;font-size:11px;color:var(--ink-2);font-family:Inter,sans-serif}
+
+/* ---- owner entry point ---- */
+.ownerfab{position:fixed;right:var(--s5);bottom:var(--s5);z-index:90;white-space:nowrap}
+.ownerfab svg{width:16px;height:16px;flex-shrink:0}
+/* inside the admin preview this is a public-visitor view, so owner-only
+   chrome is hidden — otherwise the preview lies about what renters see */
+.is-preview .ownerfab,.is-preview .cover .owner{display:none}
+
+/* ---- report company ---- */
+.reportbtn{display:inline-flex;align-items:center;gap:7px;height:48px;padding:0 18px;
+  border:var(--bd-thin);border-color:var(--hair);border-radius:var(--r-pill);
+  background:var(--surface);font-weight:700;font-size:14px;color:var(--ink-2)}
+.reportbtn:hover{border-color:var(--danger);color:var(--danger)}
+.rmodal{position:fixed;inset:0;z-index:200;display:grid;place-items:start center;
+  padding:var(--s6) var(--s4);overflow-y:auto}
+.rmodal[hidden]{display:none}
+.rm-bd{position:fixed;inset:0;background:rgba(10,11,16,.62);backdrop-filter:blur(3px)}
+.rm-card{position:relative;width:100%;max-width:600px;background:var(--surface);color:var(--ink);
+  border:var(--bd);border-radius:var(--r-lg);box-shadow:var(--off-lift);padding:var(--s5);
+  margin-bottom:var(--s6)}
+/* Close pinned to the card's corner, matching the admin dialogs. Platform
+   chrome, so it takes fixed colours rather than the owner's theme. */
+.rm-card .lm-x{position:absolute;top:12px;right:12px;z-index:3;
+  width:38px;height:38px;border-radius:11px;border:2px solid #12131A;
+  background:#F4F2ED;color:#12131A;display:grid;place-items:center;
+  cursor:pointer;padding:0;
+  transition:background .14s var(--ease),color .14s var(--ease)}
+.rm-card .lm-x:hover{background:#B91C1C;color:#fff}
+.rm-card .lm-x:focus-visible{outline:none;box-shadow:0 0 0 3px #F2B705}
+.rm-head{display:flex;gap:var(--s4);align-items:flex-start;margin-bottom:var(--s4);
+  padding-right:46px}
+.rm-head h2{font-size:23px;margin-bottom:6px}
+.rm-head p{margin:0;font-size:14px;color:var(--ink-2);max-width:48ch}
+.rm-reasons{border:0;padding:0;margin:0}
+.rm-reasons legend{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-3);padding:0;margin-bottom:9px}
+.rm-op{display:flex;gap:11px;align-items:flex-start;padding:11px 13px;border:var(--bd-thin);
+  border-color:var(--hair);border-radius:var(--r);margin-bottom:7px;cursor:pointer;
+  transition:border-color .16s var(--ease),background .16s var(--ease)}
+.rm-op:hover{border-color:var(--ink)}
+.rm-op:has(input:checked){border-color:var(--ink);background:var(--accent-tint)}
+.rm-op input{margin-top:3px;accent-color:var(--danger);flex-shrink:0}
+.rm-op b{display:block;font-size:14.5px;margin-bottom:2px}
+.rm-op span{font-size:13px;color:var(--ink-2)}
+.rm-check{display:flex;gap:11px;align-items:flex-start;padding:12px 13px;
+  border:var(--bd-thin);border-color:var(--hair);border-radius:var(--r);cursor:pointer}
+.rm-check input{margin-top:3px;flex-shrink:0}
+.rm-check b{display:block;font-size:14px;margin-bottom:2px}
+.rm-check span{font-size:12.5px;color:var(--ink-2)}
+.rm-warn{display:flex;gap:10px;align-items:flex-start;margin:var(--s4) 0 0;
+  background:var(--danger-tint);border:var(--bd-thin);border-color:var(--danger);
+  border-radius:var(--r);padding:var(--s3) var(--s4);font-size:12.5px;color:var(--ink-2)}
+.rm-warn svg{flex-shrink:0;color:var(--danger);margin-top:1px}
+.rm-warn b{color:var(--ink)}
+.rm-actions{display:flex;gap:var(--s3);margin-top:var(--s5);flex-wrap:wrap}
+.rm-done{text-align:center;padding:var(--s6) var(--s4)}
+.rm-done[hidden]{display:none}
+.rm-ok{width:74px;height:74px;border-radius:22px;background:var(--ok);color:#fff;
+  border:var(--bd);box-shadow:var(--off);display:grid;place-items:center;margin:0 auto var(--s4)}
+.rm-done h3{font-size:22px;margin-bottom:var(--s3)}
+.rm-done p{color:var(--ink-2);font-size:14.5px;max-width:44ch;margin:0 auto var(--s5)}
+
+/* an uploaded logo fills its tile; the fallback glyph does not */
+.colog.haslogo{background:#fff;overflow:hidden;padding:0}
+.colog.haslogo img{width:100%;height:100%;object-fit:contain;padding:8px}
+
+@media (max-width:1000px){
+  .abgrid,.covgrid{grid-template-columns:1fr}
+  .statstrip{grid-template-columns:repeat(3,1fr)}
+  .statstrip .tile:nth-child(4),.statstrip .tile:nth-child(5){grid-column:span 1}
+}
+@media (max-width:720px){
+  .cover{height:150px}
+  .colog{width:78px;height:78px;border-radius:20px;margin-top:-46px}
+  .colog svg{width:38px;height:38px}
+  .idbar{gap:var(--s4)}
+  .idact{width:100%}
+  .idact .btn-brand{flex:1;justify-content:center}
+  .statstrip{grid-template-columns:repeat(2,1fr)}
+  .fleet{grid-template-columns:1fr}
+  .bookbar{display:flex}
+  body{padding-bottom:78px}
+  .ownerfab{right:var(--s4);bottom:90px}
+  .rm-card{padding:var(--s4)}
+}
+
+/* =====================================================================
+   OWNER THEMING — deliberately last in the stylesheet.
+   These rules restate selectors that appear above (.unit, .statstrip .tile
+   and friends) at equal specificity, so they must come afterwards to win
+   on source order. Putting them near the top left every card stuck on the
+   platform's light --surface while the backdrop went dark.
+
+   Scope is the storefront only. The nav and footer keep platform colours
+   so a renter can always tell they are still on FR Services, and the
+   trust cluster below is exempt outright.
+   ===================================================================== */
+body{background:var(--co-bg);color:var(--co-ink)}
+.block,.block-flat,.unit,.rev,.statstrip .tile,.tile,.revsum{
+  background:var(--co-surface);border-color:var(--co-line);color:var(--co-ink)}
+.utop{background:var(--co-primary-tint);color:var(--co-on-tint);border-bottom-color:var(--co-line)}
+.idmain h1,.pane h2,.pane h3,.ubody h3,.uprice,.revbig,.revwho b,.uspecs .v,.tile b,.sf-name strong
+  {color:var(--co-ink)}
+.idmeta,.pane p,.abtext p,.uspecs .k,.revwho span,.rev p,.tile span,.uprice small,
+.mapinfo p,.crumb,.crumb a{color:var(--co-ink-2)}
+.cotabs{border-bottom-color:var(--co-line)}
+.cotab{color:var(--co-ink-2)}
+.cotab:hover,.cotab.on{color:var(--co-ink)}
+.cotab.on{border-bottom-color:var(--co-primary)}
+.uspecs li,.certs li,.ufoot,.cofoot{border-color:var(--co-line)}
+.revtrack{background:var(--co-bg);border-color:var(--co-ink)}
+.revfill{background:var(--co-accent)}
+.ubtn{background:var(--co-accent);color:var(--co-on-accent)}
+.arealist .t,.cotags .t{background:var(--co-surface);color:var(--co-ink);border-color:var(--co-line)}
+.covgrid .mapvis{border-color:var(--co-line)}
+/* dark themes need the dashed rules lifted or they vanish */
+[data-co-mode="dark"] .uspecs li,[data-co-mode="dark"] .ufoot,
+[data-co-mode="dark"] .certs li{border-color:var(--co-line)}
+[data-co-mode="dark"] .certs .ck{background:rgba(255,255,255,.12)}
+
+/* =====================================================================
+   STOREFRONT LAYOUTS
+   Ten structural skins, selected in the admin and applied through
+   data-co-layout on <html>. Each one sets the --lay-* contract below;
+   the shared component rules consume it, so adding a layout means adding
+   one variable block, not rewriting the page.
+
+   These change SHAPE only. Colour stays entirely with the owner's theme,
+   so any layout works with any palette.
+   ===================================================================== */
+:root{
+  --lay-radius:var(--r-lg); --lay-radius-sm:var(--r-pill);
+  --lay-border:var(--bd);   --lay-shadow:var(--off); --lay-shadow-hover:var(--off-lift);
+  --lay-cover-h:220px;      --lay-logo-r:26px;       --lay-logo-shadow:var(--off);
+  --lay-gap:var(--s4);      --lay-fleet-min:300px;   --lay-utop:120px;
+  --lay-pad:var(--s5);      --lay-label:inherit;     --lay-label-tt:none;
+}
+
+/* the components that every layout re-skins */
+.block,.block-flat,.unit,.rev,.statstrip .tile,.revsum{
+  border:var(--lay-border);border-radius:var(--lay-radius);box-shadow:var(--lay-shadow)}
+.unit{overflow:hidden}
+.unit:hover{box-shadow:var(--lay-shadow-hover)}
+.cover{height:var(--lay-cover-h)}
+/* .cover is position:relative for its owner pill, which makes it paint
+   above in-flow siblings — without a stacking position of its own the
+   logo gets sliced off wherever it overlaps the banner. */
+.colog{border-radius:var(--lay-logo-r);border:var(--lay-border);
+  box-shadow:var(--lay-logo-shadow);position:relative;z-index:2}
+.fleet{grid-template-columns:repeat(auto-fill,minmax(var(--lay-fleet-min),1fr));gap:var(--lay-gap)}
+.utop{height:var(--lay-utop)}
+.ubtn,.idact .btn-brand,.reportbtn,.idact .btn{border-radius:var(--lay-radius-sm)}
+.ubody,.block,.block-flat{padding:var(--lay-pad)}
+.uspecs .k{font-family:var(--lay-label);text-transform:var(--lay-label-tt)}
+
+/* ---- 2. Swiss — Minimalism & Swiss Style: hairlines, no shadow, air ---- */
+[data-co-layout="swiss"]{
+  --lay-radius:0px; --lay-radius-sm:0px; --lay-border:1px solid var(--co-line);
+  --lay-shadow:none; --lay-shadow-hover:none; --lay-cover-h:170px;
+  --lay-logo-r:0px; --lay-logo-shadow:none; --lay-gap:var(--s6);
+  --lay-fleet-min:280px; --lay-utop:186px; --lay-pad:var(--s5);
+}
+[data-co-layout="swiss"] .uicon{border-radius:0;border-width:1px}
+[data-co-layout="swiss"] .cotab.on{border-bottom-width:2px}
+[data-co-layout="swiss"] .idmain h1{font-weight:500;letter-spacing:-.04em}
+
+/* ---- 3. Soft — Soft UI Evolution: deep rounding, gentle depth ---- */
+[data-co-layout="soft"]{
+  --lay-radius:26px; --lay-radius-sm:var(--r-pill); --lay-border:0;
+  --lay-shadow:0 10px 30px rgba(18,19,26,.10),0 2px 6px rgba(18,19,26,.06);
+  --lay-shadow-hover:0 18px 44px rgba(18,19,26,.16);
+  --lay-cover-h:210px; --lay-logo-r:30px;
+  --lay-logo-shadow:0 10px 26px rgba(18,19,26,.18);
+  --lay-gap:var(--s5); --lay-utop:132px;
+}
+[data-co-layout="soft"] .cotabs{border-bottom:0}
+[data-co-layout="soft"] .uspecs li,[data-co-layout="soft"] .ufoot{border-color:transparent}
+[data-co-layout="soft"] .uspecs li{border-bottom:1px solid var(--co-line);opacity:.9}
+
+/* ---- 4. Glass — Glassmorphism: frosted panels over the cover ---- */
+[data-co-layout="glass"]{
+  --lay-radius:20px; --lay-border:1px solid rgba(255,255,255,.35);
+  --lay-shadow:0 8px 32px rgba(18,19,26,.18); --lay-shadow-hover:0 14px 44px rgba(18,19,26,.26);
+  --lay-cover-h:300px; --lay-logo-r:22px; --lay-logo-shadow:0 8px 26px rgba(18,19,26,.22);
+  --lay-gap:var(--s4); --lay-utop:120px;
+}
+[data-co-layout="glass"] .block,[data-co-layout="glass"] .unit,
+[data-co-layout="glass"] .rev,[data-co-layout="glass"] .statstrip .tile{
+  background:color-mix(in srgb, var(--co-surface) 62%, transparent);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+/* The identity sits ON the cover in white, so it must clear the bottom
+   edge entirely — at -96px the last meta line fell onto the pale backdrop
+   and turned invisible. A scrim guarantees legibility over any cover,
+   including a light gold gradient or a bright uploaded photo. */
+[data-co-layout="glass"] .cover::after{content:'';position:absolute;inset:auto 0 0;
+  height:62%;background:linear-gradient(180deg,transparent,rgba(10,11,16,.6));
+  pointer-events:none}
+[data-co-layout="glass"] .idbar{margin-top:-148px;position:relative;z-index:2;
+  padding-bottom:var(--s4)}
+[data-co-layout="glass"] .colog{margin-top:0}
+[data-co-layout="glass"] .idmain h1{color:#fff;text-shadow:0 2px 18px rgba(0,0,0,.55)}
+[data-co-layout="glass"] .idmeta{color:rgba(255,255,255,.92);
+  text-shadow:0 1px 10px rgba(0,0,0,.6)}
+
+/* ---- 5. Industrial — Data-Dense: square, tight, monospaced labels ---- */
+[data-co-layout="industrial"]{
+  --lay-radius:0px; --lay-radius-sm:2px; --lay-border:1px solid var(--co-line);
+  --lay-shadow:none; --lay-shadow-hover:inset 0 0 0 2px var(--co-primary);
+  --lay-cover-h:130px; --lay-logo-r:0px; --lay-logo-shadow:none;
+  --lay-gap:1px; --lay-fleet-min:260px; --lay-utop:74px; --lay-pad:var(--s4);
+  --lay-label:'JetBrains Mono',ui-monospace,monospace; --lay-label-tt:uppercase;
+}
+[data-co-layout="industrial"] .uspecs{font-size:12px}
+[data-co-layout="industrial"] .uspecs .k{font-size:10.5px;letter-spacing:.06em}
+[data-co-layout="industrial"] .statstrip{gap:1px}
+[data-co-layout="industrial"] .ubody h3{font-size:15px;letter-spacing:-.01em}
+[data-co-layout="industrial"] .idmain h1{letter-spacing:-.04em}
+
+/* ---- 6. Editorial — Storytelling: tall cover, wide measure ---- */
+[data-co-layout="editorial"]{
+  --lay-radius:0px; --lay-radius-sm:0px; --lay-border:0;
+  --lay-shadow:none; --lay-shadow-hover:none; --lay-cover-h:340px;
+  --lay-logo-r:0px; --lay-logo-shadow:none; --lay-gap:var(--s7);
+  --lay-fleet-min:340px; --lay-utop:190px; --lay-pad:0px;
+}
+[data-co-layout="editorial"] .unit{border-top:2px solid var(--co-ink);padding-top:var(--s3)}
+[data-co-layout="editorial"] .ubody{padding:var(--s3) 0 0}
+[data-co-layout="editorial"] .idmain h1{font-size:clamp(32px,4.6vw,52px);letter-spacing:-.045em}
+[data-co-layout="editorial"] .block,[data-co-layout="editorial"] .statstrip .tile{
+  border-top:2px solid var(--co-ink);padding-top:var(--s4)}
+[data-co-layout="editorial"] .cotabs{border-bottom-width:2px}
+
+/* ---- 7. Bento — Bento Box Grid: modular, varied spans ---- */
+[data-co-layout="bento"]{
+  --lay-radius:18px; --lay-border:0;
+  --lay-shadow:0 2px 10px rgba(18,19,26,.08); --lay-shadow-hover:0 10px 28px rgba(18,19,26,.14);
+  --lay-cover-h:200px; --lay-logo-r:20px; --lay-logo-shadow:0 6px 18px rgba(18,19,26,.14);
+  --lay-gap:var(--s3); --lay-fleet-min:250px; --lay-utop:104px;
+}
+[data-co-layout="bento"] .fleet{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+[data-co-layout="bento"] .unit:first-child{grid-column:span 2}
+[data-co-layout="bento"] .unit:first-child .utop{height:160px}
+[data-co-layout="bento"] .unit:nth-child(4){grid-row:span 1}
+
+/* ---- 8. Paper — E-Ink: matte, flat, ruled like print ---- */
+[data-co-layout="paper"]{
+  --lay-radius:0px; --lay-radius-sm:0px; --lay-border:1px solid var(--co-ink);
+  --lay-shadow:none; --lay-shadow-hover:none; --lay-cover-h:120px;
+  --lay-logo-r:0px; --lay-logo-shadow:none; --lay-gap:0px;
+  --lay-fleet-min:100%; --lay-utop:auto; --lay-pad:var(--s4);
+}
+/* single-column rows, so the photo becomes a catalogue thumbnail on the
+   left rather than a full-width banner */
+[data-co-layout="paper"] .unit{border-width:0 0 1px 0;flex-direction:row;align-items:stretch}
+[data-co-layout="paper"] .utop{width:132px;flex-shrink:0;height:auto;min-height:104px;
+  border-bottom:0;border-right:1px solid var(--co-ink)}
+[data-co-layout="paper"] .ubody{flex:1;min-width:0}
+[data-co-layout="paper"] .uicon{width:24px;height:24px;border-radius:0;border-width:1px}
+[data-co-layout="paper"] .fleet{grid-template-columns:1fr}
+[data-co-layout="paper"] .uspecs li{border-bottom-style:dotted}
+[data-co-layout="paper"] .statstrip .tile{border-width:0 1px 0 0}
+[data-co-layout="paper"] .statstrip .tile:last-child{border-right:0}
+
+/* ---- 9. Showcase — Hero-Centric: full-bleed cover, centred identity ---- */
+[data-co-layout="showcase"]{
+  --lay-radius:14px; --lay-border:0;
+  --lay-shadow:0 4px 18px rgba(18,19,26,.10); --lay-shadow-hover:0 12px 34px rgba(18,19,26,.18);
+  --lay-cover-h:420px; --lay-logo-r:50%; --lay-logo-shadow:0 8px 24px rgba(18,19,26,.22);
+  --lay-gap:var(--s5); --lay-fleet-min:380px; --lay-utop:210px;
+}
+/* Centred identity stack: logo straddling the cover edge, then name,
+   then the trust row, then the actions. `flex:none` on .idmain because in
+   a column the inherited flex:1 stretches it and pushes the gaps apart. */
+[data-co-layout="showcase"] .idbar{flex-direction:column;align-items:center;
+  text-align:center;gap:var(--s3);margin-top:0}
+[data-co-layout="showcase"] .colog{margin-top:-52px;margin-bottom:var(--s2)}
+[data-co-layout="showcase"] .colog svg{width:46px;height:46px}
+[data-co-layout="showcase"] .idmain{flex:none;width:100%;min-width:0;padding-bottom:0}
+[data-co-layout="showcase"] .idmain h1{font-size:clamp(30px,4.4vw,46px);margin-bottom:var(--s3)}
+[data-co-layout="showcase"] .idmeta{justify-content:center;row-gap:var(--s2)}
+[data-co-layout="showcase"] .idact{justify-content:center;width:100%;padding-bottom:0}
+[data-co-layout="showcase"] .cotabs{justify-content:center}
+/* an uploaded logo needs the circular mask too, not just the fallback tile */
+[data-co-layout="showcase"] .colog.haslogo img{border-radius:50%}
+
+/* ---- 10. Console — HUD / Sci-Fi: thin lines, glow, monospace ---- */
+[data-co-layout="console"]{
+  --lay-radius:4px; --lay-radius-sm:4px;
+  --lay-border:1px solid color-mix(in srgb, var(--co-primary) 55%, transparent);
+  --lay-shadow:none;
+  --lay-shadow-hover:0 0 0 1px var(--co-primary),0 0 18px color-mix(in srgb, var(--co-primary) 40%, transparent);
+  --lay-cover-h:150px; --lay-logo-r:4px;
+  --lay-logo-shadow:0 0 20px color-mix(in srgb, var(--co-primary) 45%, transparent);
+  --lay-gap:var(--s3); --lay-fleet-min:270px; --lay-utop:88px; --lay-pad:var(--s4);
+  --lay-label:'JetBrains Mono',ui-monospace,monospace; --lay-label-tt:uppercase;
+}
+[data-co-layout="console"] .statstrip .tile span,
+[data-co-layout="console"] .ubody h3{font-family:'JetBrains Mono',ui-monospace,monospace;
+  letter-spacing:-.02em}
+[data-co-layout="console"] .ubody h3{font-size:14px}
+[data-co-layout="console"] .cotab.on{border-bottom-color:var(--co-primary);
+  text-shadow:0 0 12px color-mix(in srgb, var(--co-primary) 60%, transparent)}
+[data-co-layout="console"] .uspecs{font-size:12px}
+
+/* --- exempt: platform-owned trust cluster, fixed in every theme --- */
+.verified,.rate-pill,.reportbtn,.vpop,.rmodal,.rm-card,.bookbar,
+nav.top,nav.top *,footer.site,footer.site *{
+  --co-ink:inherit}
+.verified{background:var(--ok);color:#fff}
+.rate-pill{background:var(--ink);color:#fff}
+.reportbtn{background:var(--surface);color:var(--ink-2)}
+/* white-backed chrome must keep dark text — on a dark theme these inherit
+   the themed ink and render white-on-white */
+.idact .btn-w,.cover .owner{color:var(--ink)}
+#favBtn.is-on{color:var(--danger)}   /* keep the saved state legible on any theme */
+.vpop,.rm-card{background:var(--surface);color:var(--ink)}
+.vpop h4,.rm-head h2,.rm-done h3,.rm-op b,.rm-check b{color:var(--ink)}
+.vpop ul,.vpop .no,.rm-head p,.rm-op span,.rm-check span,.rm-done p{color:var(--ink-2)}
+nav.top,footer.site{background:var(--bg);color:var(--ink)}
+footer.site{background:var(--surface-2)}
+.bookbar{background:var(--surface);color:var(--ink)}
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="wrap nbar">
+    <a class="logo" href="index.html">
+      <span class="m"><img src="logo.png" alt="FR Services"></span>
+      <span class="wm">FR Services<small>Fleet Rental</small></span>
+    </a>
+    <div class="nlinks">
+      <a href="index.html">Rent</a>
+      <a href="index.html#how">How it works</a>
+      <a href="register.html">For companies</a>
+      <a href="tow.html">Emergency tow</a>
+    </div>
+    <div class="nright">
+      <a class="btn btn-w hide-sm" href="register.html">List your company</a>
+      <span class="nauth" id="authNav"><a class="btn btn-i" href="platform.html">Sign in</a></span>
+    </div>
+  </div>
+</nav>
+
+<!-- Breadcrumb sits above the cover: the logo tile below lifts into the
+     cover art, so anything between the two would get clipped. -->
+<div class="wrap">
+  <div class="crumb">
+    <a href="index.html">Home</a>
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M9 6l6 6-6 6"/></svg>
+    <a href="index.html" id="cb-cat">Heavy Equipment</a>
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M9 6l6 6-6 6"/></svg>
+    <span id="cb-city">Davao City</span>
+  </div>
+</div>
+
+<!-- OWNER-CONTROLLED COVER -->
+<div class="cover">
+  <span class="owner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg> Owner-editable cover</span>
+</div>
+
+<div class="wrap">
+  <!-- IDENTITY -->
+  <div class="idbar">
+    <div class="colog" id="co-logo"></div>
+    <div class="idmain">
+      <h1 id="co-name">Davao Heavy Lift Corp.</h1>
+      <div class="idmeta" style="position:relative">
+        <!-- platform-owned trust signals: never themed, always clickable -->
+        <button class="verified" id="vBtn" aria-expanded="false" aria-controls="vPop">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.4 1.8 3-.2.9 2.9 2.5 1.7-1.2 2.8 1.2 2.8-2.5 1.7-.9 2.9-3-.2L12 22l-2.4-1.8-3 .2-.9-2.9-2.5-1.7L4.4 13 3.2 10.2l2.5-1.7.9-2.9 3 .2z"/></svg>
+          Verified company
+          <svg class="chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="vpop" id="vPop" role="dialog" aria-label="What verified means" hidden
+             style="top:34px;left:0">
+          <h4>What we checked</h4>
+          <ul>
+            <li>SEC or DTI business registration</li>
+            <li>Current mayor's / business permit</li>
+            <li>LTO registration for each listed unit</li>
+            <li>Comprehensive insurance certificate</li>
+            <li>Government ID of the registered owner</li>
+          </ul>
+          <p class="no"><b>What it does not mean.</b> We do not inspect vehicles or guarantee
+          condition, pricing or punctuality. Ratings come from completed bookings only.
+          Report anything that looks wrong.</p>
+        </div>
+        <span class="rate-pill" id="co-rating"></span>
+        <span class="sep">·</span>
+        <span id="co-loc">Talomo, Davao City</span>
+        <span class="sep">·</span>
+        <span id="co-since">Operating since 2009</span>
+      </div>
+    </div>
+    <div class="idact">
+      <button class="btn-brand">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Message company
+      </button>
+      <!-- Only rendered for a signed-in visitor; see paintFavourite(). A
+           saved company has to belong to somebody. -->
+      <button class="btn btn-w" id="favBtn" data-fav aria-label="Save company" hidden>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20.8 8.6c0 5-8.8 9.9-8.8 9.9s-8.8-4.9-8.8-9.9a4.8 4.8 0 0 1 8.8-2.7 4.8 4.8 0 0 1 8.8 2.7z"/></svg>
+        <span id="favLbl">Save</span>
+      </button>
+      <button class="reportbtn" id="reportBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4h9l1 2h6v9h-7l-1-2H4"/></svg>
+        Report
+      </button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="statstrip">
+    <div class="tile"><b id="st-units">34</b><span>UNITS</span></div>
+    <div class="tile"><b id="st-reply">8 min</b><span>AVG REPLY</span></div>
+    <div class="tile"><b id="st-radius">50 km</b><span>SERVICE RADIUS</span></div>
+    <div class="tile"><b id="st-reviews">218</b><span>REVIEWS</span></div>
+    <div class="tile"><b id="st-km">3.9 km</b><span>FROM YOU</span></div>
+  </div>
+
+  <!-- SECTION TABS -->
+  <div class="cotabs" role="tablist">
+    <button class="cotab on" data-pane="fleet" role="tab">Fleet &amp; rates</button>
+    <button class="cotab" data-pane="about" role="tab">About</button>
+    <button class="cotab" data-pane="docs" role="tab">Documents</button>
+    <button class="cotab" data-pane="coverage" role="tab">Service areas</button>
+    <button class="cotab" data-pane="reviews" role="tab">Reviews</button>
+  </div>
+
+  <!-- FLEET -->
+  <section class="pane on" id="pane-fleet">
+    <div class="shead">
+      <div>
+        <h2>Available units</h2>
+        <p>Rates shown are per day, exclusive of fuel unless stated. Delivery quoted separately.</p>
+      </div>
+    </div>
+    <div id="fleet-groups"></div>
+
+    <!-- Add-ons a company sells alongside the unit. Vehicle rental in
+         particular lives on pickup and drop-off. -->
+    <section id="svc-block" hidden>
+      <div class="shead" style="margin-top:var(--s7)">
+        <div>
+          <h2>Services &amp; add-ons</h2>
+          <p>Optional extras you can add when you book. Prices are per the unit shown.</p>
+        </div>
+      </div>
+      <div class="svcgrid" id="svc-list"></div>
+    </section>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="pane" id="pane-about">
+    <div class="abgrid">
+      <div class="abtext">
+        <h2 class="mb4">About this company</h2>
+        <p id="co-about"></p>
+        <p>Bookings are confirmed by the company within their stated reply time. For heavy equipment, mobilization and demobilization are quoted per site based on distance and access.</p>
+        <div class="block mt5">
+          <h3 class="mb3" style="font-size:17px">Rental terms</h3>
+          <ul class="uspecs">
+            <li><span class="k">Minimum rental</span><span class="v">1 day (8 hours)</span></li>
+            <li><span class="k">Overtime rate</span><span class="v">₱850 / hour</span></li>
+            <li><span class="k">Fuel</span><span class="v">Client-supplied</span></li>
+            <li><span class="k">Operator meals &amp; lodging</span><span class="v">Client account</span></li>
+            <li><span class="k">Cancellation</span><span class="v">Free up to 48h before</span></li>
+            <li><span class="k">Payment</span><span class="v">50% down, balance on completion</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="block">
+        <h3 class="mb3" style="font-size:17px">Credentials</h3>
+        <ul class="certs" id="cred-list"></ul>
+        <p class="small muted mt4" style="padding-top:var(--s3);border-top:2px dashed var(--hair)">
+          A tick means FR Services confirmed the document with the office that issued it. Anything marked <b>company-submitted</b> is the company's own upload and has not been checked yet.
+          <button class="linkish" data-pane-link="docs">See all documents</button>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOCUMENTS
+       What the company chose to publish, plus an honest statement of what
+       each item does and does not prove. The distinction between "checked
+       by FR Services" and "the company uploaded this" is the whole point
+       of the section — collapse it and the section is worse than nothing. -->
+  <section class="pane" id="pane-docs">
+    <div class="shead">
+      <div>
+        <h2>Is this company real?</h2>
+        <p>The permits and registrations this company has chosen to show. Check them before you pay a deposit.</p>
+      </div>
+    </div>
+
+    <div class="authbar" id="auth-summary"></div>
+    <div class="docgrid" id="doc-list"></div>
+
+    <div class="docnote">
+      <h3>How to read this</h3>
+      <dl class="docfacts">
+        <div><dt><span class="dpill dp-ok">Checked by FR Services</span></dt>
+          <dd>We have seen the original and confirmed it with the issuing office. We check three documents: DTI registration, the mayor's permit and BIR 2303.</dd></div>
+        <div><dt><span class="dpill dp-warn">Company-submitted</span></dt>
+          <dd>The company's own upload — either one of the three still awaiting our check, or a supporting document we do not review at all, such as an insurance policy or a vehicle OR/CR. Treat it as a claim, not proof.</dd></div>
+        <div><dt><span class="dpill dp-off">Expired</span></dt>
+          <dd>The validity date has passed. A company cannot hide this by publishing it.</dd></div>
+      </dl>
+      <p class="small muted" style="margin-bottom:0">Document numbers are shortened by default so they cannot be copied off this page and used to impersonate the company. You can ask the company for the full number, then check it directly with the issuing office — that is always the strongest test. Something wrong here? <button class="linkish" data-report-open>Report this company</button>.</p>
+    </div>
+  </section>
+
+  <!-- COVERAGE -->
+  <section class="pane" id="pane-coverage">
+    <div class="covgrid">
+      <div>
+        <h2 class="mb3">Where this company operates</h2>
+        <p class="muted mb4">This company set a <b id="cov-radius">50 km</b> service radius from <b id="cov-base">Talomo, Davao City</b>. Renters outside this area will not see them in search results — that's what keeps your results local.</p>
+        <div class="block-flat">
+          <span class="flabel">Cities served</span>
+          <div class="arealist">
+            <span class="t">Davao City</span><span class="t">Panabo</span>
+            <span class="t">Tagum</span><span class="t">Digos</span>
+            <span class="t">Sta. Cruz</span><span class="t">Carmen</span>
+            <span class="t">Mati</span><span class="t t-mute">+4 more</span>
+          </div>
+        </div>
+        <div class="block-flat mt4">
+          <span class="flabel">Mobilization</span>
+          <ul class="uspecs mt3" style="margin-bottom:0">
+            <li><span class="k">Within 10 km</span><span class="v">Free</span></li>
+            <li><span class="k">10–30 km</span><span class="v">₱2,500</span></li>
+            <li><span class="k">30–50 km</span><span class="v">₱4,500</span></li>
+            <li><span class="k">Beyond 50 km</span><span class="v">Quoted per site</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="mapvis">
+        <svg viewBox="0 0 500 420" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <rect width="500" height="420" fill="#E4EBF2"/>
+          <path d="M-20 280 Q110 240 210 300 T520 265 L520 440 L-20 440Z" fill="#CFDDE6"/>
+          <path d="M30 -20 L130 80 L110 210 L220 300 L180 440" stroke="#F4F8FA" stroke-width="20" fill="none" stroke-linecap="round"/>
+          <path d="M-20 140 L150 175 L370 120 L520 165" stroke="#F4F8FA" stroke-width="14" fill="none"/>
+          <circle cx="240" cy="200" r="72"  fill="rgba(79,70,229,.10)" stroke="rgba(79,70,229,.45)" stroke-width="2.5"/>
+          <circle cx="240" cy="200" r="120" fill="rgba(79,70,229,.06)" stroke="rgba(79,70,229,.3)" stroke-width="2.5" stroke-dasharray="8 7"/>
+          <circle cx="240" cy="200" r="164" fill="none" stroke="rgba(79,70,229,.2)" stroke-width="2" stroke-dasharray="5 8"/>
+        </svg>
+        <button class="mpin you" style="left:48%;top:48%">Base</button>
+        <button class="mpin" style="left:24%;top:30%">10 km</button>
+        <button class="mpin" style="left:72%;top:24%">30 km</button>
+        <button class="mpin" style="left:78%;top:72%">50 km</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="pane" id="pane-reviews">
+    <h2 class="mb4">What renters say</h2>
+    <div class="revsum block">
+      <div style="text-align:center">
+        <div class="revbig" id="rev-avg">4.90</div>
+        <div class="revstars big"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z"/></svg></div>
+        <div class="small muted mt3" id="rev-count">218 reviews</div>
+      </div>
+      <div class="revbars">
+        <div class="revbar"><span>5</span><span class="revtrack"><span class="revfill" style="width:91%"></span></span><span>91%</span></div>
+        <div class="revbar"><span>4</span><span class="revtrack"><span class="revfill" style="width:7%"></span></span><span>7%</span></div>
+        <div class="revbar"><span>3</span><span class="revtrack"><span class="revfill" style="width:1%"></span></span><span>1%</span></div>
+        <div class="revbar"><span>2</span><span class="revtrack"><span class="revfill" style="width:1%"></span></span><span>1%</span></div>
+        <div class="revbar"><span>1</span><span class="revtrack"><span class="revfill" style="width:0%"></span></span><span>0%</span></div>
+      </div>
+    </div>
+    <div id="rev-list"></div>
+  </section>
+</div>
+
+<!-- mobile sticky booking -->
+<div class="bookbar">
+  <div class="p">₱12,000 <small>from / day</small></div>
+  <a class="btn btn-y" style="margin-left:auto" href="booking.html?c=davao-heavy-lift&u=dhl-ex20">Request booking</a>
+</div>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="fbot" style="border-top:0;padding-top:0">
+      <span>© 2026 FR Services Fleet Services PH · Static prototype — demo data only</span>
+      <span><a href="index.html" style="text-decoration:underline">Back to search</a></span>
+    </div>
+  </div>
+</footer>
+
+<!-- Shown to the signed-in owner only. Editing lives in admin.html; this
+     is just the way in from the page you are editing. -->
+<a class="btn btn-d ownerfab" id="ownerEdit" href="admin.html?c=davao-heavy-lift">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+  Edit my page
+</a>
+
+<!-- ================= REPORT COMPANY ================= -->
+<div class="rmodal" id="rModal" hidden>
+  <div class="rm-bd" data-rm-close></div>
+  <div class="rm-card" role="dialog" aria-modal="true" aria-labelledby="rm-title">
+    <div class="rm-head">
+      <div>
+        <h2 id="rm-title">Report this company</h2>
+        <p>Reports go to FR Services Trust &amp; Safety, not to the company. Your name is never shown to them.</p>
+      </div>
+      <button class="lm-x" data-rm-close aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+
+    <form id="rForm" onsubmit="return false">
+      <fieldset class="rm-reasons">
+        <legend>What's the problem?</legend>
+        <label class="rm-op"><input type="radio" name="reason" value="scam" required><span><b>Fraud or scam</b>Asked for payment outside the platform, or took a deposit and disappeared.</span></label>
+        <label class="rm-op"><input type="radio" name="reason" value="listing"><span><b>Misleading listing</b>The unit, price or availability is not what was advertised.</span></label>
+        <label class="rm-op"><input type="radio" name="reason" value="unsafe"><span><b>Unsafe vehicle or equipment</b>Defective, uninsured, or operated without the required certification.</span></label>
+        <label class="rm-op"><input type="radio" name="reason" value="conduct"><span><b>Harassment or unsafe conduct</b>Threatening, abusive or discriminatory behaviour.</span></label>
+        <label class="rm-op"><input type="radio" name="reason" value="reviews"><span><b>Fake reviews or impersonation</b>Reviews look bought, or the company is posing as someone else.</span></label>
+        <label class="rm-op"><input type="radio" name="reason" value="other"><span><b>Something else</b>Tell us below.</span></label>
+      </fieldset>
+
+      <div class="field mt4">
+        <label for="rm-detail">What happened?</label>
+        <textarea id="rm-detail" rows="4" maxlength="1200"
+          placeholder="Dates, unit, amounts, and what was said. Specifics help us act faster."></textarea>
+      </div>
+      <p class="fhelp" id="rm-count">0 / 1200</p>
+
+      <div class="field mt3">
+        <label for="rm-booking">Booking reference <span style="text-transform:none;letter-spacing:0;font-weight:500">(optional)</span></label>
+        <input id="rm-booking" placeholder="FR-2026-XXXXX" maxlength="24">
+      </div>
+
+      <label class="rm-check mt4">
+        <input type="checkbox" id="rm-anon">
+        <span><b>Keep me anonymous to this company</b>We still need your account internally so we can follow up and stop abuse of the report system.</span>
+      </label>
+
+      <p class="rm-warn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+        <span><b>If someone is in danger, call 911 first.</b> This form is not monitored in real time.
+        Do not include passwords, OTPs or card numbers — we will never ask for them.</span>
+      </p>
+
+      <div class="rm-actions">
+        <button class="btn btn-y btn-lg" id="rm-send">Submit report</button>
+        <button class="btn btn-w btn-lg" data-rm-close>Cancel</button>
+      </div>
+    </form>
+
+    <div class="rm-done" id="rm-done" hidden>
+      <div class="rm-ok">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l6 6L20 6"/></svg>
+      </div>
+      <h3>Report received</h3>
+      <p>Reference <b id="rm-ref">FR-R-000000</b>. Trust &amp; Safety reviews reports within 24 hours.
+         We'll message you if we need more, and we'll tell you the outcome.</p>
+      <button class="btn btn-i btn-lg" data-rm-close>Done</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/theme.js"></script>
+<script src="assets/data.js"></script>
+<script src="assets/ops.js"></script>
+<script src="assets/platform.js"></script>
+<script src="assets/auth.js"></script>
+<script>
+const starRow = n => Array.from({length:5}, (_, i) =>
+  i < n ? '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z"/></svg>'
+        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z"/></svg>').join('');
+
+/* ---- load company from ?c= ---- */
+const co = byId(qs('c') || 'davao-heavy-lift') || FR_COMPANIES[4];
+
+/* ---- owner theme ----
+   Declared BEFORE anything renders: the fleet markup reads
+   theme.unitImages, and a `let` used above its declaration hits the
+   temporal dead zone and takes the whole script down with it.
+   Loaded from storage and normalised before it touches the DOM, so a
+   tampered record can only ever produce the default theme, never CSS. */
+function renderTheme(raw){
+  const t = applyTheme(raw, document.documentElement);
+  /* the owner's uploaded logo replaces the category glyph when present */
+  const box = document.getElementById('co-logo');
+  if (t.logo){
+    box.innerHTML = '<img alt="">';
+    box.querySelector('img').src = t.logo;        // property, not markup
+    box.classList.add('haslogo');
+  } else {
+    box.classList.remove('haslogo');
+    box.innerHTML = unitIcon((co.types || []).join(' '), co.cat);
+  }
+  return t;
+}
+let theme = renderTheme(loadTheme(co.id));
+
+/* The owner's own fleet wins once they've edited it in the admin;
+   otherwise fall back to the seeded demo listings. */
+const units = loadFleet(co.id) || FR_UNITS[co.id] || [];
+
+document.title = co.name + ' — FR Services';
+document.getElementById('co-name').textContent = co.name;
+/* co-logo is owned by renderTheme() — it must not be overwritten here or
+   an uploaded logo is wiped a few lines after it is applied */
+document.getElementById('co-loc').textContent = co.loc;
+document.getElementById('co-since').textContent = 'Operating since ' + co.since;
+document.getElementById('co-about').textContent = co.about;
+document.getElementById('co-rating').innerHTML = STAR_SVG + co.rating.toFixed(2) + ' (' + co.reviews + ')';
+document.getElementById('cb-cat').textContent = FR_CATS[co.cat].label;
+document.getElementById('cb-city').textContent = FR_GEO.city;
+document.getElementById('st-units').textContent   = co.units;
+document.getElementById('st-reply').textContent   = co.reply;
+document.getElementById('st-radius').textContent  = co.radius + ' km';
+document.getElementById('st-reviews').textContent = co.reviews;
+document.getElementById('st-km').textContent      = co.km + ' km';
+document.getElementById('cov-radius').textContent = co.radius + ' km';
+document.getElementById('cov-base').textContent   = co.loc;
+document.getElementById('rev-avg').textContent    = co.rating.toFixed(2);
+document.getElementById('rev-count').textContent  = co.reviews + ' reviews';
+
+
+/* Every unit gets a photo slot in every layout. The owner's own upload
+   wins; otherwise it falls back to the category placeholder, offset per
+   unit so a fleet of six doesn't show six identical crops. */
+function unitPhoto(u){
+  const own = u.photo || (theme.unitImages && theme.unitImages[u.id]);
+  if (own) return `background-image:url('${own}')`;
+  const h = [...u.id].reduce((a, c) => a + c.charCodeAt(0), 0);
+  return `background-image:url('${CAT_PHOTO[co.cat]}');` +
+         `background-position:${PHOTO_POS[h % PHOTO_POS.length]}`;
+}
+
+/* Two shapes reach this page: the seeded demo listings, which carry a
+   free-form `specs` object, and units the owner created in the admin,
+   which carry typed fields. Normalise both into the same spec rows. */
+function specRows(u){
+  const rows = u.specs
+    ? Object.entries(u.specs)
+    : [['Type', u.type], ['Model', u.model], ['Year', u.year],
+       ['Capacity', u.capacity]].filter(([, v]) => v);
+
+  const operator = typeof u.operator === 'string'
+    ? { included:'Included', optional:'On request', none:'Not included' }[u.operator]
+    : (u.operator ? 'Included' : 'Not included');
+
+  rows.push(['Operator', operator]);
+  /* owner-created units carry a delivery mode; seeded ones are a flat fee */
+  rows.push(['Delivery', u.deliveryMode
+    ? deliveryText(u)
+    : (u.delivery ? peso(u.delivery) : 'Free')]);
+  if (u.fuel)    rows.push(['Fuel', u.fuel === 'included' ? 'Included' : 'Client-supplied']);
+  if (u.minDays > 1) rows.push(['Minimum hire', u.minDays + ' days']);
+  return rows.map(([k, v]) =>
+    `<li><span class="k">${k}</span><span class="v">${v}</span></li>`).join('');
+}
+
+const avail = u => (u.qty !== undefined ? u.qty : u.avail) || 0;
+
+/* ---- fleet ----
+   A company may run several service lines. When it does, the fleet is
+   grouped under a heading per line rather than mixed into one grid — a
+   renter looking for a tow truck should not have to scan past sedans. */
+const unitCat = u => u.cat || co.cat;
+
+function unitCard(u){
+  const save = typeof bestDiscount === 'function' ? bestDiscount(u) : 0;
+  const n = avail(u);
+  return `
+  <article class="unit">
+    <div class="utop${(u.photo || (theme.unitImages||{})[u.id]) ? ' hasphoto' : ''}" style="${unitPhoto(u)}">
+      <span class="uicon">${unitIcon(u.type || u.name, unitCat(u))}</span>
+      <span class="uavail t ${n > 0 ? 't-ok' : 't-mute'}">${n > 0 ? n + ' available' : 'Fully booked'}</span>
+      ${save ? `<span class="usave">Save ${save}% on long hire</span>` : ''}
+    </div>
+    <div class="ubody">
+      <h3>${u.name}</h3>
+      <ul class="uspecs">${specRows(u)}</ul>
+      ${u.notes ? `<p class="unote">${u.notes}</p>` : ''}
+      <div class="ufoot">
+        <div class="uprice">${peso(u.price)}<small> / ${u.unit}</small></div>
+        <a class="ubtn" href="booking.html?c=${co.id}&u=${u.id}">Book</a>
+      </div>
+    </div>
+  </article>`;
+}
+
+const lines = catsOf(co);
+const groupsHost = document.getElementById('fleet-groups');
+
+if (!units.length){
+  groupsHost.innerHTML = `<div class="fleet"><p class="unitnone">This company hasn't listed any units yet.</p></div>`;
+} else if (lines.length === 1){
+  groupsHost.innerHTML = `<div class="fleet">${units.map(unitCard).join('')}</div>`;
+} else {
+  groupsHost.innerHTML = lines.map(cat => {
+    const inLine = units.filter(u => unitCat(u) === cat);
+    if (!inLine.length) return '';
+    return `
+      <div class="fleetline">
+        <h3 class="linehead">
+          <span class="lineic v-${cat}">${unitIcon('', cat)}</span>
+          ${FR_CATS[cat].label}
+          <span class="linecount">${inLine.length} unit${inLine.length > 1 ? 's' : ''}</span>
+        </h3>
+        <div class="fleet">${inLine.map(unitCard).join('')}</div>
+      </div>`;
+  }).join('');
+}
+
+/* ---- services & add-ons ---- */
+const services = (typeof FR_SERVICES !== 'undefined' && FR_SERVICES[co.id]) || [];
+if (services.length){
+  document.getElementById('svc-block').hidden = false;
+  document.getElementById('svc-list').innerHTML = services.map(s => `
+    <div class="svc">
+      <span class="svcic v-${s.cat || co.cat}">${unitIcon('', s.cat || co.cat)}</span>
+      <div class="svcmain">
+        <b>${s.name}</b>
+        <p>${s.note || ''}</p>
+      </div>
+      <span class="svcprice">${s.price ? peso(s.price) : 'Quoted'}<small>${
+        s.price ? ' / ' + s.unit : ''}</small></span>
+    </div>`).join('');
+}
+
+/* =====================================================================
+   PUBLISHED DOCUMENTS
+   Only what the owner published, and only in the form ops.js releases it —
+   masked numbers stay masked, withheld files stay withheld. Nothing here
+   reaches back into the owner's private store.
+   ===================================================================== */
+/* Document text is owner-supplied and lands in innerHTML, so it is escaped
+   on the way out. The rest of this page renders platform fixtures. */
+const esc = s => String(s == null ? '' : s)
+  .replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+
+const DOC_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h7l4 4v14a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M16 3v5h4"/></svg>';
+const TICK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l6 6L20 6"/></svg>';
+
+function reviewPill(r){
+  if (r === 'verified') return `<span class="dpill dp-ok">${TICK}Checked by FR Services</span>`;
+  if (r === 'rejected') return '<span class="dpill dp-off">Not accepted</span>';
+  return '<span class="dpill dp-warn">Company-submitted</span>';
+}
+function statePill(d){
+  if (d.state === 'expired') return `<span class="dpill dp-off">${esc(d.label)}</span>`;
+  if (d.state === 'soon')    return `<span class="dpill dp-soon">${esc(d.label)}</span>`;
+  if (d.state === 'none')    return '<span class="dpill dp-off">No expiry date</span>';
+  return '<span class="dpill dp-cur">Current</span>';
+}
+
+function paintDocuments(){
+  const host = document.getElementById('doc-list');
+  const bar  = document.getElementById('auth-summary');
+  if (!host || typeof publishedDocs !== 'function') return;
+
+  const docs = publishedDocs(co.id);
+  const checked = docs.filter(d => d.review === 'verified').length;
+  const live    = docs.filter(d => d.state !== 'expired').length;
+
+  if (!docs.length){
+    bar.innerHTML = '<div class="msg"><b>This company has not published any documents.</b><br>' +
+      'That is not proof of anything either way — but you can ask them for their business permit ' +
+      'before you pay a deposit, and a company that will not show it is telling you something.</div>';
+    host.innerHTML = '<div class="docempty"><b>Nothing published yet</b>' +
+      'Documents the company chooses to show would appear here.</div>';
+    return;
+  }
+
+  bar.innerHTML =
+    `<div><div class="big">${docs.length}</div><div class="lbl">published</div></div>
+     <div class="sep"></div>
+     <div><div class="big">${checked}</div><div class="lbl">checked by us</div></div>
+     <div class="sep"></div>
+     <div><div class="big">${live}</div><div class="lbl">still valid</div></div>
+     <div class="msg">${
+       checked === docs.length
+         ? 'Every document below has been confirmed with the office that issued it.'
+         : checked
+         ? `${checked} of ${docs.length} have been confirmed with the issuing office. The rest are the company's own word for now.`
+         : 'None of these have been checked by FR Services yet — they are the company\'s own submissions.'
+     }</div>`;
+
+  host.innerHTML = docs.map(d => `
+    <article class="doccard">
+      <div>
+        <h4>${esc(d.name)}</h4>
+        ${d.issuer ? `<p class="iss">Issued by ${esc(d.issuer)}</p>` : ''}
+      </div>
+      <dl>
+        ${d.number ? `<div><dt>Number</dt><dd>${esc(d.number)}${
+          d.numberMasked ? '<span class="small muted" style="font-weight:500"> (shortened)</span>' : ''}</dd></div>` : ''}
+        ${d.issued  ? `<div><dt>Issued</dt><dd>${esc(fmtDate(d.issued))}</dd></div>` : ''}
+        ${d.expires ? `<div><dt>Valid until</dt><dd>${esc(fmtDate(d.expires))}</dd></div>` : ''}
+      </dl>
+      ${d.note ? `<p class="note">${esc(d.note)}</p>` : ''}
+      ${d.file
+        ? `<a class="open" href="${d.file.data}" target="_blank" rel="noopener noreferrer"
+              download="${esc(d.file.name)}">${DOC_ICON}Open the document</a>`
+        : d.hasFile
+        ? '<p class="note">A scan is on file but the company has not made it public.</p>'
+        : ''}
+      <div class="pills">${statePill(d)}${reviewPill(d.review)}</div>
+    </article>`).join('');
+}
+paintDocuments();
+
+/* The About sidebar summarises the same store rather than a hardcoded list
+   — a static "Verified credentials" block goes stale the moment a permit
+   lapses, and a stale credential list is a lie with a tick beside it. */
+function paintCredSummary(){
+  const host = document.getElementById('cred-list');
+  if (!host || typeof publishedDocs !== 'function') return;
+  const docs = publishedDocs(co.id);
+  if (!docs.length){
+    host.innerHTML = '<li class="small muted" style="display:block">This company has not published any documents yet.</li>';
+    return;
+  }
+  const checked  = docs.filter(d => d.review === 'verified').length;
+  const claimed  = docs.length - checked;
+  const expired  = docs.filter(d => d.state === 'expired').length;
+
+  /* Checked ones lead — this is a credentials list. But a truncated list
+     could show six ticks while an unverified or lapsed document sits just
+     out of sight, so the tally below always states the whole picture. */
+  const order = docs.slice().sort((a, b) =>
+    (a.review === 'verified' ? 0 : 1) - (b.review === 'verified' ? 0 : 1));
+
+  host.innerHTML = order.slice(0, 5).map(d => `
+    <li><span class="ck">${d.review === 'verified' ? TICK : '?'}</span>
+      <div><b>${esc(d.name)}</b><br><span class="small muted">${
+        d.expires ? esc(d.state === 'expired' ? d.label : 'Valid until ' + fmtDate(d.expires))
+                  : esc(d.issuer || '')
+      }${d.review === 'verified' ? '' : ' · company-submitted'}</span></div></li>`).join('') +
+    `<li style="display:block;padding-top:var(--s3)"><span class="small muted">` +
+    `${docs.length} published · ${checked} checked by FR Services` +
+    (claimed ? ` · <b>${claimed} company-submitted</b>` : '') +
+    (expired ? ` · <b>${expired} expired</b>` : '') + '</span></li>';
+}
+paintCredSummary();
+
+/* =====================================================================
+   SAVING A COMPANY
+   The button exists only for a signed-in visitor. Showing it signed out
+   and then bouncing them to a login when they press it is the pattern
+   that trains people to stop pressing things.
+   ===================================================================== */
+function paintFavourite(){
+  const btn = document.getElementById('favBtn');
+  if (!btn || typeof authSession !== 'function') return;
+  const signedIn = !!authSession();
+  btn.hidden = !signedIn;
+  if (!signedIn) return;
+
+  const on = isFavourite(co.id);
+  btn.classList.toggle('is-on', on);
+  btn.querySelector('svg').setAttribute('fill', on ? 'currentColor' : 'none');
+  document.getElementById('favLbl').textContent = on ? 'Saved' : 'Save';
+  btn.setAttribute('aria-pressed', String(on));
+  btn.setAttribute('aria-label', (on ? 'Remove ' : 'Save ') + co.name);
+}
+const favBtn = document.getElementById('favBtn');
+if (favBtn) favBtn.addEventListener('click', () => {
+  const out = toggleFavourite(co.id);
+  /* The store refuses when signed out even though the button is hidden —
+     belt and braces, because "hidden" is a CSS attribute, not a rule. */
+  if (!out.ok){ paintFavourite(); return; }
+  paintFavourite();
+});
+paintAuthNav('authNav');
+paintFavourite();
+
+/* "See all documents" jumps to the pane rather than duplicating it. */
+document.querySelectorAll('[data-pane-link]').forEach(b => b.addEventListener('click', () => {
+  const t = document.querySelector(`.cotab[data-pane="${b.dataset.paneLink}"]`);
+  if (t) t.click();
+}));
+
+/* ---- reviews ---- */
+document.getElementById('rev-list').innerHTML = FR_REVIEWS.map(r => `
+  <div class="rev">
+    <div class="revhead">
+      <span class="revav">${r.who.split(' ').map(s=>s[0]).join('')}</span>
+      <span class="revwho"><b>${r.who}</b><span>${r.when} · rented ${r.unit}</span></span>
+      <span class="revstars">${starRow(r.r)}</span>
+    </div>
+    <p>${r.body}</p>
+  </div>`).join('');
+
+/* ---- mobile book bar ---- */
+const cheapest = units.reduce((a,b) => a.price < b.price ? a : b);
+document.querySelector('.bookbar .p').innerHTML =
+  `${peso(cheapest.price)} <small>from / ${cheapest.unit}</small>`;
+document.querySelector('.bookbar .btn').href = `booking.html?c=${co.id}&u=${cheapest.id}`;
+
+/* ---- tabs ---- */
+document.querySelectorAll('.cotab').forEach(t => t.addEventListener('click', () => {
+  document.querySelectorAll('.cotab').forEach(x => x.classList.remove('on'));
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('on'));
+  t.classList.add('on');
+  document.getElementById('pane-' + t.dataset.pane).classList.add('on');
+}));
+
+document.getElementById('ownerEdit').href = 'admin.html?c=' + encodeURIComponent(co.id);
+
+/* ---- preview mode ----
+   admin.html embeds this page in an iframe so the owner sees the real
+   storefront rather than a mock-up, and pushes each edit across with
+   postMessage. Two guards on that: it is only wired up when the URL
+   explicitly says preview=1, and the payload still goes through
+   normaliseTheme() inside applyTheme(), so a message from anywhere can
+   only ever produce a valid theme — never CSS or markup. */
+const PREVIEW = new URLSearchParams(location.search).get('preview') === '1';
+if (PREVIEW){
+  document.documentElement.classList.add('is-preview');
+  window.addEventListener('message', e => {
+    if (!e.data || e.data.type !== 'fr-theme') return;
+    theme = renderTheme(e.data.theme);
+  });
+  /* tell the parent we are ready for the first push */
+  if (window.parent !== window) window.parent.postMessage({ type:'fr-preview-ready' }, '*');
+}
+
+/* ---- verified explainer ---- */
+const vBtn = document.getElementById('vBtn'), vPop = document.getElementById('vPop');
+vBtn.addEventListener('click', e => {
+  e.stopPropagation();
+  const open = vPop.hidden;
+  vPop.hidden = !open;
+  vBtn.setAttribute('aria-expanded', String(open));
+});
+document.addEventListener('click', e => {
+  if (!vPop.hidden && !e.target.closest('#vPop') && !e.target.closest('#vBtn')){
+    vPop.hidden = true; vBtn.setAttribute('aria-expanded','false');
+  }
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') vPop.hidden = true; });
+
+/* ---- report company ---- */
+const rModal = document.getElementById('rModal');
+function openReport(){
+  rModal.hidden = false;
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => rModal.querySelector('input[name=reason]').focus(), 30);
+}
+function closeReport(){
+  rModal.hidden = true;
+  document.body.style.overflow = '';
+  document.getElementById('rForm').hidden = false;
+  document.getElementById('rm-done').hidden = true;
+  document.getElementById('rForm').reset();
+  document.getElementById('rm-count').textContent = '0 / 1200';
+}
+document.getElementById('reportBtn').addEventListener('click', openReport);
+document.querySelectorAll('[data-report-open]').forEach(b => b.addEventListener('click', openReport));
+rModal.addEventListener('click', e => { if (e.target.closest('[data-rm-close]')) closeReport(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !rModal.hidden) closeReport(); });
+
+document.getElementById('rm-detail').addEventListener('input', e => {
+  document.getElementById('rm-count').textContent = e.target.value.length + ' / 1200';
+});
+
+document.getElementById('rm-send').addEventListener('click', () => {
+  const reason = rModal.querySelector('input[name=reason]:checked');
+  if (!reason){
+    rModal.querySelector('.rm-reasons legend').style.color = 'var(--danger)';
+    rModal.querySelector('input[name=reason]').focus();
+    return;
+  }
+  /* Prototype: this writes to browser storage so the report turns up in
+     the FR Services platform queue, which is the flow worth demonstrating.
+     A real submission must be server-side — authenticated, rate-limited
+     per account and per IP, with the reporter's identity stored but never
+     returned to the company. See ARCHITECTURE.md §13. */
+  const ref = 'FR-R-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+  if (typeof addReport === 'function'){
+    addReport({
+      id: ref,
+      company: co.id,
+      reason: reason.value,
+      detail: document.getElementById('rm-detail').value,
+      ref: document.getElementById('rm-booking').value,
+      anon: document.getElementById('rm-anon').checked,
+      at: (typeof opsToday === 'function') ? opsToday() : ''
+    });
+  }
+  document.getElementById('rm-ref').textContent = ref;
+  document.getElementById('rForm').hidden = true;
+  document.getElementById('rm-done').hidden = false;
+});
+</script>
+</body>
+</html>

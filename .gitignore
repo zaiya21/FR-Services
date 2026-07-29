@@ -1,0 +1,28 @@
+# dependencies and build output
+node_modules/
+.next/
+out/
+build/
+dist/
+
+# environment
+.env
+.env.local
+.env*.local
+
+# editor / OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# scratch files from local verification runs
+_probe*.html
+__smoke*.html
+__diag.html
