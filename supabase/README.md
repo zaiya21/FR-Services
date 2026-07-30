@@ -80,8 +80,11 @@ the same instant would otherwise both see room.
   Everything else is `exempt` — not a verdict, a statement that none
   applies. Held as an equivalence: `exempt` if and only if the type is not
   reviewable.
-- **Expiry is a generated column.** No code path can claim a lapsed permit
-  is current.
+- **Expiry is derived at read time**, by `app.is_expired()`, so no code path
+  can claim a lapsed permit is current. Not a generated column: that
+  expression must be IMMUTABLE and `current_date` is only STABLE, so
+  Postgres rejects it — correctly, since a stored answer would be wrong by
+  morning.
 - **A reviewable document needs a file.** A typed permit number gives a
   reviewer nothing to take to the issuing office.
 - **A rejection needs a reason.** Approvals and returns may stand alone.
@@ -142,7 +145,7 @@ policy is wrong and the comment above it is a lie.
 ## Not built yet
 
 - **Seed data.** The 42 demo companies, their fleets and documents still
-  live in `assets/data.js`. A `supabase/seed.sql` would replace the
+  live in `public/assets/data.js`. A `supabase/seed.sql` would replace the
   generators; until then a fresh database is empty.
 - **`unit_instances`.** Capacity is enforced per listing quantity, which is
   right for availability but cannot tell you *which* excavator went out.

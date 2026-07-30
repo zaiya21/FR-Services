@@ -138,6 +138,17 @@ would have shipped a subtly different page:
 
 ## Not carried over
 
-`ARCHITECTURE.md` and the static `*.html` files stay in the parent folder.
-They are the reference this was checked against, and the architecture
-notes still describe the application, which is unchanged.
+The static build it was converted from is kept at `legacy/` — `*.html` and
+its own copy of `assets/`. It is the reference the DOM comparison above ran
+against, which is the only reason to keep it. `ARCHITECTURE.md` describes
+the application rather than the build, so it still reads true; where it
+names `assets/x.js`, the file is now `public/assets/x.js`.
+
+## Where the app lives
+
+The Next app sits at the repository root — `package.json`, `app/` and
+`public/` are top-level. It was briefly in an `fr-next/` subfolder; it was
+moved because Vercel's framework detection reads the repository root, and
+with a bare `index.html` there and `package.json` one level down, a
+zero-config import silently served the old static site instead of
+building. If you see `fr-next/` referenced anywhere, it is stale.
