@@ -3,7 +3,8 @@ import Markup from './markup';
 import LegacyScripts from '../_LegacyScripts';
 
 export const metadata = {
-  title: "Company storefront — FR Services"
+  title: "Company storefront — FR Services",
+  description: "Verified fleet rental company on FR Services. Browse available units, rates and availability."
 };
 
 export default function Page(){

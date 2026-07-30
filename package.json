@@ -10,6 +10,7 @@
   },
   "//deps": "next carries a caret so `npm update` picks up the 15.x security patches on its own — a pinned 15.5.4 sitting on a critical advisory is how this got noticed in the first place. react is pinned exactly: a React minor can change what renders, and identical rendering is the one thing this build must not lose.",
   "dependencies": {
+    "leaflet": "1.9.4",
     "next": "^15.5.22",
     "react": "19.1.1",
     "react-dom": "19.1.1"
