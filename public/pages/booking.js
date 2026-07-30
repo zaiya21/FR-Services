@@ -1,9 +1,34 @@
 
-const co   = byId(qs('c') || 'davao-heavy-lift') || FR_COMPANIES[4];
-/* the owner's edited fleet wins, exactly as on the storefront — otherwise
-   a unit they created in the admin cannot be booked */
-const list = loadFleet(co.id) || FR_UNITS[co.id] || FR_UNITS['davao-heavy-lift'];
+/* No fallback company or fallback fleet. Both used to be guaranteed by
+   seeded data; against a registry that starts empty they resolve to
+   undefined and this page throws on `unit.name` before rendering
+   anything. A booking form for a unit that does not exist is worse than a
+   page saying so — it would take a name, a date and a deposit for it. */
+const co   = byId(qs('c'));
+const list = co ? (loadFleet(co.id) || FR_UNITS[co.id] || []) : [];
 const unit = list.find(u => u.id === qs('u')) || list[0];
+
+if (!co || !unit){
+  const why = !co
+    ? 'That company is not registered on FR Services.'
+    : co.name + ' has not listed any units yet, so there is nothing to book.';
+  document.title = 'Nothing to book — FR Services';
+  document.body.innerHTML =
+    '<main style="max-width:620px;margin:14vh auto;padding:0 24px;' +
+    'font-family:Inter,system-ui,sans-serif;text-align:center">' +
+    '<h1 style="font-family:\'Space Grotesk\',sans-serif;font-size:26px;' +
+    'margin:0 0 12px">This unit cannot be booked</h1>' +
+    '<p style="color:#5b6470;line-height:1.6;margin:0 0 22px">' + why + '</p>' +
+    '<a href="/" style="display:inline-block;background:#057A2F;color:#fff;' +
+    'text-decoration:none;font-weight:700;padding:11px 20px;border-radius:999px">' +
+    'Back to the marketplace</a>' +
+    (co ? ' <a href="/company?c=' + encodeURIComponent(co.id) + '" ' +
+          'style="display:inline-block;margin-left:8px;color:#0d1117;' +
+          'text-decoration:none;font-weight:700;padding:11px 20px;' +
+          'border:2px solid #0d1117;border-radius:999px">View the company</a>' : '') +
+    '</main>';
+  throw new Error('nothing bookable');
+}
 /* owner units store operator as a mode string, seeded ones as a boolean */
 const hasOperator = typeof unit.operator === 'string'
   ? unit.operator === 'included' : !!unit.operator;

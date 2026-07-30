@@ -335,6 +335,10 @@
 .gpin.tow:hover{background:#991B1B}
 .gpin.you{background:var(--brand);color:#fff;cursor:default;box-shadow:var(--off-sm)}
 .gpin.you:hover{background:var(--brand);transform:translate(-50%,-50%)}
+/* A confirmed device fix, distinguished from the approximate one. The ring
+   is drawn on the pin as well as the accuracy circle beneath it, because at
+   a tight zoom the circle can be smaller than the pin and vanish. */
+.gpin.you.fix{box-shadow:0 0 0 3px rgba(5,122,47,.28),var(--off-sm)}
 .mapnote{position:absolute;left:var(--s4);bottom:var(--s4);z-index:500;margin:0;
   background:rgba(255,255,255,.94);border:var(--bd-thin);border-radius:var(--r-pill);
   padding:5px 13px;font-size:12px;font-weight:600;color:var(--ink-2);

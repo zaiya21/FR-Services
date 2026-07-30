@@ -144,10 +144,25 @@ nav.top{position:sticky;top:0;z-index:80;background:var(--bg);border-bottom:var(
   font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
   padding:3px 10px;border-radius:var(--r-pill);border:2px solid var(--ink);flex-shrink:0}
 .geo b{font-weight:700}
-.geo .chg{margin-left:auto;background:rgba(255,255,255,.15);
+.geo .chg{background:rgba(255,255,255,.15);
   border:2px solid rgba(255,255,255,.4);border-radius:var(--r-pill);
   padding:4px 14px;font-size:13px;font-weight:700;transition:all .16s var(--ease)}
+/* Only the first of the two buttons takes the auto margin, or the pair
+   splits to opposite ends of the bar with the sentence stranded between. */
+.geo .chg:first-of-type{margin-left:auto}
 .geo .chg:hover{background:#fff;color:var(--indigo);border-color:#fff}
+/* The primary action of the bar: solid, because "share your location" is a
+   request and an outlined button among outlined buttons is not a request. */
+.geo .chg.gps{background:var(--yellow);color:var(--ink);border-color:var(--ink)}
+.geo .chg.gps:hover{background:#fff;color:var(--ink);border-color:var(--ink)}
+.geo .chg.gps[disabled]{opacity:.6;cursor:progress}
+/* Locating, and exact — the tag stops claiming a guess is a fix. */
+.geo .tag.live{background:#fff;color:var(--indigo);border-color:#fff}
+.geo .tag.exact{background:var(--brand-2, #2E9A33);color:#fff;border-color:#fff}
+.geomsg{padding:0 var(--s5)}
+.geomsg:not(:empty){padding:0 var(--s5) 11px;font-size:13px;line-height:1.5;
+  color:rgba(255,255,255,.92);max-width:74ch}
+.geomsg b{font-weight:700;color:#fff}
 
 /* ---------- 6. FORM FIELDS ---------- */
 .field{display:flex;flex-direction:column;gap:3px;padding:7px 13px;
@@ -188,6 +203,11 @@ nav.top{position:sticky;top:0;z-index:80;background:var(--bg);border-bottom:var(
 .rate-pill{display:inline-flex;align-items:center;gap:4px;background:var(--ink);
   color:#fff;border-radius:var(--r-pill);padding:3px 9px;font-size:12px;font-weight:700}
 .rate-pill svg{width:11px;height:11px;color:var(--yellow)}
+/* An unreviewed listing. Outlined rather than solid ink so it reads as an
+   absence of ratings and not as a score — a filled pill in the same slot
+   as "4.94" gets read as a number whatever it says. */
+.rate-pill.new{background:transparent;color:var(--ink-2);
+  border:var(--bd-thin);font-weight:600}
 
 /* ---------- 8. COMPANY CARD (browse) ---------- */
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(288px,1fr));gap:var(--s5)}

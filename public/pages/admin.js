@@ -1,6 +1,63 @@
 
 const $ = id => document.getElementById(id);
-const COMPANY_ID = new URLSearchParams(location.search).get('c') || 'davao-heavy-lift';
+
+/* ---------------------------------------------------------------------
+   Which company is being administered.
+
+   The old default was a demo company id. With the fixtures gone that
+   resolves to nothing, and the console would have rendered a whole
+   dashboard — charts, bookings, expense totals — for a company that does
+   not exist, which is worse than refusing: every figure on it would be a
+   zero presented as a measurement.
+
+   With exactly one registered company, open it. That is the normal case
+   here and asking someone to choose from a list of one is a nuisance.
+   --------------------------------------------------------------------- */
+const ADMIN_WANT = new URLSearchParams(location.search).get('c');
+const ADMIN_LIST = (typeof FR_COMPANIES !== 'undefined') ? FR_COMPANIES : [];
+const COMPANY_ID = (() => {
+  if (ADMIN_WANT && ADMIN_LIST.some(c => c.id === ADMIN_WANT)) return ADMIN_WANT;
+  if (!ADMIN_WANT && ADMIN_LIST.length === 1) return ADMIN_LIST[0].id;
+  return null;
+})();
+
+if (!COMPANY_ID){
+  const esc0 = s => String(s == null ? '' : s).replace(/[&<>"]/g, '');
+  document.title = 'Choose a company — FR Services';
+  document.body.innerHTML =
+    '<main style="max-width:640px;margin:12vh auto;padding:0 24px;' +
+    'font-family:Inter,system-ui,sans-serif">' +
+    '<h1 style="font-family:\'Space Grotesk\',sans-serif;font-size:26px;' +
+    'margin:0 0 12px">' +
+    (ADMIN_LIST.length ? 'Which company?' : 'No company to administer yet') + '</h1>' +
+    '<p style="color:#5b6470;line-height:1.65;margin:0 0 22px">' +
+    (ADMIN_WANT
+      ? 'Nothing is registered under <b>' + esc0(ADMIN_WANT) + '</b>.'
+      : ADMIN_LIST.length
+        ? 'Pick the company whose dashboard you want to open.'
+        : 'This console manages a registered company — its bookings, expenses, ' +
+          'documents and storefront. Register one first and its dashboard ' +
+          'appears here.') +
+    '</p>' +
+    (ADMIN_LIST.length
+      ? '<div style="display:grid;gap:10px;margin-bottom:24px">' +
+        ADMIN_LIST.map(c =>
+          '<a href="/admin?c=' + encodeURIComponent(c.id) + '" ' +
+          'style="display:block;padding:14px 16px;border:2px solid #0d1117;' +
+          'border-radius:12px;text-decoration:none;color:#0d1117;font-weight:700">' +
+          esc0(c.name) + '<span style="display:block;font-weight:500;font-size:13px;' +
+          'color:#5b6470;margin-top:3px">' + esc0(c.loc) + '</span></a>').join('') +
+        '</div>'
+      : '') +
+    '<a href="/register" style="display:inline-block;background:#057A2F;color:#fff;' +
+    'text-decoration:none;font-weight:700;padding:11px 20px;border-radius:999px">' +
+    'Register a company</a> ' +
+    '<a href="/" style="display:inline-block;margin-left:8px;color:#0d1117;' +
+    'text-decoration:none;font-weight:700;padding:11px 20px;border:2px solid #0d1117;' +
+    'border-radius:999px">Marketplace</a></main>';
+  throw new Error('no company to administer');
+}
+
 $('viewLive').href = '/company?c=' + encodeURIComponent(COMPANY_ID);
 
 let theme = loadTheme(COMPANY_ID);

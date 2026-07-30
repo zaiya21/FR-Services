@@ -181,6 +181,68 @@
   .wgrid{grid-template-columns:1fr;gap:var(--s5)}
   .prev{position:static;max-width:420px}
 }
+/* ---- exact coordinates ----
+   Boxed, because it is the one field on this form that cannot be guessed
+   at later: everything else an owner can revise from the dashboard, but a
+   company with no pin is invisible to the distance matching that drives
+   every search on the marketplace. It should not look like the field above
+   it. */
+.coordsec{border:var(--bd);border-radius:var(--r-lg);padding:var(--s5);
+  background:var(--surface)}
+.coordsec.bad{border-color:var(--danger);background:var(--danger-tint)}
+.coordsec.ok{border-color:var(--ok)}
+.coordhead{margin-bottom:var(--s4)}
+.chint2{margin:6px 0 0;font-size:12.5px;line-height:1.55;color:var(--ink-2)}
+.coordvals{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3)}
+
+/* Reserves its height only when it has something to say, so the form does
+   not jump every time a keystroke clears the message. */
+.coordmsg:empty{display:none}
+.coordmsg{margin-top:var(--s3);font-size:13px;line-height:1.55;
+  border-radius:var(--r);padding:9px 13px;border:var(--bd-thin)}
+.coordmsg.err{background:var(--danger-tint);border-color:var(--danger);color:var(--danger)}
+.coordmsg.warn{background:#FEF6E0;border-color:var(--yellow);color:#7A5A02}
+.coordmsg.good{background:var(--ok-tint,#E8F6EC);border-color:var(--ok);color:#0B5C2A}
+.coordmsg b{font-weight:700}
+
+.coordmap{margin-top:var(--s4);border:var(--bd);border-radius:var(--r);
+  overflow:hidden;background:#E4EBF2}
+#coordMap{height:280px}
+.coordnote{margin:8px 0 0;font-size:12px;line-height:1.5;color:var(--ink-3)}
+
+/* The draggable yard pin. Distinct from the marketplace price bubbles: it
+   is a thing you move, not a thing you click through to. */
+.ypin{display:block;width:26px;height:26px;margin:-26px 0 0 -13px;
+  border-radius:50% 50% 50% 2px;transform:rotate(45deg);
+  background:var(--brand);border:2.5px solid var(--ink);
+  box-shadow:0 2px 5px rgba(0,0,0,.3);cursor:grab}
+.ypin:active{cursor:grabbing}
+
+/* ---- the coordinates guide ---- */
+.coordguide{margin-top:var(--s4);padding:var(--s5);background:#fff;
+  border:var(--bd);border-radius:var(--r);}
+.coordguide h4{margin:0 0 var(--s4);font-family:'Space Grotesk',sans-serif;
+  font-size:15px}
+.gstep{display:flex;gap:var(--s3);align-items:flex-start;margin-bottom:var(--s4)}
+.gnum{width:24px;height:24px;flex-shrink:0;border-radius:8px;
+  background:var(--yellow);border:var(--bd-thin);display:grid;place-items:center;
+  font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12px}
+/* Only the section heading is a block. `.gstep b` caught the inline
+   "Apple Maps:" labels inside the list items too and broke each one onto
+   its own line, so every entry read as a heading with an orphaned
+   sentence under it. */
+.gstep > div > b{display:block;font-size:13.5px;margin-bottom:5px}
+.gstep li b{font-weight:700;color:var(--ink)}
+.gstep ol,.gstep ul{margin:0;padding-left:18px}
+.gstep li{font-size:13px;line-height:1.6;color:var(--ink-2);margin-bottom:3px}
+.gtip{margin:7px 0 0;font-size:12.5px;line-height:1.55;color:var(--ink-3);
+  border-left:2.5px solid var(--yellow);padding-left:10px}
+.gwarn{background:#FEF6E0;border:var(--bd-thin);border-color:var(--yellow);
+  border-radius:var(--r);padding:var(--s4);margin-bottom:var(--s4)}
+.gwarn b{display:block;font-size:13px;margin-bottom:7px}
+.gwarn ul{margin:0;padding-left:18px}
+.gwarn li{font-size:12.5px;line-height:1.6;color:#7A5A02;margin-bottom:5px}
+
 @media (max-width:720px){
   .catpick{grid-template-columns:1fr}
   .fgrid2{grid-template-columns:1fr}
@@ -188,4 +250,8 @@
   .wstep{min-width:0;flex:1;padding:10px}
   .wstep b{font-size:11.5px}
   .wnav .btn{flex:1}
+  /* Two coordinate boxes side by side leave about 20 characters each on a
+     phone, and a longitude is 10 of them plus a label. */
+  .coordvals{grid-template-columns:1fr}
+  #coordMap{height:220px}
 }

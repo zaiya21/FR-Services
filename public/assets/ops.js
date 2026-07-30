@@ -173,18 +173,18 @@ const OPS_VENDORS = {
 
 /* =====================================================================
    THE FLEET THIS DASHBOARD REPORTS ON
-   Three sources, in order of authority:
-     1. the owner's saved fleet, so a unit added in the admin shows up in
-        utilisation straight away;
-     2. the curated demo listings, where they exist;
-     3. a fleet synthesised from the company's own marketplace record.
 
-   (3) exists because only five of the forty-two demo companies have hand
-   written unit lists, and an admin console that is blank for the other
-   thirty-seven is not a console. The marketplace card already claims a
-   category, a unit count and a headline rate — synthesising from those
-   three keeps the dashboard consistent with what a renter is being shown,
-   instead of contradicting it with zeroes.
+   One source now: the owner's own saved fleet. A third source used to
+   synthesise a plausible yard from the marketplace card, because only five
+   of the forty-two demo companies had hand-written unit lists and a blank
+   console demonstrated nothing.
+
+   That reasoning does not survive real registrations. Every company here is
+   one somebody signed up, so an empty fleet is not a gap in the fixtures —
+   it is the true state of a yard whose owner has not added a unit yet, and
+   every number downstream (utilisation, revenue, expenses, the printable
+   report) is derived from this list. Inventing it would mean an owner's
+   first dashboard showed them bookings they never took.
    ===================================================================== */
 function fleetFromDemo(companyId){
   const demo = (typeof FR_UNITS !== 'undefined' && FR_UNITS[companyId]) || [];
@@ -204,54 +204,8 @@ function fleetFromDemo(companyId){
   }).filter(Boolean);
 }
 
-/* Bigger machines cost more than the headline rate, which is always the
-   cheapest thing on the lot. Multipliers are against that rate. */
-const TYPE_MULT = {
-  Sedan:1, SUV:1.5, Van:1.9, Pickup:1.35, Truck:2.4, Motorcycle:0.45,
-  Excavator:1.6, Backhoe:1, Crane:2.2, Bulldozer:1.9, 'Dump Truck':1.15,
-  'Boom Lift':1.25, Compactor:0.85, Loader:1.1,
-  Flatbed:1, 'Wheel-Lift':0.85, 'Heavy Duty':1.9, 'Long-haul':2.3, 'Winch-out':1.2
-};
-
-function synthFleet(co){
-  if (typeof FR_TYPES === 'undefined' || typeof normaliseUnit !== 'function') return [];
-  const rnd  = opsRng(co.id + ':fleet');
-  const cats = (typeof catsOf === 'function') ? catsOf(co) : [co.cat || 'vehicles'];
-  const base = Number(String(co.price || '2000').replace(/,/g, '')) || 2000;
-  const total = Math.max(3, co.units || 8);
-  const out = [];
-
-  cats.forEach((cat, ci) => {
-    const types = (FR_TYPES[cat] || []).slice();
-    if (!types.length) return;
-    /* Enough listings to look like a yard, never more types than exist. */
-    const lines = Math.max(2, Math.min(types.length, Math.round(total / cats.length / 2.4)));
-    const share = Math.max(lines, Math.round(total / cats.length));
-
-    for (let i = 0; i < lines; i++){
-      const type = types[(i + ci) % types.length];
-      const mult = (TYPE_MULT[type] || 1) * (0.9 + rnd() * 0.25);
-      const perkm = cat !== 'vehicles' && rnd() < 0.5;
-      out.push(normaliseUnit({
-        id: co.id + '-u' + ci + i,
-        cat, name: type,
-        type,
-        price: Math.max(300, Math.round(base * mult / 50) * 50),
-        unit: cat === 'towing' ? 'call-out' : 'day',
-        qty: Math.max(1, Math.round(share / lines * (0.7 + rnd() * 0.8))),
-        year: 2018 + between(rnd, 0, 7),
-        operator: cat === 'equipment' ? 'included' : (rnd() < 0.4 ? 'optional' : 'none'),
-        minDays: 1,
-        d3: pick(rnd, [0, 0, 5, 5, 8]), d7: pick(rnd, [5, 10, 10, 12]), d30: pick(rnd, [15, 20, 25, 30]),
-        deliveryMode: perkm ? 'perkm' : 'flat',
-        delivery: perkm ? 0 : Math.round(base * 0.2 / 50) * 50,
-        deliveryFree: perkm ? pick(rnd, [5, 10, 15]) : 0,
-        deliveryKm: perkm ? pick(rnd, [45, 65, 80, 120, 180]) : 0
-      }));
-    }
-  });
-  return out.filter(Boolean);
-}
+/* synthFleet() and its TYPE_MULT price table were here, and are gone for
+   the same reason as seedDocs(). */
 
 function opsFleet(companyId){
   if (typeof normaliseUnit !== 'function') return [];
@@ -261,8 +215,13 @@ function opsFleet(companyId){
   const demo = fleetFromDemo(companyId);
   if (demo.length) return demo;
 
-  const co = (typeof byId === 'function') ? byId(companyId) : null;
-  return co ? synthFleet(co) : [];
+  /* No saved fleet and no listings means an empty yard. It used to
+     synthesise one from the marketplace card, which made every dashboard
+     look busy — including the dashboard of a company registered thirty
+     seconds ago, which would open onto invented bookings, invented
+     revenue and an invented utilisation figure. An owner cannot tell a
+     synthesised booking from a real one, so there must not be any. */
+  return [];
 }
 
 /* =====================================================================
@@ -783,74 +742,9 @@ function docState(doc, today){
 
 const docKey = id => 'fr.docs.' + String(id).replace(/[^a-z0-9-]/gi, '');
 
-/* The starting set: what a company of this shape would actually hold. */
-function seedDocs(companyId, today){
-  const t   = today || opsToday();
-  const rnd = opsRng(companyId + ':docs');
-  const co  = (typeof byId === 'function') ? byId(companyId) : null;
-  const cats = co && typeof catsOf === 'function' ? catsOf(co) : ['vehicles'];
-  /* A mayor's permit is issued by a city or municipality, never a province.
-     `loc` is "locality, province", but which half holds the city varies:
-     "Ecoland, Davao City" puts it second, "Puerto Princesa City, Palawan"
-     first. Prefer whichever segment actually says City; otherwise the
-     locality, which is the municipality ("Panabo, Davao del Norte").
-     Taking the last segment gave "City of Palawan", which is a province. */
-  const parts = String((co && co.loc) || 'Davao City')
-    .split(',').map(s => s.trim()).filter(Boolean);
-  const seat = parts.find(p => /\bcity$/i.test(p)) || parts[0] || 'Davao City';
-  /* Coron and El Nido are municipalities; their permits come from a
-     municipal hall, not a city hall. */
-  const isCity = /\bcity$/i.test(seat) || /^City of\s/i.test(seat);
-  const city = seat.replace(/^City of\s+/i, '').replace(/\s+City$/i, '');
-  const permitIssuer = (isCity ? 'City of ' : 'Municipality of ') + city;
-
-  const rows = [
-    /* the three FR Services verifies — every trading company holds them */
-    { type:'dti',       name:'DTI registration', issuer:'Department of Trade and Industry' },
-    { type:'permit',    name:'Mayor’s permit', issuer:permitIssuer },
-    { type:'bir',       name:'BIR registration (Form 2303)', issuer:'Bureau of Internal Revenue' },
-    /* everything below is the owner's own choice to publish */
-    { type:'insurance', name:'Comprehensive insurance', issuer:'Pioneer Insurance' },
-    { type:'insurance', name:'Fleet third-party liability', issuer:'Malayan Insurance' }
-  ];
-  if (cats.includes('vehicles'))
-    rows.push({ type:'lto', name:'LTO registration — fleet', issuer:'Land Transportation Office' });
-  if (cats.includes('equipment')){
-    rows.push({ type:'pcab',  name:'PCAB licence', issuer:'Philippine Contractors Accreditation Board' });
-    rows.push({ type:'tesda', name:'Operator certification (TESDA NC II)', issuer:'TESDA' });
-    rows.push({ type:'dole',  name:'DOLE safety compliance', issuer:'Department of Labor and Employment' });
-  }
-  if (cats.includes('towing'))
-    rows.push({ type:'ltfrb', name:'Tow operator accreditation', issuer:'LTFRB' });
-
-  return rows.map((d, i) => {
-    const expires = addDays(t, between(rnd, -20, 320));
-    /* A mix, not a clean sweep. Every marketplace has a review backlog at
-       any moment, and a platform console whose queue is permanently empty
-       is demonstrating nothing. */
-    const roll = rnd();
-    const review = roll < 0.70 ? 'verified' : roll < 0.95 ? 'pending' : 'rejected';
-    /* The three we verify always carry a file — a registered company could
-       not have completed registration otherwise, so a seed without one
-       would be modelling a state the product does not allow. A one-byte
-       stand-in: the fixture needs a file to EXIST, not to be readable, and
-       real scans in every seed would blow the storage budget. */
-    const needsFile = isReviewableType(d.type);
-    return normaliseDoc(Object.assign({}, d, {
-      id: 'seed' + i,
-      number: String(between(rnd, 100000, 999999)) + '-' + String(between(rnd, 10, 99)),
-      issued: addDays(expires, -365),
-      expires,
-      published: review !== 'rejected',
-      review,
-      file: needsFile ? {
-        name: d.type + '-' + (co ? co.id : 'company') + '.pdf',
-        type: 'application/pdf', size: between(rnd, 180, 1400) * 1024,
-        data: 'data:application/pdf;base64,JVBERi0xLjQK'
-      } : null
-    }), true);
-  }).sort((a, b) => a.expires.localeCompare(b.expires));
-}
+/* seedDocs() was here. Deleted rather than left unreferenced: a helper
+   that manufactures verified compliance documents is not something to
+   leave lying around one call site away from being useful again. */
 
 function loadDocs(companyId, today){
   try {
@@ -859,7 +753,14 @@ function loadDocs(companyId, today){
        by upsertDoc or the seed, never by the form. */
     if (Array.isArray(raw)) return raw.slice(0, MAX_DOCS).map(r => normaliseDoc(r, true)).filter(Boolean);
   } catch { /* fall through to the seed */ }
-  return seedDocs(companyId, today);
+  /* Nothing stored means the company has uploaded nothing, and that is a
+     real answer. This used to fall through to seedDocs(), which invented
+     a plausible set INCLUDING verified ones — so a company that had just
+     registered appeared to hold permits FR Services had checked. Of all
+     the fixture data in this app that was the one piece that could not
+     stay: the verified badge is the product, and a fabricated one is
+     indistinguishable from a fraudulent one. */
+  return [];
 }
 /* Writes back rows that were already normalised and already carry a
    platform-assigned review, so this pass is trusted. Nothing reaches it

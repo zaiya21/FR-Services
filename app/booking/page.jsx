@@ -10,7 +10,7 @@ export default function Page(){
   return (
     <>
       <Markup />
-      <LegacyScripts srcs={["/assets/theme.js","/assets/data.js","/pages/booking.js"]} />
+      <LegacyScripts srcs={["/assets/geo.js","/assets/registry.js","/assets/theme.js","/assets/ph-locations.js","/assets/data.js","/pages/booking.js"]} />
     </>
   );
 }

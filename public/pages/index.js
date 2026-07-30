@@ -205,16 +205,167 @@ const modalPicker = makeLocPicker({
 /* One place sets the active city, so the geo bar, the hero field and the
    results can never drift out of sync. Province comes along because city
    names repeat across the country. */
-function setCity(val, prov){
+/* `explicit` distinguishes a renter picking a city from the first paint
+   seeding the fallback one. Both move the origin; only one of them is a
+   choice, and the geo bar reports provenance — labelling the default
+   "You chose this" on a first visit is a small lie that undermines the
+   one part of the bar that is meant to be checkable. */
+function setCity(val, prov, opts){
+  const explicit = !opts || opts.explicit !== false;
   FR_GEO.city = FILTERS.city = val;
   FILTERS.province = FR_GEO.province = prov || '';
-  const n = providersIn(val, prov);
-  $('geo-city').textContent = val;
-  $('geo-count').textContent = n;
-  $('geo-note').textContent = n ? 'within 50 km.' : '— no providers here yet.';
+
+  /* Choosing a city by hand moves the origin to that city, so distances
+     and the map follow the choice. Without this the cards would say "2 km"
+     while showing companies in a city 900 km away — the distance would
+     still be measured from the abandoned GPS fix. */
+  const at = cityLatLon(val);
+  if (at){
+    FR_GEO.lat = at[0]; FR_GEO.lon = at[1];
+    FR_GEO.accuracy = null;
+    FR_GEO.source = explicit ? 'explicit' : 'default';
+    frRedistance();
+  }
+  paintGeoBar();
   $('s-loc').value = val;
   render();
 }
+
+/* ---------------------------------------------------------------------
+   The headline numbers.
+
+   Every one of these was hardcoded — "1,900+ registered companies",
+   "631 units", "4.86 average rating" — which was fine over a seeded
+   dataset and became a straightforward falsehood the moment the
+   marketplace was emptied. A listing site inflating its own inventory is
+   the exact thing renters are right to distrust, so they are derived, and
+   they are allowed to say zero.
+   --------------------------------------------------------------------- */
+function paintHeadline(){
+  for (const k in FR_CATS){
+    const el = $('pc-' + k);
+    if (el) el.textContent = FR_CATS[k].units.toLocaleString('en-PH') + ' units';
+  }
+  const n = FR_COMPANIES.length;
+  const cos = $('st-cos');
+  if (cos) cos.textContent = n.toLocaleString('en-PH');
+
+  /* Provinces, not regions: with a handful of companies "1 region covered"
+     overstates reach far less honestly than the province they are in. */
+  const provs = new Set(FR_COMPANIES.map(c => c.province).filter(Boolean));
+  const pv = $('st-provinces'), pvl = $('st-provinces-l');
+  if (pv)  pv.textContent = provs.size;
+  if (pvl) pvl.textContent = provs.size === 1 ? 'Province covered' : 'Provinces covered';
+
+  const rated = FR_COMPANIES.filter(c => c.reviews > 0);
+  const avg = $('st-avg');
+  if (avg) avg.textContent = rated.length
+    ? (rated.reduce((s, c) => s + c.rating, 0) / rated.length).toFixed(2)
+    : '—';
+
+  /* The "example storefront" links pointed at a demo company that no
+     longer exists. Point them at a real one when there is one, and at
+     registration when there is not — a link to a 404 is worse than a link
+     to the thing that fixes it. */
+  const first = FR_COMPANIES[0];
+  for (const id of ['sf-link', 'sf-foot']){
+    const a = $(id);
+    if (a && first) a.href = '/company?c=' + encodeURIComponent(first.id);
+  }
+}
+
+/* The geo bar states its own provenance. Someone deciding whether to trust
+   "3 companies within 50 km" needs to know if the 50 km is measured from a
+   GPS fix, from a city they picked, or from a fallback guess. */
+function paintGeoBar(){
+  const n = providersIn(FILTERS.city, FILTERS.province);
+  const tag = $('geo-tag');
+  const exact = FR_GEO.source === 'geolocation';
+
+  $('geo-city').textContent = FILTERS.city ||
+    (exact ? 'your exact location' : 'the Philippines');
+  $('geo-count').textContent = n;
+  tag.classList.toggle('exact', exact);
+  tag.classList.remove('live');
+  tag.textContent = exact ? 'GPS'
+                  : FR_GEO.source === 'explicit' ? 'You chose this'
+                  : 'Approximate';
+
+  const total = FR_COMPANIES.length;
+  $('geo-note').textContent =
+    !total                      ? '— none registered yet.'
+    : n                         ? 'that reach you.'
+    : '— none of the ' + total + ' registered ' +
+      (total === 1 ? 'company reaches' : 'companies reach') + ' here yet.';
+
+  /* The accuracy figure is the one number that makes "exact" checkable. */
+  $('geo-msg').innerHTML = exact && FR_GEO.accuracy
+    ? 'Located to within about <b>' + FR_GEO.accuracy + ' m</b>' +
+      (FR_GEO.city ? ', nearest city ' + FR_GEO.city : '') +
+      '. Distances below are measured from where you are standing.'
+    : '';
+}
+
+/* ---------------------------------------------------------------------
+   "Use my exact location".
+
+   On an explicit click, never on load. A geolocation prompt that fires by
+   itself is the fastest way to get permanently blocked: the browser
+   remembers the denial, and the one moment the renter actually wants it —
+   a breakdown on the highway, on the tow page — is the moment it silently
+   fails. Ask when asking means something.
+   --------------------------------------------------------------------- */
+async function useMyLocation(){
+  const btn = $('geo-locate'), msg = $('geo-msg'), tag = $('geo-tag');
+  btn.disabled = true;
+  const label = btn.innerHTML;
+  tag.classList.add('live');
+  tag.textContent = 'Locating…';
+  msg.innerHTML = 'Waiting for your device. Your browser will ask for permission — ' +
+                  'nothing is sent anywhere, the coordinates stay in this page.';
+
+  try {
+    const fix = await frRequestLocation();
+    geoSave(fix);
+    FR_GEO.lat = fix.lat; FR_GEO.lon = fix.lon;
+    FR_GEO.accuracy = fix.accuracy;
+    FR_GEO.source = 'geolocation';
+    frNameGeo();
+
+    /* The city label follows the fix, and so does the filter — otherwise
+       the search stays pinned to the old city and "exact location" changes
+       nothing anyone can see. */
+    FILTERS.city = FR_GEO.city;
+    FILTERS.province = FR_GEO.province;
+    $('s-loc').value = FR_GEO.city;
+
+    frRedistance();
+    paintGeoBar();
+    render();
+
+    if (fix.outside)
+      msg.innerHTML = 'You appear to be outside the Philippines. Your location ' +
+        'is set, but every company here operates locally — pick the Philippine ' +
+        'city you need the unit delivered to instead.';
+    else if (!FR_GEO.city)
+      msg.innerHTML = 'Located to within about <b>' + fix.accuracy + ' m</b>. ' +
+        'No city in our table is close enough to name, so distances are ' +
+        'measured straight from your coordinates.';
+  } catch (err) {
+    tag.classList.remove('live');
+    tag.textContent = FR_GEO.source === 'geolocation' ? 'GPS' : 'Approximate';
+    /* A refusal is an answer. Say what happens next instead of scolding. */
+    msg.innerHTML = err.message +
+      (err.code === 'denied'
+        ? ' Your browser keeps that choice — to change it, use the padlock ' +
+          'icon in the address bar and allow location for this site.'
+        : '');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = label;
+  }
+}
+$('geo-locate').addEventListener('click', useMyLocation);
 function openLocModal(){
   locModal.hidden = false;
   document.body.style.overflow = 'hidden';
@@ -271,11 +422,31 @@ function appliedChips(){
     </span>`).join('');
 }
 
+const SEARCH_IC = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/><path d="M8 11h6"/></svg>';
+
+/* Two different nothings, and conflating them is the mistake.
+   "No results for your filters" tells someone to widen the search. On an
+   empty marketplace that is a lie: widening it finds nothing either,
+   because there is nothing. The second state has one useful action, and
+   it is not "clear all filters". */
 function emptyState(){
+  if (!FR_COMPANIES.length){
+    return `<div class="empty">
+      <span class="ic">${SEARCH_IC}</span>
+      <h3>No companies have registered yet</h3>
+      <p>FR Services lists rental companies that have signed up and had their
+         DTI registration, mayor's permit and BIR 2303 checked. Nobody has
+         completed that yet, so there is nothing to show — this is a real
+         empty marketplace, not a failed search.</p>
+      <a class="btn btn-y" href="/register">List the first company</a>
+    </div>`;
+  }
   return `<div class="empty">
-    <span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/><path d="M8 11h6"/></svg></span>
+    <span class="ic">${SEARCH_IC}</span>
     <h3>Walang nahanap na provider</h3>
-    <p>No companies match these filters${FILTERS.city ? ' in <b>' + FILTERS.city + '</b>' : ''}.
+    <p>None of the ${FR_COMPANIES.length} registered
+       compan${FR_COMPANIES.length === 1 ? 'y' : 'ies'} match these
+       filters${FILTERS.city ? ' in <b>' + FILTERS.city + '</b>' : ''}.
        Try widening the distance, clearing a filter, or searching a nearby city.</p>
     <button class="btn btn-y" data-clear="all">Clear all filters</button>
   </div>`;
@@ -413,36 +584,74 @@ function syncMap(){
   const pin = (html) => L.divIcon({ html, className: '', iconSize: [0, 0] });
   const pts = [];
 
-  /* the viewer */
-  const here = cityLatLon(FILTERS.city) || [FR_GEO.lat, FR_GEO.lon];
-  if (here){
-    L.marker(here, { icon: pin('<span class="gpin you">You</span>'), interactive: false,
-                     zIndexOffset: 1000 }).addTo(PINS);
-    pts.push(here);
-  }
+  /* The viewer, at the real origin — FR_GEO, not the chosen city's centre.
+     Those are the same thing when a city was picked by hand (setCity moves
+     FR_GEO to it) and very different after a GPS fix, where the whole point
+     is the actual spot rather than the middle of the city. */
+  const here = [FR_GEO.lat, FR_GEO.lon];
+  const exact = FR_GEO.source === 'geolocation';
 
-  /* providers currently in the result set — capped so a nationwide
-     search doesn't drop 40 overlapping bubbles on one screen */
-  const list = sortCompanies(filterCompanies(FILTERS), 'near')
-    .filter(c => typeof c.lat === 'number').slice(0, 24);
+  /* The accuracy circle is the honest part of an "exact location" claim: a
+     ±2 km fix drawn as a 12-pixel dot is a lie told with a marker. Drawn
+     only for a real fix, and only when it is big enough to mean something
+     at this zoom — a 20 m circle is smaller than the pin over it. */
+  if (exact && FR_GEO.accuracy > 40){
+    L.circle(here, {
+      radius: FR_GEO.accuracy,
+      color: '#057A2F', weight: 1.5, opacity: .5,
+      fillColor: '#057A2F', fillOpacity: .10, interactive: false
+    }).addTo(PINS);
+  }
+  L.marker(here, {
+    icon: pin('<span class="gpin you' + (exact ? ' fix' : '') + '">' +
+              (exact ? 'You are here' : 'You') + '</span>'),
+    interactive: false, zIndexOffset: 1000
+  }).addTo(PINS);
+  pts.push(here);
+
+  /* Providers currently in the result set — capped so a nationwide search
+     doesn't drop dozens of overlapping bubbles on one screen. */
+  const all = sortCompanies(filterCompanies(FILTERS), 'near')
+    .filter(c => typeof c.lat === 'number');
+  const list = all.slice(0, 24);
 
   list.forEach(c => {
     const cls = c.cat === 'towing' ? 'gpin tow' : 'gpin';
-    /* price is a display string ("12,000"); peso() takes a number */
-    const amount = peso(c.price.replace(/,/g, ''));
-    const label = c.cat === 'towing' ? 'Tow ' + amount : amount;
+    const n = +String(c.price).replace(/,/g, '');
+    /* A company that has not set a rate gets its name, not "₱0" — which
+       would read as free rather than as unpriced. */
+    const label = !n ? escPin(c.name)
+                : c.cat === 'towing' ? 'Tow ' + peso(n)
+                : peso(n);
+    const km = distanceKm(c);
     L.marker([c.lat, c.lon], { icon: pin(
-      `<a class="${cls}" href="/company?c=${c.id}" title="${c.name} — ${c.loc}">${label}</a>`
+      `<a class="${cls}" href="/company?c=${c.id}" title="${escPin(c.name)} — ${escPin(c.loc)}${
+        km == null ? '' : ' · ' + kmLabel(km)}">${label}</a>`
     )}).addTo(PINS);
     pts.push([c.lat, c.lon]);
   });
 
-  if (pts.length > 1)      MAP.fitBounds(pts, { padding: [46, 46], maxZoom: 13 });
-  else if (pts.length === 1) MAP.setView(pts[0], 12);
+  /* One point is the viewer alone. Fitting bounds to it zooms to the max,
+     which on an empty marketplace lands you on a street corner with no
+     context at all — hold a city-wide view instead. */
+  if (pts.length > 1)        MAP.fitBounds(pts, { padding: [46, 46], maxZoom: exact ? 15 : 13 });
+  else                       MAP.setView(here, exact ? 14 : 11);
 
-  $('fleetmap').nextElementSibling.textContent = list.length
-    ? 'Scroll to zoom · tap a price to open that company'
-    : 'No providers here yet — try another city';
+  const note = $('fleetmap').nextElementSibling;
+  note.textContent =
+      !FR_COMPANIES.length ? 'No companies registered yet — the map fills in as they join'
+    : !all.length           ? 'No providers reach here yet — try another city'
+    : all.length > list.length
+        ? `Showing the ${list.length} nearest of ${all.length} · tap a price to open that company`
+        : 'Scroll to zoom · tap a price to open that company';
+}
+
+/* Company names reach the map inside an attribute and as link text, and
+   they are owner-supplied. Escaped at the point of use. */
+function escPin(s){
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
 /* Location override — in production this writes the explicit choice that
@@ -450,8 +659,21 @@ function syncMap(){
 $('geo-change').addEventListener('click', openLocModal);
 
 syncTypeOptions();
-// seeds the geo bar counts and does the first render
-setCity(FR_GEO.city, FR_GEO.province);
+paintHeadline();
+
+/* First paint. A fix kept from a previous visit was already adopted by
+   data.js, so honour it rather than resetting to the fallback city —
+   setCity() would overwrite the coordinates with the city centre and throw
+   away accuracy the renter already granted us. */
+if (FR_GEO.source === 'geolocation'){
+  FILTERS.city = FR_GEO.city;
+  FILTERS.province = FR_GEO.province;
+  $('s-loc').value = FR_GEO.city;
+  paintGeoBar();
+  render();
+} else {
+  setCity(FR_GEO.city, FR_GEO.province, { explicit:false });
+}
 initMap();
 
 /* Shows who is signed in, or the sign-in button when nobody is. */

@@ -3,8 +3,36 @@ const starRow = n => Array.from({length:5}, (_, i) =>
   i < n ? '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z"/></svg>'
         : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z"/></svg>').join('');
 
-/* ---- load company from ?c= ---- */
-const co = byId(qs('c') || 'davao-heavy-lift') || FR_COMPANIES[4];
+/* ---- load company from ?c= ----
+   There is no fallback company any more. The old `|| FR_COMPANIES[4]` was
+   safe only while a seeded list guaranteed a fifth entry; against a
+   registry that starts empty it hands `undefined` to every line below and
+   the page dies on the first property read. Say what happened instead. */
+const co = byId(qs('c'));
+if (!co){
+  const asked = qs('c');
+  document.title = 'Company not found — FR Services';
+  document.body.innerHTML =
+    '<main style="max-width:620px;margin:14vh auto;padding:0 24px;' +
+    'font-family:Inter,system-ui,sans-serif;text-align:center">' +
+    '<h1 style="font-family:\'Space Grotesk\',sans-serif;font-size:26px;' +
+    'margin:0 0 12px">This company page is not here</h1>' +
+    '<p style="color:#5b6470;line-height:1.6;margin:0 0 22px">' +
+    (asked
+      ? 'Nothing is registered under <b>' + String(asked).replace(/[<>&]/g, '') +
+        '</b>. It may have been removed, or the link may be mistyped.'
+      : 'No company was named in the link.') +
+    '</p><p style="color:#5b6470;line-height:1.6;margin:0 0 22px">' +
+    'Companies appear here once they have completed registration.</p>' +
+    '<a href="/" style="display:inline-block;background:#057A2F;color:#fff;' +
+    'text-decoration:none;font-weight:700;padding:11px 20px;border-radius:999px">' +
+    'Back to the marketplace</a> ' +
+    '<a href="/register" style="display:inline-block;margin-left:8px;' +
+    'color:#0d1117;text-decoration:none;font-weight:700;padding:11px 20px;' +
+    'border:2px solid #0d1117;border-radius:999px">List a company</a></main>';
+  /* Stop the rest of this script: everything after here dereferences `co`. */
+  throw new Error('company not found: ' + asked);
+}
 
 /* ---- owner theme ----
    Declared BEFORE anything renders: the fleet markup reads
@@ -38,19 +66,32 @@ document.getElementById('co-name').textContent = co.name;
    an uploaded logo is wiped a few lines after it is applied */
 document.getElementById('co-loc').textContent = co.loc;
 document.getElementById('co-since').textContent = 'Operating since ' + co.since;
-document.getElementById('co-about').textContent = co.about;
-document.getElementById('co-rating').innerHTML = STAR_SVG + co.rating.toFixed(2) + ' (' + co.reviews + ')';
+document.getElementById('co-about').textContent =
+  co.about || (co.name + ' has not written a description yet.');
+/* "New" rather than 0.00 — see companyCard() in data.js for why a zero
+   rating on an unreviewed listing is worse than no rating at all. */
+document.getElementById('co-rating').innerHTML = co.reviews
+  ? STAR_SVG + Number(co.rating).toFixed(2) + ' (' + co.reviews + ')'
+  : 'New company';
 document.getElementById('cb-cat').textContent = FR_CATS[co.cat].label;
-document.getElementById('cb-city').textContent = FR_GEO.city;
-document.getElementById('st-units').textContent   = co.units;
-document.getElementById('st-reply').textContent   = co.reply;
+document.getElementById('cb-city').textContent = FR_GEO.city || 'your area';
+document.getElementById('st-units').textContent   = units.length;
+document.getElementById('st-reply').textContent   = co.reply || '—';
 document.getElementById('st-radius').textContent  = co.radius + ' km';
 document.getElementById('st-reviews').textContent = co.reviews;
-document.getElementById('st-km').textContent      = co.km + ' km';
+/* Distance from wherever the renter actually is, which is unknown until
+   they share a location — so it says so rather than printing a stale
+   number or a bare "0 km". */
+(() => {
+  const km = (typeof distanceKm === 'function') ? distanceKm(co) : null;
+  document.getElementById('st-km').textContent =
+    km == null ? '—' : (typeof kmLabel === 'function' ? kmLabel(km) : km.toFixed(1) + ' km');
+})();
 document.getElementById('cov-radius').textContent = co.radius + ' km';
 document.getElementById('cov-base').textContent   = co.loc;
-document.getElementById('rev-avg').textContent    = co.rating.toFixed(2);
-document.getElementById('rev-count').textContent  = co.reviews + ' reviews';
+document.getElementById('rev-avg').textContent    = co.reviews ? Number(co.rating).toFixed(2) : '—';
+document.getElementById('rev-count').textContent  =
+  co.reviews ? co.reviews + ' reviews' : 'No reviews yet';
 
 
 /* Every unit gets a photo slot in every layout. The owner's own upload
