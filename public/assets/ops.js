@@ -164,8 +164,8 @@ const OPS_VENDORS = {
   fuel:        ['Petron Ecoland','Shell Matina','Caltex Buhangin','Phoenix Toril'],
   maintenance: ['Suarez Auto Works','Davao Diesel Service','Rivera Machine Shop','Apex Hydraulics'],
   parts:       ['Yamamoto Parts Supply','Southern Tyre Center','Mindanao Bearings','JR Auto Supply'],
-  wages:       ['Payroll - drivers','Payroll - operators','Overtime settlement','Field crew allowance'],
-  haulage:     ['Lowbed hire - Panabo','Lowbed hire - Digos','Escort vehicle','Toll & terminal fees'],
+  wages:       ['Payroll for drivers','Payroll for operators','Overtime settlement','Field crew allowance'],
+  haulage:     ['Lowbed hire to Panabo','Lowbed hire to Digos','Escort vehicle','Toll & terminal fees'],
   insurance:   ['Pioneer Insurance','Malayan Insurance','Standard Insurance'],
   permits:     ['LTO registration','Mayor’s permit','DOLE safety filing','LTFRB clearance'],
   admin:       ['Office rent','Internet & telco','Accounting retainer','Yard utilities']
@@ -626,9 +626,9 @@ const MAX_DOCS = 30;
 function docFileProblem(file){
   if (!file) return 'No file selected.';
   if (!DOC_FILE_TYPES.includes(file.type))
-    return 'Upload a PDF, PNG, JPG or WebP. SVG is not accepted - it can carry scripts.';
+    return 'Upload a PDF, PNG, JPG or WebP. SVG is not accepted, because it can carry scripts.';
   if (file.size > MAX_DOC_BYTES)
-    return 'That file is ' + (file.size / 1048576).toFixed(1) + ' MB. Maximum is 1.5 MB - ' +
+    return 'That file is ' + (file.size / 1048576).toFixed(1) + ' MB. Maximum is 1.5 MB, so ' +
            'scan at a lower resolution or save the PDF as “reduced size”.';
   return null;
 }
@@ -793,7 +793,7 @@ function upsertDoc(companyId, entry){
     row.reviewNote = changed ? '' : (prev.reviewNote || '');
     if (changed && isReviewableType(row.type))
       row.reviewLog.push({ at: opsToday(), review:'pending', auto:true,
-        note:'Returned to the queue automatically - the company changed a reviewed detail.' });
+        note:'Returned to the queue automatically, because the company changed a reviewed detail.' });
     row.reviewLog = row.reviewLog.slice(-MAX_REVIEW_LOG);
     rows[at] = row;
   } else if (rows.length >= MAX_DOCS){
@@ -1270,7 +1270,7 @@ function buildReport(kind, companyId, from, to, today){
       rows: months.map(m => [monthLabel(m.key), String(m.n), rMoney(m.net), rMoney(m.vat), rMoney(m.net + m.vat)]),
       total: ['Total', String(rows.length), rMoney(s.revenue - s.vat), rMoney(s.vat), rMoney(s.revenue)]
     });
-    model.notes.push('Indicative only. Figures follow the booking date and have not been reconciled against issued official receipts - check with your accountant before filing.');
+    model.notes.push('Indicative only. Figures follow the booking date and have not been reconciled against issued official receipts, so check with your accountant before filing.');
   }
 
   model.notes.push('Generated from FR Services company admin on ' + fmtDate(t) + '. Prototype data.');

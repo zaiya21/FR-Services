@@ -3,7 +3,7 @@ import Markup from './markup';
 import LegacyScripts from '../_LegacyScripts';
 
 export const metadata = {
-  title: "Platform admin - FR Services",
+  title: "Platform admin on FR Services",
   robots: { index: false, follow: false }
 };
 

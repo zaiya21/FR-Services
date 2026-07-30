@@ -12,7 +12,7 @@ if (!co || !unit){
   const why = !co
     ? 'That company is not registered on FR Services.'
     : co.name + ' has not listed any units yet, so there is nothing to book.';
-  document.title = 'Nothing to book - FR Services';
+  document.title = 'Nothing to book on FR Services';
   document.body.innerHTML =
     '<main style="max-width:620px;margin:14vh auto;padding:0 24px;' +
     'font-family:Inter,system-ui,sans-serif;text-align:center">' +
@@ -34,7 +34,7 @@ const hasOperator = typeof unit.operator === 'string'
   ? unit.operator === 'included' : !!unit.operator;
 
 /* header */
-document.title = 'Book ' + unit.name + ' - FR Services';
+document.title = 'Book ' + unit.name + ' on FR Services';
 document.getElementById('bk-em').innerHTML     = unitIcon(unit.name, co.cat);
 document.getElementById('bk-name').textContent = unit.name;
 /* seeded units call it `avail`, owner-created ones `qty` */

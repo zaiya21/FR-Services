@@ -62,7 +62,7 @@ const PLATFORM_PRICING = [
   { key:'rentals', label:'Vehicle & equipment rental', value:'8% commission',
     note:'Charged on the booking total, on confirmed bookings only.' },
   { key:'towing', label:'Emergency towing', value:'12% commission',
-    note:'Higher because dispatch is the service - finding an available truck at short notice.' }
+    note:'Higher because dispatch is the service, meaning finding an available truck at short notice.' }
 ];
 
 const REVIEW_QUEUE_STATES = ['pending', 'verified', 'rejected'];
@@ -199,7 +199,7 @@ function setDocReview(companyId, docId, review, note){
   const remark = String(note == null ? '' : note)
     .replace(/[\u0000-\u001f\u007f]/g, '').trim().slice(0, MAX_REVIEW_NOTE);
   if (REVIEW_NOTE_REQUIRED.includes(review) && !remark)
-    return { ok:false, error:'Say why it was rejected - the company needs something to act on.' };
+    return { ok:false, error:'Say why it was rejected, because the company needs something to act on.' };
 
   const rows = loadDocs(companyId);
   const d = rows.find(x => x.id === docId);
@@ -474,7 +474,7 @@ function platformAlerts(from, to, today){
   if (pubExpired.length)
     out.push({ level:'urgent',
       title: `${pubExpired.length} approved document${pubExpired.length > 1 ? 's have' : ' has'} expired while still published`,
-      body: pubExpired.slice(0, 3).map(d => d.companyName + ' - ' + d.name).join('; ') +
+      body: pubExpired.slice(0, 3).map(d => d.companyName + ', ' + d.name).join('; ') +
             (pubExpired.length > 3 ? '…' : ''),
       go: 'review' });
 

@@ -11,7 +11,7 @@ const starRow = n => Array.from({length:5}, (_, i) =>
 const co = byId(qs('c'));
 if (!co){
   const asked = qs('c');
-  document.title = 'Company not found - FR Services';
+  document.title = 'Company not found on FR Services';
   document.body.innerHTML =
     '<main style="max-width:620px;margin:14vh auto;padding:0 24px;' +
     'font-family:Inter,system-ui,sans-serif;text-align:center">' +
@@ -60,7 +60,7 @@ let theme = renderTheme(loadTheme(co.id));
    otherwise fall back to the seeded demo listings. */
 const units = loadFleet(co.id) || FR_UNITS[co.id] || [];
 
-document.title = co.name + ' - FR Services';
+document.title = co.name + ' on FR Services';
 document.getElementById('co-name').textContent = co.name;
 /* co-logo is owned by renderTheme() - it must not be overwritten here or
    an uploaded logo is wiped a few lines after it is applied */
@@ -76,7 +76,7 @@ document.getElementById('co-rating').innerHTML = co.reviews
 document.getElementById('cb-cat').textContent = FR_CATS[co.cat].label;
 document.getElementById('cb-city').textContent = FR_GEO.city || 'your area';
 document.getElementById('st-units').textContent   = units.length;
-document.getElementById('st-reply').textContent   = co.reply || '-';
+document.getElementById('st-reply').textContent   = co.reply || 'Not set';
 document.getElementById('st-radius').textContent  = co.radius + ' km';
 document.getElementById('st-reviews').textContent = co.reviews;
 /* Distance from wherever the renter actually is, which is unknown until
@@ -85,11 +85,11 @@ document.getElementById('st-reviews').textContent = co.reviews;
 (() => {
   const km = (typeof distanceKm === 'function') ? distanceKm(co) : null;
   document.getElementById('st-km').textContent =
-    km == null ? '-' : (typeof kmLabel === 'function' ? kmLabel(km) : km.toFixed(1) + ' km');
+    km == null ? 'Unknown' : (typeof kmLabel === 'function' ? kmLabel(km) : km.toFixed(1) + ' km');
 })();
 document.getElementById('cov-radius').textContent = co.radius + ' km';
 document.getElementById('cov-base').textContent   = co.loc;
-document.getElementById('rev-avg').textContent    = co.reviews ? Number(co.rating).toFixed(2) : '-';
+document.getElementById('rev-avg').textContent    = co.reviews ? Number(co.rating).toFixed(2) : 'None yet';
 document.getElementById('rev-count').textContent  =
   co.reviews ? co.reviews + ' reviews' : 'No reviews yet';
 
@@ -235,7 +235,7 @@ function paintDocuments(){
 
   if (!docs.length){
     bar.innerHTML = '<div class="msg"><b>This company has not published any documents.</b><br>' +
-      'That is not proof of anything either way - but you can ask them for their business permit ' +
+      'That is not proof of anything either way, but you can ask them for their business permit ' +
       'before you pay a deposit, and a company that will not show it is telling you something.</div>';
     host.innerHTML = '<div class="docempty"><b>Nothing published yet</b>' +
       'Documents the company chooses to show would appear here.</div>';
@@ -253,7 +253,7 @@ function paintDocuments(){
          ? 'Every document below has been confirmed with the office that issued it.'
          : checked
          ? `${checked} of ${docs.length} have been confirmed with the issuing office. The rest are the company's own word for now.`
-         : 'None of these have been checked by FR Services yet - they are the company\'s own submissions.'
+         : 'None of these have been checked by FR Services yet, and they are the company\'s own submissions.'
      }</div>`;
 
   host.innerHTML = docs.map(d => `

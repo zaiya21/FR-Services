@@ -36,7 +36,7 @@ const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
 function imageProblem(file){
   if (!file) return 'No file selected.';
   if (!IMAGE_TYPES.includes(file.type))
-    return 'Use a PNG, JPG or WebP. SVG is not accepted - it can carry scripts.';
+    return 'Use a PNG, JPG or WebP. SVG is not accepted, because it can carry scripts.';
   if (file.size > MAX_IMAGE_BYTES)
     return 'That file is ' + (file.size / 1048576).toFixed(1) + ' MB. Maximum is 2 MB.';
   return null;
@@ -145,7 +145,7 @@ const LAYOUTS = [
   { id:'bento',      name:'Bento',       note:'Modular tiles at varied sizes, the lead unit twice as wide.' },
   { id:'paper',      name:'Paper',       note:'Matte and flat, ruled like a printed page.' },
   { id:'showcase',   name:'Showcase',    note:'Full-bleed cover, centred identity, large unit tiles.' },
-  { id:'console',    name:'Console',     note:'Technical readout. Thin lines and glow - pair with a dark backdrop.' }
+  { id:'console',    name:'Console',     note:'Technical readout. Thin lines and glow, so pair with a dark backdrop.' }
 ];
 const LAYOUT_IDS = LAYOUTS.map(l => l.id);
 

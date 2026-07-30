@@ -3,7 +3,7 @@ import Markup from './markup';
 import LegacyScripts from '../_LegacyScripts';
 
 export const metadata = {
-  title: "Request a booking - FR Services"
+  title: "Request a booking on FR Services"
 };
 
 export default function Page(){

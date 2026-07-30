@@ -31,7 +31,7 @@ document.getElementById('w-next').addEventListener('click', () => {
      any more than the permits can. */
   if (step === 3 && !coordsSet()){
     coordMsg('err', 'Your coordinates are needed before you continue. Paste them ' +
-                    'above, tap “I am at the yard now”, or open the guide - it takes ' +
+                    'above, tap “I am at the yard now”, or open the guide, because it takes ' +
                     'about thirty seconds in Google Maps.');
     document.getElementById('coordSec').scrollIntoView({ block:'center', behavior:'smooth' });
     return;
@@ -152,7 +152,7 @@ function submitRegistration(){
   note.style.lineHeight = '1.6';
   note.textContent =
     'Saved in this browser. This prototype has no server yet, so your company ' +
-    'is visible on this device only - clearing site data removes it. Your yard ' +
+    'is visible on this device only, and clearing site data removes it. Your yard ' +
     'is pinned at ' + formatCoords(COORD.lat, COORD.lon) + '.';
   done.appendChild(note);
 
@@ -170,7 +170,7 @@ function submitRegistration(){
 const REQ_HINT = {
   dti:    'Certificate of business name registration.',
   permit: 'Current year, from your city or municipal hall.',
-  bir:    'Certificate of registration - Form 2303.'
+  bir:    'Certificate of registration, Form 2303.'
 };
 const OPT_TYPES = [
   { id:'insurance', label:'Insurance certificate',        hint:'Comprehensive or CTPL cover.' },
@@ -246,7 +246,7 @@ function showDocError(){
   const err = document.getElementById('docErr');
   err.textContent =
     'Attach a file for ' + missingRequired().map(t => t.label).join(', ') +
-    ' before continuing. These three are what we verify - without them there is nothing to check.';
+    ' before continuing. These three are what we verify, and without them there is nothing to check.';
   document.getElementById('reqBar').scrollIntoView({ block:'center', behavior:'smooth' });
 }
 
@@ -376,7 +376,7 @@ function showCoordMap(lat, lon, zoom){
   document.getElementById('coordNote').hidden = false;
 
   if (!window.L){
-    wrap.innerHTML = '<p class="coordnote" style="padding:14px">Map unavailable - ' +
+    wrap.innerHTML = '<p class="coordnote" style="padding:14px">Map unavailable, but ' +
       'the coordinates above are still saved.</p>';
     return;
   }
@@ -483,7 +483,7 @@ document.getElementById('r-gps').addEventListener('click', async (e) => {
       'Your device reports <b>' + formatCoords(fix.lat, fix.lon) + '</b>, accurate to ' +
       'about <b>' + fix.accuracy + ' m</b>.' +
       (fix.accuracy > 100
-        ? ' That is a wide fix - probably a wifi or cell estimate rather than GPS. ' +
+        ? ' That is a wide fix, probably a wifi or cell estimate rather than GPS. ' +
           'Drag the pin onto your gate, or step outside and try again.'
         : ' Check the pin is on your gate and drag it if not.'));
   } catch (err) {

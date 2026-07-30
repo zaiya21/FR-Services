@@ -389,7 +389,7 @@ function paintQueue(){
               ${d.file
                 ? `<a class="qfile" href="${d.file.data}" target="_blank" rel="noopener noreferrer"
                       download="${esc(d.file.name)}">${FILE_SVG}Open ${esc(d.file.name)}</a>`
-                : '<span class="qnofile">No file attached - approving this would be approving a typed claim.</span>'}
+                : '<span class="qnofile">No file attached, so approving this would be approving a typed claim.</span>'}
               ${d.reviewNote
                 ? `<span class="qremark"><b>Remark:</b> ${esc(d.reviewNote)}</span>` : ''}
             </div>
@@ -456,7 +456,7 @@ const VERDICTS = {
     button:'Reject document', tone:'bad',
     effect:'The document is marked <b>Not accepted</b> and the company\'s verified badge is withdrawn while it stands.',
     quick:[
-      'The scan is unreadable - please re-upload a clearer copy.',
+      'The scan is unreadable. Please re-upload a clearer copy.',
       'The issuing office has no record of this document.',
       'The details entered do not match the attached file.',
       'This document has expired. Upload the current one.',
@@ -471,7 +471,7 @@ const VERDICTS = {
     quick:[
       'Needs a second reviewer before a decision.',
       'Waiting on confirmation from the issuing office.',
-      'Approved in error - returning for a proper check.'
+      'Approved in error, returning for a proper check.'
     ]
   }
 };
@@ -862,7 +862,7 @@ $('askForm').addEventListener('submit', () => {
      so is better than leaving the operator waiting for an email. */
   $('newCode').innerHTML = r.sent
     ? `Your code is <b style="letter-spacing:.2em">${esc(r.code)}</b>.<br>` +
-      `<span style="font-weight:500">Shown here because this prototype has no mail server - in production it would be emailed and never displayed.</span>`
+      `<span style="font-weight:500">Shown here because this prototype has no mail server, so in production it would be emailed and never displayed.</span>`
     : `<span style="font-weight:500">If that address is registered, a code has been issued. ` +
       `We don't confirm either way, so this form can't be used to find out who has an account.</span>`;
 });

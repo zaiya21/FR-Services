@@ -22,7 +22,7 @@ import Markup from './markup';
 import LegacyScripts from './_LegacyScripts';
 
 export const metadata = {
-  title: "FR Services - Rent vehicles, heavy equipment & towing anywhere in the Philippines",
+  title: "Rent vehicles, heavy equipment and towing anywhere in the Philippines with FR Services",
   description: "One marketplace for vehicle rental, heavy equipment hire and 24/7 towing across all 17 regions of the Philippines. We match you with verified companies that actually serve your area."
 };
 

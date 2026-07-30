@@ -252,7 +252,7 @@ async function applyNewPassword(user, next){
   acct.salt = randomHex(16);
   acct.hash = await hashPassword(next, acct.salt);
   acct.isDefault = false;
-  if (!saveAccounts(rows)) return { ok:false, error:'Could not save - browser storage is blocked.' };
+  if (!saveAccounts(rows)) return { ok:false, error:'Could not save, because browser storage is blocked.' };
   /* A password change ends every existing session. */
   authSignOut();
   clearFailures(user);
@@ -337,7 +337,7 @@ function toggleFavourite(id){
   else list.unshift(key);
   return writeJSON(FAV_KEY(s.user), list)
     ? { ok:true, on: at < 0 }
-    : { ok:false, error:'Could not save - browser storage is blocked.' };
+    : { ok:false, error:'Could not save, because browser storage is blocked.' };
 }
 
 /**

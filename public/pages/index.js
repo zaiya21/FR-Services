@@ -261,7 +261,7 @@ function paintHeadline(){
   const avg = $('st-avg');
   if (avg) avg.textContent = rated.length
     ? (rated.reduce((s, c) => s + c.rating, 0) / rated.length).toFixed(2)
-    : '-';
+    : 'None yet';
 
   /* The "example storefront" links pointed at a demo company that no
      longer exists. Point them at a real one when there is one, and at
@@ -293,9 +293,9 @@ function paintGeoBar(){
 
   const total = FR_COMPANIES.length;
   $('geo-note').textContent =
-    !total                      ? '- none registered yet.'
+    !total                      ? 'because none have registered yet.'
     : n                         ? 'that reach you.'
-    : '- none of the ' + total + ' registered ' +
+    : 'because none of the ' + total + ' registered ' +
       (total === 1 ? 'company reaches' : 'companies reach') + ' here yet.';
 
   /* The accuracy figure is the one number that makes "exact" checkable. */
@@ -321,7 +321,7 @@ async function useMyLocation(){
   const label = btn.innerHTML;
   tag.classList.add('live');
   tag.textContent = 'Locating…';
-  msg.innerHTML = 'Waiting for your device. Your browser will ask for permission - ' +
+  msg.innerHTML = 'Waiting for your device. Your browser will ask for permission, and ' +
                   'nothing is sent anywhere, the coordinates stay in this page.';
 
   try {
@@ -345,7 +345,7 @@ async function useMyLocation(){
 
     if (fix.outside)
       msg.innerHTML = 'You appear to be outside the Philippines. Your location ' +
-        'is set, but every company here operates locally - pick the Philippine ' +
+        'is set, but every company here operates locally, so pick the Philippine ' +
         'city you need the unit delivered to instead.';
     else if (!FR_GEO.city)
       msg.innerHTML = 'Located to within about <b>' + fix.accuracy + ' m</b>. ' +
@@ -357,7 +357,7 @@ async function useMyLocation(){
     /* A refusal is an answer. Say what happens next instead of scolding. */
     msg.innerHTML = err.message +
       (err.code === 'denied'
-        ? ' Your browser keeps that choice - to change it, use the padlock ' +
+        ? ' Your browser keeps that choice, so to change it use the padlock ' +
           'icon in the address bar and allow location for this site.'
         : '');
   } finally {
@@ -639,8 +639,8 @@ function syncMap(){
 
   const note = $('fleetmap').nextElementSibling;
   note.textContent =
-      !FR_COMPANIES.length ? 'No companies registered yet - the map fills in as they join'
-    : !all.length           ? 'No providers reach here yet - try another city'
+      !FR_COMPANIES.length ? 'No companies registered yet, and the map fills in as they join'
+    : !all.length           ? 'No providers reach here yet, so try another city'
     : all.length > list.length
         ? `Showing the ${list.length} nearest of ${all.length} · tap a price to open that company`
         : 'Scroll to zoom · tap a price to open that company';

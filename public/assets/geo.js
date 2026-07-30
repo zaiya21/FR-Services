@@ -89,7 +89,7 @@ function parseCoords(raw){
      to name the problem and give the fix than to fail vaguely. */
   if (/^https?:\/\/(maps\.app\.goo\.gl|goo\.gl\/maps)/i.test(s))
     return { error: 'That is a short link, which hides the numbers. Open it, ' +
-                    'then copy the coordinates out of the address bar - or ' +
+                    'then copy the coordinates out of the address bar, or ' +
                     'right-click the pin in Google Maps and copy from there.' };
 
   let note = '';
@@ -105,7 +105,7 @@ function parseCoords(raw){
     if (!hit) return { error: 'No coordinates in that link. Right-click your ' +
                               'pin in Google Maps and choose the numbers at the top of the menu.' };
     if (hit === centre && !place)
-      note = 'Read from the map centre in that link - check the pin is where you want it.';
+      note = 'Read from the map centre in that link, so check the pin is where you want it.';
     s = hit[1] + ', ' + hit[2];
   }
 
@@ -175,7 +175,7 @@ function parseCoords(raw){
        somewhere in the sea off Davao and call it a yard. */
     if (Number.isInteger(lat) && Number.isInteger(lon))
       return { error: 'Those are whole degrees, which covers about 111 km. ' +
-                      'Copy the full number - it should have four or more decimals.' };
+                      'Copy the full number, which should have four or more decimals.' };
 
     return { lat: round6(lat), lon: round6(lon), note: n };
   }
@@ -243,7 +243,7 @@ function frRequestLocation(opts){
     if (!geoSecureOrigin())
       return reject({ code:'insecure',
         message:'Location needs a secure connection (https). This page is on ' +
-                location.protocol + ' - the browser blocks it before asking you.' });
+                location.protocol + ', so the browser blocks it before asking you.' });
 
     navigator.geolocation.getCurrentPosition(
       pos => {
@@ -261,7 +261,7 @@ function frRequestLocation(opts){
           1: { code:'denied',      message:'Location permission was declined. ' +
                'You can still choose your city by hand.' },
           2: { code:'unavailable', message:'Your device could not get a fix. ' +
-               'Indoors and on desktop this is common - try again near a window, ' +
+               'Indoors and on desktop this is common, so try again near a window, ' +
                'or choose your city by hand.' },
           3: { code:'timeout',     message:'Getting a location took too long. Try again.' }
         };

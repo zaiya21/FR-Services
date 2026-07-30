@@ -75,7 +75,7 @@ function regAdd(input){
   }
   list.push(rec);
   if (!regWrite(list))
-    return { ok:false, error:'Could not save - browser storage is full or blocked.' };
+    return { ok:false, error:'Could not save, because browser storage is full or blocked.' };
   return { ok:true, id: rec.id, company: rec };
 }
 

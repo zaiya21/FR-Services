@@ -23,7 +23,7 @@ const COMPANY_ID = (() => {
 
 if (!COMPANY_ID){
   const esc0 = s => String(s == null ? '' : s).replace(/[&<>"]/g, '');
-  document.title = 'Choose a company - FR Services';
+  document.title = 'Choose a company on FR Services';
   document.body.innerHTML =
     '<main style="max-width:640px;margin:12vh auto;padding:0 24px;' +
     'font-family:Inter,system-ui,sans-serif">' +
@@ -35,7 +35,7 @@ if (!COMPANY_ID){
       ? 'Nothing is registered under <b>' + esc0(ADMIN_WANT) + '</b>.'
       : ADMIN_LIST.length
         ? 'Pick the company whose dashboard you want to open.'
-        : 'This console manages a registered company - its bookings, expenses, ' +
+        : 'This console manages a registered company, covering its bookings, expenses, ' +
           'documents and storefront. Register one first and its dashboard ' +
           'appears here.') +
     '</p>' +
@@ -383,7 +383,7 @@ function paintDelivery(){
   const km = Number($('um-delpreview').value) || 0;
   const cost = deliveryCost(u, km);
   $('umDelCalc').innerHTML = cost === null
-    ? '<b>Renter sees:</b> Quoted per site - no figure shown until you send one.'
+    ? '<b>Renter sees:</b> Quoted per site, with no figure shown until you send one.'
     : `<b>Renter sees:</b> ${deliveryText(u)}` +
       (mode === 'perkm' ? ` &nbsp;·&nbsp; a ${km} km job costs ${peso(cost)}` : '');
 }
@@ -418,7 +418,7 @@ $('umSave').addEventListener('click', () => {
     deliveryKm:$('um-delkm').value, deliveryFree:$('um-delfree').value,
     notes:$('um-notes').value, photo:draftPhoto
   });
-  if (!next){ $('umErr').textContent = 'Could not save - check the fields above.'; return; }
+  if (!next){ $('umErr').textContent = 'Could not save. Check the fields above.'; return; }
 
   const i = fleet.findIndex(x => x.id === next.id);
   if (i >= 0) fleet[i] = next; else fleet.push(next);
@@ -466,7 +466,7 @@ function paintAudit(){
   }
   box.innerHTML = `<h3>${warnIcon()} ${w.length} thing${w.length>1?'s':''} to look at</h3>
     <p>These combinations may be hard to read. You can still publish - but renters on a bright street may not see them.</p>
-    <ul>${w.map(x => `<li><b>${x.label}</b> - contrast ${x.ratio}:1, needs ${x.need}:1</li>`).join('')}</ul>`;
+    <ul>${w.map(x => `<li><b>${x.label}</b> at contrast ${x.ratio}:1, needs ${x.need}:1</li>`).join('')}</ul>`;
 }
 const okIcon = () => '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l6 6L20 6"/></svg>';
 const warnIcon = () => '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>';
@@ -535,7 +535,7 @@ $('coverClear').addEventListener('click', () => {
 $('saveBtn').addEventListener('click', () => {
   const ok = saveTheme(COMPANY_ID, theme);
   const note = $('savedNote');
-  note.textContent = ok ? 'Published - open your page to see it live.'
+  note.textContent = ok ? 'Published. Open your page to see it live.'
                         : 'Could not save (browser storage is full or blocked).';
   note.style.color = ok ? 'var(--ok)' : 'var(--danger)';
   setTimeout(() => { note.textContent = ''; }, 6000);
@@ -889,7 +889,7 @@ function paintOverview(){
       <td class="num"><span class="miniprog"><i style="width:${u.utilisation}%"></i></span>
           &nbsp;${pct(u.utilisation)}</td>
     </tr>`).join('')
-    : '<tr><td colspan="6" class="emptyrow">No units listed yet - add them under Storefront.</td></tr>';
+    : '<tr><td colspan="6" class="emptyrow">No units listed yet. Add them under Storefront.</td></tr>';
 
   /* --- compliance --- */
   const docs = opsCompliance(COMPANY_ID, TODAY);
@@ -1088,7 +1088,7 @@ $('exAdd').addEventListener('click', () => {
     unitId, unitName: unit ? unit.name : '',
     note:   $('ex-note').value
   });
-  if (!saved){ err.textContent = 'Could not save - the ledger is full or storage is blocked.'; return; }
+  if (!saved){ err.textContent = 'Could not save, because the ledger is full or storage is blocked.'; return; }
   $('ex-amount').value = ''; $('ex-vendor').value = ''; $('ex-note').value = '';
   note.textContent = 'Recorded.';
   setTimeout(() => { note.textContent = ''; }, 4000);
@@ -1112,7 +1112,7 @@ $('dm-type').innerHTML =
   `<optgroup label="Checked by FR Services">` +
   DOC_TYPES.filter(t => t.reviewable)
     .map(t => `<option value="${t.id}">${esc(t.label)}</option>`).join('') +
-  `</optgroup><optgroup label="Yours to publish - not reviewed">` +
+  `</optgroup><optgroup label="Yours to publish, not reviewed">` +
   DOC_TYPES.filter(t => !t.reviewable)
     .map(t => `<option value="${t.id}">${esc(t.label)}</option>`).join('') +
   `</optgroup>`;
@@ -1145,10 +1145,10 @@ function paintDocs(){
             : 'FR Services will confirm each one with the issuing office.')
         : `<b>Registration incomplete</b>` +
           `You cannot be verified until <b style="display:inline">${reg.missing.map(m => m.label).join(', ')}</b> ` +
-          `${reg.missing.length > 1 ? 'have' : 'has'} a file attached. A typed number is not a document - there would be nothing for us to check.`) +
+          `${reg.missing.length > 1 ? 'have' : 'has'} a file attached. A typed number is not a document, because there would be nothing for us to check.`) +
     `</span>` +
     `<span class="chips">${reg.items.map(i =>
-      `<span class="st st-${i.done ? 'ok' : 'off'}">${esc(i.label.replace(/\s*\(.*\)$/, ''))}${i.done ? '' : ' - no file'}</span>`
+      `<span class="st st-${i.done ? 'ok' : 'off'}">${esc(i.label.replace(/\s*\(.*\)$/, ''))}${i.done ? '' : ', no file'}</span>`
     ).join('')}</span>`;
   const lapsed = rows.filter(d => d.state === 'expired').length;
   const soon   = rows.filter(d => d.state === 'soon').length;
@@ -1190,7 +1190,7 @@ $('dcRows').addEventListener('change', e => {
   const t = e.target.closest('[data-pub]');
   if (!t) return;
   const saved = setDocPublished(COMPANY_ID, t.dataset.pub, t.checked);
-  $('dcErr').textContent = saved ? '' : 'Could not save - browser storage is full or blocked.';
+  $('dcErr').textContent = saved ? '' : 'Could not save, because browser storage is full or blocked.';
   paintDocs();
 });
 $('dcRows').addEventListener('click', e => {
@@ -1246,7 +1246,7 @@ function paintDocFile(){
   const drop = $('dmDrop');
   const mustHave = isReviewableType($('dm-type').value);
   drop.querySelector('.lbl').textContent =
-    dmFile ? dmFile.name : (mustHave ? 'Attach the file - required' : 'Attach the file');
+    dmFile ? dmFile.name : (mustHave ? 'Attach the file, required' : 'Attach the file');
   drop.querySelector('.sub').textContent = dmFile
     ? (dmFile.type === 'application/pdf' ? 'PDF' : 'Image') +
       ' · ' + (dmFile.size / 1024).toFixed(0) + ' KB'
@@ -1291,7 +1291,7 @@ function paintDocPreview(){
     (st ? ` It will read as <b style="display:inline">${esc(st.label)}</b>.` : '') +
     (reviewed
       ? (dcEditing ? '' : ' Marked <b style="display:inline">Awaiting review</b> until our team confirms it.')
-      : ' Shown as <b style="display:inline">Company-submitted</b> - FR Services does not review this type.');
+      : ' Shown as <b style="display:inline">Company-submitted</b>, because FR Services does not review this type.');
 }
 ['dm-published','dm-shownum','dm-showfile','dm-number','dm-expires']
   .forEach(id => $(id).addEventListener('input', paintDocPreview));
@@ -1329,8 +1329,8 @@ $('dmSave').addEventListener('click', () => {
   });
   if (!saved){
     err.textContent = dmFile
-      ? 'Could not save - browser storage is full. Try a smaller scan, or remove the file from an older document.'
-      : 'Could not save - you have reached the ' + MAX_DOCS + '-document limit.';
+      ? 'Could not save, because browser storage is full. Try a smaller scan, or remove the file from an older document.'
+      : 'Could not save, because you have reached the ' + MAX_DOCS + '-document limit.';
     return;
   }
   closeDoc();
