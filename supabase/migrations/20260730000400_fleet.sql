@@ -1,9 +1,9 @@
 -- =====================================================================
--- FLEET — the units a company rents out, and the add-on services.
+-- FLEET - the units a company rents out, and the add-on services.
 --
 -- The interesting part is the delivery model. The application supports
 -- three ways of charging for getting a unit to site, and the fields only
--- make sense in combination — a per-km listing without a per-km rate
+-- make sense in combination - a per-km listing without a per-km rate
 -- would quote every job at zero. That coherence is a CHECK here rather
 -- than a fallback in JavaScript, because a row that cannot be priced
 -- should not be storable.
@@ -71,7 +71,7 @@ create table public.units (
 
 comment on constraint units_discounts_are_monotonic on public.units is
   'A 7-day rate cheaper than a 30-day rate is almost always a typo, and the
-   booking engine always quotes the best applicable tier — so the mistake
+   booking engine always quotes the best applicable tier - so the mistake
    would silently cost the owner money rather than error.';
 
 -- Optional extras: airport pickup, an operator, a damage waiver.
@@ -100,7 +100,7 @@ create trigger units_touch before update on public.units
   for each row execute function app.touch_updated_at();
 
 -- ---------------------------------------------------------------------
--- Policies. A listed unit on a listed company is public — that is the
+-- Policies. A listed unit on a listed company is public - that is the
 -- shop window. Everything else belongs to the company.
 -- ---------------------------------------------------------------------
 alter table public.units    enable row level security;

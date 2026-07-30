@@ -1,5 +1,5 @@
 /* =====================================================================
-   AUTH — the sign-in gate for the FR Services platform console
+   AUTH - the sign-in gate for the FR Services platform console
    ---------------------------------------------------------------------
    READ THIS BEFORE TRUSTING IT.
 
@@ -68,7 +68,7 @@ function randomHex(bytes){
 }
 
 /* Chrome treats file:// as a secure context, so crypto.subtle is normally
-   there. The fallback exists so the gate still functions if it is not —
+   there. The fallback exists so the gate still functions if it is not -
    and labels itself, so nobody mistakes it for a digest. */
 function weakDigest(s){
   let h1 = 0x811c9dc5, h2 = 0x01000193;
@@ -187,7 +187,7 @@ function authSignOut(){
 /**
  * @returns {Promise<{ok:boolean, error?:string, session?:object}>}
  * The failure message is deliberately the same whether the account does
- * not exist or the password is wrong — otherwise the form doubles as a
+ * not exist or the password is wrong - otherwise the form doubles as a
  * way to enumerate who has an account.
  */
 async function authSignIn(user, password, remember){
@@ -252,7 +252,7 @@ async function applyNewPassword(user, next){
   acct.salt = randomHex(16);
   acct.hash = await hashPassword(next, acct.salt);
   acct.isDefault = false;
-  if (!saveAccounts(rows)) return { ok:false, error:'Could not save — browser storage is blocked.' };
+  if (!saveAccounts(rows)) return { ok:false, error:'Could not save - browser storage is blocked.' };
   /* A password change ends every existing session. */
   authSignOut();
   clearFailures(user);
@@ -267,7 +267,7 @@ async function applyNewPassword(user, next){
    --------------------------------------------------------------- */
 function authStartReset(user){
   const acct = findAccount(user);
-  /* Same response either way — the reset form must not confirm whether an
+  /* Same response either way - the reset form must not confirm whether an
      address is registered. The code is only returned when it is real. */
   if (!acct) return { ok:true, sent:false };
 
@@ -337,7 +337,7 @@ function toggleFavourite(id){
   else list.unshift(key);
   return writeJSON(FAV_KEY(s.user), list)
     ? { ok:true, on: at < 0 }
-    : { ok:false, error:'Could not save — browser storage is blocked.' };
+    : { ok:false, error:'Could not save - browser storage is blocked.' };
 }
 
 /**
@@ -364,7 +364,7 @@ function paintAuthNav(hostId){
   return s;
 }
 
-/** Wipes accounts, sessions, locks and reset codes — the demo reset. */
+/** Wipes accounts, sessions, locks and reset codes - the demo reset. */
 function authFactoryReset(){
   const s = authSession();
   [AUTH_ACCOUNTS, AUTH_SESSION, AUTH_LOCKS, AUTH_RESETS]

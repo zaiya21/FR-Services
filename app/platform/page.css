@@ -62,7 +62,7 @@
 .kpi .k-note b{color:var(--ok)}
 .kpi .k-note b.down{color:var(--danger)}
 
-/* charts — same derived palette as the company console */
+/* charts - same derived palette as the company console */
 :root{
   --c1:#057A2F; --c2:#1D4ED8; --c3:#B8860B; --c4:#0891B2; --c5:#C2410C; --c6:#7C3AED;
   --c-other:#6B7280; --c-grid:#E6E4DE; --c-axis:#C9C6BE;
@@ -103,7 +103,7 @@
   font-variant-numeric:tabular-nums}
 .c-tip[hidden]{display:none !important}
 
-/* Ranked horizontal bars — the right form for many ordered magnitudes.
+/* Ranked horizontal bars - the right form for many ordered magnitudes.
    One hue, because the categories carry no identity beyond their size. */
 .ranked{display:grid;gap:3px}
 .rrow{display:grid;grid-template-columns:minmax(120px,180px) 1fr auto auto;
@@ -111,7 +111,7 @@
   border-bottom:1px solid var(--hair);font-size:13px}
 .rrow:last-child{border-bottom:0}
 .rrow .nm{font-weight:600;min-width:0;overflow:hidden}
-/* `.rmeta`, not `.co` — fr.css already owns `.co` as the marketplace
+/* `.rmeta`, not `.co` - fr.css already owns `.co` as the marketplace
    company card, and the sub-label inherited a full card border. */
 .rrow .rmeta{display:block;font-size:11.5px;color:var(--ink-3);font-weight:500;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -201,7 +201,7 @@ table.dt .sub{display:block;font-size:11.5px;color:var(--ink-3);margin-top:2px}
 
 /* ---- review queue ----
    Grouped by company, not one card per document. An operator works a
-   company at a time — same issuer, same file, often the same phone call —
+   company at a time - same issuer, same file, often the same phone call -
    so three separate cards for one company was three times the scrolling
    and no more information. */
 .qgroups{display:grid;gap:var(--s3)}
@@ -343,7 +343,7 @@ table.dt .sub{display:block;font-size:11.5px;color:var(--ink-3);margin-top:2px}
 /* =====================================================================
    SIGN-IN GATE
    A box over the page, not a landing page. The console behind it is
-   blurred and inert until there is a session — and, importantly, its
+   blurred and inert until there is a session - and, importantly, its
    panes are never painted, so no marketplace data is sitting in the DOM
    waiting to be read out of a screenshot.
    ===================================================================== */
@@ -354,6 +354,22 @@ table.dt .sub{display:block;font-size:11.5px;color:var(--ink-3);margin-top:2px}
 .gate-card{position:relative;width:100%;max-width:440px;background:var(--surface);
   border:var(--bd);border-radius:var(--r-lg);box-shadow:var(--off-lift);
   padding:var(--s6) var(--s5);margin:auto}
+/* A way out of the gate.
+   It navigates rather than dismissing, and that is the honest behaviour:
+   the entire console sits behind this card, so "close" cannot mean "reveal
+   what is underneath". Top-right on the card edge, matching the modal
+   close buttons everywhere else in the app. */
+.gate-x{position:absolute;top:10px;right:10px;width:34px;height:34px;
+  display:grid;place-items:center;border-radius:50%;color:var(--ink-2);
+  border:var(--bd-thin);background:#fff;
+  transition:background .16s var(--ease),color .16s var(--ease)}
+.gate-x:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+/* The worded exit. An unlabelled X on a sign-in box reads as "dismiss";
+   this says where it actually goes. */
+.gate-out{margin-top:var(--s4);text-align:center}
+.gate-out a{font-size:13.5px;font-weight:700;color:var(--ink-2)}
+.gate-out a:hover{color:var(--ink)}
+
 .gate-mark{display:flex;align-items:center;gap:11px;margin-bottom:var(--s4)}
 .gate-mark img{width:42px;height:42px;border:var(--bd-thin);border-radius:12px;
   background:#fff;padding:3px}

@@ -11,7 +11,7 @@ const starRow = n => Array.from({length:5}, (_, i) =>
 const co = byId(qs('c'));
 if (!co){
   const asked = qs('c');
-  document.title = 'Company not found — FR Services';
+  document.title = 'Company not found - FR Services';
   document.body.innerHTML =
     '<main style="max-width:620px;margin:14vh auto;padding:0 24px;' +
     'font-family:Inter,system-ui,sans-serif;text-align:center">' +
@@ -60,15 +60,15 @@ let theme = renderTheme(loadTheme(co.id));
    otherwise fall back to the seeded demo listings. */
 const units = loadFleet(co.id) || FR_UNITS[co.id] || [];
 
-document.title = co.name + ' — FR Services';
+document.title = co.name + ' - FR Services';
 document.getElementById('co-name').textContent = co.name;
-/* co-logo is owned by renderTheme() — it must not be overwritten here or
+/* co-logo is owned by renderTheme() - it must not be overwritten here or
    an uploaded logo is wiped a few lines after it is applied */
 document.getElementById('co-loc').textContent = co.loc;
 document.getElementById('co-since').textContent = 'Operating since ' + co.since;
 document.getElementById('co-about').textContent =
   co.about || (co.name + ' has not written a description yet.');
-/* "New" rather than 0.00 — see companyCard() in data.js for why a zero
+/* "New" rather than 0.00 - see companyCard() in data.js for why a zero
    rating on an unreviewed listing is worse than no rating at all. */
 document.getElementById('co-rating').innerHTML = co.reviews
   ? STAR_SVG + Number(co.rating).toFixed(2) + ' (' + co.reviews + ')'
@@ -76,20 +76,20 @@ document.getElementById('co-rating').innerHTML = co.reviews
 document.getElementById('cb-cat').textContent = FR_CATS[co.cat].label;
 document.getElementById('cb-city').textContent = FR_GEO.city || 'your area';
 document.getElementById('st-units').textContent   = units.length;
-document.getElementById('st-reply').textContent   = co.reply || '—';
+document.getElementById('st-reply').textContent   = co.reply || '-';
 document.getElementById('st-radius').textContent  = co.radius + ' km';
 document.getElementById('st-reviews').textContent = co.reviews;
 /* Distance from wherever the renter actually is, which is unknown until
-   they share a location — so it says so rather than printing a stale
+   they share a location - so it says so rather than printing a stale
    number or a bare "0 km". */
 (() => {
   const km = (typeof distanceKm === 'function') ? distanceKm(co) : null;
   document.getElementById('st-km').textContent =
-    km == null ? '—' : (typeof kmLabel === 'function' ? kmLabel(km) : km.toFixed(1) + ' km');
+    km == null ? '-' : (typeof kmLabel === 'function' ? kmLabel(km) : km.toFixed(1) + ' km');
 })();
 document.getElementById('cov-radius').textContent = co.radius + ' km';
 document.getElementById('cov-base').textContent   = co.loc;
-document.getElementById('rev-avg').textContent    = co.reviews ? Number(co.rating).toFixed(2) : '—';
+document.getElementById('rev-avg').textContent    = co.reviews ? Number(co.rating).toFixed(2) : '-';
 document.getElementById('rev-count').textContent  =
   co.reviews ? co.reviews + ' reviews' : 'No reviews yet';
 
@@ -133,7 +133,7 @@ const avail = u => (u.qty !== undefined ? u.qty : u.avail) || 0;
 
 /* ---- fleet ----
    A company may run several service lines. When it does, the fleet is
-   grouped under a heading per line rather than mixed into one grid — a
+   grouped under a heading per line rather than mixed into one grid - a
    renter looking for a tow truck should not have to scan past sedans. */
 const unitCat = u => u.cat || co.cat;
 
@@ -200,7 +200,7 @@ if (services.length){
 
 /* =====================================================================
    PUBLISHED DOCUMENTS
-   Only what the owner published, and only in the form ops.js releases it —
+   Only what the owner published, and only in the form ops.js releases it -
    masked numbers stay masked, withheld files stay withheld. Nothing here
    reaches back into the owner's private store.
    ===================================================================== */
@@ -235,7 +235,7 @@ function paintDocuments(){
 
   if (!docs.length){
     bar.innerHTML = '<div class="msg"><b>This company has not published any documents.</b><br>' +
-      'That is not proof of anything either way — but you can ask them for their business permit ' +
+      'That is not proof of anything either way - but you can ask them for their business permit ' +
       'before you pay a deposit, and a company that will not show it is telling you something.</div>';
     host.innerHTML = '<div class="docempty"><b>Nothing published yet</b>' +
       'Documents the company chooses to show would appear here.</div>';
@@ -253,7 +253,7 @@ function paintDocuments(){
          ? 'Every document below has been confirmed with the office that issued it.'
          : checked
          ? `${checked} of ${docs.length} have been confirmed with the issuing office. The rest are the company's own word for now.`
-         : 'None of these have been checked by FR Services yet — they are the company\'s own submissions.'
+         : 'None of these have been checked by FR Services yet - they are the company\'s own submissions.'
      }</div>`;
 
   host.innerHTML = docs.map(d => `
@@ -281,7 +281,7 @@ function paintDocuments(){
 paintDocuments();
 
 /* The About sidebar summarises the same store rather than a hardcoded list
-   — a static "Verified credentials" block goes stale the moment a permit
+   - a static "Verified credentials" block goes stale the moment a permit
    lapses, and a stale credential list is a lie with a tick beside it. */
 function paintCredSummary(){
   const host = document.getElementById('cred-list');
@@ -295,7 +295,7 @@ function paintCredSummary(){
   const claimed  = docs.length - checked;
   const expired  = docs.filter(d => d.state === 'expired').length;
 
-  /* Checked ones lead — this is a credentials list. But a truncated list
+  /* Checked ones lead - this is a credentials list. But a truncated list
      could show six ticks while an unverified or lapsed document sits just
      out of sight, so the tally below always states the whole picture. */
   const order = docs.slice().sort((a, b) =>
@@ -337,7 +337,7 @@ function paintFavourite(){
 const favBtn = document.getElementById('favBtn');
 if (favBtn) favBtn.addEventListener('click', () => {
   const out = toggleFavourite(co.id);
-  /* The store refuses when signed out even though the button is hidden —
+  /* The store refuses when signed out even though the button is hidden -
      belt and braces, because "hidden" is a CSS attribute, not a rule. */
   if (!out.ok){ paintFavourite(); return; }
   paintFavourite();
@@ -384,7 +384,7 @@ document.getElementById('ownerEdit').href = '/admin?c=' + encodeURIComponent(co.
    postMessage. Two guards on that: it is only wired up when the URL
    explicitly says preview=1, and the payload still goes through
    normaliseTheme() inside applyTheme(), so a message from anywhere can
-   only ever produce a valid theme — never CSS or markup. */
+   only ever produce a valid theme - never CSS or markup. */
 const PREVIEW = new URLSearchParams(location.search).get('preview') === '1';
 if (PREVIEW){
   document.documentElement.classList.add('is-preview');
@@ -444,7 +444,7 @@ document.getElementById('rm-send').addEventListener('click', () => {
   }
   /* Prototype: this writes to browser storage so the report turns up in
      the FR Services platform queue, which is the flow worth demonstrating.
-     A real submission must be server-side — authenticated, rate-limited
+     A real submission must be server-side - authenticated, rate-limited
      per account and per IP, with the reporter's identity stored but never
      returned to the company. See ARCHITECTURE.md §13. */
   const ref = 'FR-R-' + Math.random().toString(36).slice(2, 8).toUpperCase();

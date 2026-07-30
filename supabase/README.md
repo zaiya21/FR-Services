@@ -1,4 +1,4 @@
-# Database — schema and row-level security
+# Database - schema and row-level security
 
 The schema for FR Services, with the trust boundaries the application
 documents enforced in Postgres rather than in the browser.
@@ -38,7 +38,7 @@ supabase db push
 
 Two properties make the rest safe. Every table enables RLS, so a table
 added without policies fails closed rather than open. And the helper
-functions are `SECURITY DEFINER` with a pinned empty `search_path` —
+functions are `SECURITY DEFINER` with a pinned empty `search_path` -
 without the first, a policy on `profiles` that reads `profiles` recurses;
 without the second, a caller can shadow an unqualified name and change what
 a function running with the owner's rights actually does.
@@ -49,7 +49,7 @@ RLS filters **rows**. Three things in this schema needed something else,
 and each is the kind of gap that looks covered when it is not.
 
 **Columns a permitted UPDATE must not touch.** A company may update its own
-document — that is how publishing works — so RLS has to allow the UPDATE.
+document - that is how publishing works - so RLS has to allow the UPDATE.
 It cannot then say "but not the `review` column". Triggers do that:
 `documents_guard_review`, `profiles_guard_role`, `companies_guard_trust`,
 `bookings_guard_amounts`. Without them a seller can approve their own
@@ -59,7 +59,7 @@ the price of a booking someone already accepted.
 **Columns a renter must not see.** `published_documents` is a
 definer-rights view precisely because the alternative leaks. Granting
 `anon` SELECT on `documents` with a row policy for published rows would
-also hand over the full `doc_number` and the reviewer's `review_note` —
+also hand over the full `doc_number` and the reviewer's `review_note` -
 the masking is per column, which no row policy can express. So `anon` has
 no privilege on the base table at all, and the view's `WHERE` clause is the
 whole boundary. `booking_commission`, which has nothing to mask, is
@@ -71,19 +71,19 @@ every authenticated user the totals of every booking on the marketplace.
 a subquery, so it cannot reach the unit's `quantity`; and a listing of
 three vans may legitimately have three overlapping hires and must refuse
 the fourth. `app.enforce_fleet_capacity` counts overlaps under a row lock
-on the unit — the lock is load-bearing, because two bookings submitted at
+on the unit - the lock is load-bearing, because two bookings submitted at
 the same instant would otherwise both see room.
 
 ## Invariants worth knowing
 
 - **Verification covers three documents.** DTI, mayor's permit, BIR 2303.
-  Everything else is `exempt` — not a verdict, a statement that none
+  Everything else is `exempt` - not a verdict, a statement that none
   applies. Held as an equivalence: `exempt` if and only if the type is not
   reviewable.
 - **Expiry is derived at read time**, by `app.is_expired()`, so no code path
   can claim a lapsed permit is current. Not a generated column: that
   expression must be IMMUTABLE and `current_date` is only STABLE, so
-  Postgres rejects it — correctly, since a stored answer would be wrong by
+  Postgres rejects it - correctly, since a stored answer would be wrong by
   morning.
 - **A reviewable document needs a file.** A typed permit number gives a
   reviewer nothing to take to the issuing office.
@@ -93,7 +93,7 @@ the same instant would otherwise both see room.
 - **The verified badge is a view** (`company_standing`), never a column.
   All three approved and current, or no badge. An expired insurance policy
   cannot cost a badge the platform never granted on its account.
-- **`total = net + vat`, and a cancelled booking bills nothing** — CHECKs,
+- **`total = net + vat`, and a cancelled booking bills nothing** - CHECKs,
   so a reporting bug cannot become a stored fact.
 - **Longer hires cannot cost more than shorter ones.** The booking engine
   always quotes the best applicable tier, so an inverted discount silently
@@ -104,7 +104,7 @@ the same instant would otherwise both see room.
 
 ## What is deliberately absent
 
-- **No `verified` column on companies** — see above.
+- **No `verified` column on companies** - see above.
 - **No platform read path to `expenses`.** Assertion 3 fails the migration
   if a policy there ever mentions `app.is_platform()`.
 - **No DELETE policy on `bookings`.** A booking is a financial record;

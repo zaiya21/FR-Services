@@ -1,5 +1,5 @@
 -- =====================================================================
--- IDENTITY — who is asking, and what they are allowed to be.
+-- IDENTITY - who is asking, and what they are allowed to be.
 --
 -- Supabase Auth owns auth.users. This adds the two things it cannot know:
 -- whether an account is an FR Services operator, and which company (if
@@ -138,7 +138,7 @@ create policy profiles_delete_platform on public.profiles
   using (app.is_platform());
 
 -- Membership: you can see the companies you belong to; the platform sees
--- every membership. Only the platform writes them — attaching yourself to
+-- every membership. Only the platform writes them - attaching yourself to
 -- a company is exactly the escalation this table exists to prevent.
 create policy members_select on public.company_members
   for select to authenticated

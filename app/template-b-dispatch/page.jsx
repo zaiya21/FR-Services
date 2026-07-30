@@ -3,7 +3,7 @@ import Markup from './markup';
 import LegacyScripts from '../_LegacyScripts';
 
 export const metadata = {
-  title: "DISPATCH — Fleet Services PH · Template B"
+  title: "DISPATCH - Fleet Services PH · Template B"
 };
 
 export default function Page(){

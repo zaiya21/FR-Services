@@ -1,12 +1,12 @@
 /* =====================================================================
-   Philippine locations — all cities and municipalities.
+   Philippine locations - all cities and municipalities.
    Source: PSGC (Philippine Standard Geographic Code), Philippine Statistics
    Authority, via psgc.gitlab.io. Fetched 2026-07-27.
 
    1634 places (146 cities, 1488 municipalities)
    across 84 provinces and 17 regions.
 
-   Barangays are deliberately excluded — there are 42,000+ of them, and they
+   Barangays are deliberately excluded - there are 42,000+ of them, and they
    belong in a job-site address field, not in a marketplace location search.
 
    Stored as index-referenced arrays rather than objects so province and

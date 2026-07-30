@@ -1,9 +1,9 @@
 /* =====================================================================
-   PDF — a minimal writer, and the report layout that uses it
+   PDF - a minimal writer, and the report layout that uses it
    ---------------------------------------------------------------------
-   "Download PDF" has to produce an actual .pdf file. The alternative —
+   "Download PDF" has to produce an actual .pdf file. The alternative -
    opening the print dialog and asking the operator to choose "Save as
-   PDF" — is the same button as Print wearing a different label, and on a
+   PDF" - is the same button as Print wearing a different label, and on a
    phone it does nothing at all.
 
    A CDN library was not an option: this prototype runs from file:// and
@@ -64,7 +64,7 @@ function pdfText(s){
   }
   return out;
 }
-/** The same transliteration without the escaping — for measuring. */
+/** The same transliteration without the escaping - for measuring. */
 function pdfPlain(s){
   return pdfText(s).replace(/\\([()\\])/g, '$1');
 }
@@ -172,7 +172,7 @@ PDFDoc.prototype.build = function(){
   return out;
 };
 PDFDoc.prototype.blob = function(){
-  /* Latin-1 bytes, one per character — Blob would otherwise UTF-8 encode
+  /* Latin-1 bytes, one per character - Blob would otherwise UTF-8 encode
      and shift every xref offset. */
   const s = this.build();
   const bytes = new Uint8Array(s.length);
@@ -190,7 +190,7 @@ const PDF_BAND  = [0.95, 0.96, 0.97];
 const PDF_BRAND = [0.02, 0.48, 0.18];
 
 function pdfFromReport(model){
-  /* Wide tables get landscape — a seven-column booking register squeezed
+  /* Wide tables get landscape - a seven-column booking register squeezed
      into A4 portrait is unreadable, and unreadable is the same as broken. */
   const widest = model.tables.reduce((n, t) => Math.max(n, t.cols.length), 0);
   const doc = new PDFDoc(widest >= 6);

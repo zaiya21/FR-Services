@@ -1,5 +1,5 @@
 -- =====================================================================
--- PLATFORM — the commission model, and the badge as a derived fact.
+-- PLATFORM - the commission model, and the badge as a derived fact.
 --
 -- The verified badge is a view, not a column. That is the single most
 -- important decision in this file: a stored `verified` boolean can drift
@@ -10,7 +10,7 @@
 
 -- Listing is free; income is commission on completed bookings, and the
 -- rate follows the service line. A table rather than a constant because a
--- rate change must not silently re-price bookings already taken — the
+-- rate change must not silently re-price bookings already taken - the
 -- effective_from column is what lets an old booking keep its old rate.
 create table public.commission_rates (
   line           app.service_line not null,
@@ -27,7 +27,7 @@ insert into public.commission_rates (line, rate, effective_from) values
   ('towing',    0.1200, date '2026-01-01');
 
 comment on table public.commission_rates is
-  'Listing is free — there is no subscription row here because there is no
+  'Listing is free - there is no subscription row here because there is no
    subscription. Income is 8% on rentals, 12% on emergency towing.';
 
 create or replace function app.commission_rate(l app.service_line, on_date date)
@@ -110,7 +110,7 @@ from public.company_registration r;
 
 comment on view public.company_standing is
   'The verified badge, derived. A badge is only worth anything if it can be
-   lost — this is what loses it.';
+   lost - this is what loses it.';
 
 grant select on public.commission_rates to anon, authenticated;
 grant select on public.company_registration, public.company_standing to anon, authenticated;

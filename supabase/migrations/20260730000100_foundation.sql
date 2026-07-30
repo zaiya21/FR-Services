@@ -1,5 +1,5 @@
 -- =====================================================================
--- FOUNDATION — extensions, enums, and the identity helpers every policy
+-- FOUNDATION - extensions, enums, and the identity helpers every policy
 -- in the later migrations depends on.
 --
 -- The shape of the security model, stated once so the policies below read
@@ -26,7 +26,7 @@
 create extension if not exists pgcrypto  with schema extensions;
 -- btree_gist lets an exclusion constraint mix equality (unit_id) with a
 -- range overlap (the hire dates). The fleet cannot be double-booked
--- without it — see 0600.
+-- without it - see 0600.
 create extension if not exists btree_gist with schema extensions;
 
 create schema if not exists app;

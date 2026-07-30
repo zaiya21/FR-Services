@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FR Services — Rent vehicles, heavy equipment &amp; towing anywhere in the Philippines</title>
+<title>FR Services - Rent vehicles, heavy equipment &amp; towing anywhere in the Philippines</title>
 <meta name="description" content="One marketplace for vehicle rental, heavy equipment hire and 24/7 towing across all 17 regions of the Philippines. We match you with verified companies that actually serve your area.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,17 +12,17 @@
 <link rel="stylesheet" href="assets/fr.css">
 <style>
 /* =====================================================================
-   SPLIT HERO — three vertical panels, one per category.
+   SPLIT HERO - three vertical panels, one per category.
    Images are AI-generated originals (assets/img/), deliberately dark and
    neutral so the category color tint and the headline scrim do the work.
    ===================================================================== */
-/* No overflow:hidden here — it would clip the location dropdown. Each
+/* No overflow:hidden here - it would clip the location dropdown. Each
    .panel clips its own scaled photo, so nothing escapes regardless. */
 .hero3{position:relative;width:100%;height:clamp(620px,92vh,900px);
   border-bottom:var(--bd);background:var(--ink)}
 .panels{position:absolute;inset:0;display:flex}
 
-/* flex-basis MUST be 0 — with a % basis the panels fill the row exactly,
+/* flex-basis MUST be 0 - with a % basis the panels fill the row exactly,
    leaving no free space for flex-grow to distribute, and hover does nothing. */
 .panel{position:relative;flex:1 1 0%;min-width:0;overflow:hidden;
   border-right:var(--bd);text-align:left;padding:0;
@@ -33,29 +33,29 @@
   /* Colour grade. The source photos were generated with overcast skies,
      so sepia+hue-rotate warms the grey cloud toward golden hour and
      brightness lifts it out of the gloom. Replace with a proper regen
-     when credits allow — see ARCHITECTURE.md for the prompts. */
+     when credits allow - see ARCHITECTURE.md for the prompts. */
   --grade:saturate(1.35) contrast(1.04) brightness(1.16) sepia(.24) hue-rotate(-12deg);
   --grade-hi:saturate(1.5) contrast(1.05) brightness(1.28) sepia(.13) hue-rotate(-9deg)}
 .panel.p-eq{--acc:var(--indigo); --acc-ink:#fff}
-/* towing stays moodier on purpose — a dark wet highway suits emergency
+/* towing stays moodier on purpose - a dark wet highway suits emergency
    recovery, which is exactly when someone needs this category */
 .panel.p-tow{--grade:saturate(1.18) contrast(1.06) brightness(1.02) sepia(.10) hue-rotate(-6deg);
   --grade-hi:saturate(1.32) contrast(1.06) brightness(1.14) sepia(.05) hue-rotate(-4deg)}
 .panel:last-child{border-right:0}
 .panel:hover{flex-grow:1.9}
 
-/* photo layer — brightness lift reads on any hue, unlike a color shift */
+/* photo layer - brightness lift reads on any hue, unlike a color shift */
 .pimg{position:absolute;inset:0;background-size:cover;background-position:center;
   transform:scale(1.04);transition:transform .7s var(--ease),filter .45s var(--ease);
   filter:var(--grade)}
 .panel:hover .pimg{transform:scale(1.11);filter:var(--grade-hi)}
 
-/* warm light wash over the sky — fakes late-afternoon sun on flat cloud */
+/* warm light wash over the sky - fakes late-afternoon sun on flat cloud */
 .pimg::after{content:'';position:absolute;inset:0;mix-blend-mode:soft-light;
   background:linear-gradient(180deg,rgba(255,196,92,.55) 0%,
     rgba(255,158,66,.28) 38%,rgba(255,255,255,0) 70%)}
 
-/* category color tint — lighter now that the photos are brighter,
+/* category color tint - lighter now that the photos are brighter,
    otherwise the tint turns muddy over the warmed-up image */
 .ptint{position:absolute;inset:0;mix-blend-mode:overlay;opacity:.24;
   transition:opacity .45s var(--ease)}
@@ -97,7 +97,7 @@
 .panel:hover .pgo{transform:translate(-2px,-2px);box-shadow:var(--off);
   background:var(--acc);color:var(--acc-ink)}
 
-/* selected state — grows less than hover so hovering always reads as
+/* selected state - grows less than hover so hovering always reads as
    the stronger signal, even against the already-selected panel */
 .panel.on{flex-grow:1.45}
 .panel.on .ptint{opacity:.12}
@@ -109,7 +109,7 @@
    While any panel is hovered, every OTHER panel pulls back: its photo zooms
    out, dims and desaturates, and its label fades. So one panel zooming in
    is matched by the others shrinking away, not just losing width.
-   The :not(:hover) chain is deliberate — it raises specificity above
+   The :not(:hover) chain is deliberate - it raises specificity above
    .panel.on .pimg so the currently-selected panel recedes too.        */
 .panels:hover .panel:not(:hover) .pimg{
   transform:scale(.94);
@@ -141,7 +141,7 @@
 .stat.c .n{color:var(--teal)}  .stat.d .n{color:var(--violet)}
 
 /* =====================================================================
-   FILTER TOOLBAR — sticky under the nav. Every control here writes to the
+   FILTER TOOLBAR - sticky under the nav. Every control here writes to the
    single FILTERS object; nothing filters on its own.
    ===================================================================== */
 .filterbar{position:sticky;top:var(--nav-h);z-index:40;background:var(--bg);
@@ -169,7 +169,7 @@
   text-decoration:underline;text-underline-offset:3px;flex-shrink:0}
 .fbclear:hover{color:var(--danger)}
 
-/* applied search terms — what the hero form put in, shown so it's
+/* applied search terms - what the hero form put in, shown so it's
    obvious why results are narrowed, and individually removable */
 .applied{display:flex;gap:var(--s2);flex-wrap:wrap;margin-bottom:var(--s4)}
 .achip{display:inline-flex;align-items:center;gap:9px;height:34px;
@@ -185,7 +185,7 @@
 #results{padding-top:var(--s6)}
 
 /* =====================================================================
-   LOCATION COMBOBOX — all 1,634 PSGC cities and municipalities.
+   LOCATION COMBOBOX - all 1,634 PSGC cities and municipalities.
    A <datalist> can't group, can't show province context, and can't mark
    which places we actually have providers in, so this is hand-rolled.
    ===================================================================== */
@@ -193,7 +193,7 @@
 .geo .chg{display:inline-flex;align-items:center;gap:7px}
 
 /* =====================================================================
-   SPLIT FIELDS — all three search fields share one shape: a value zone on
+   SPLIT FIELDS - all three search fields share one shape: a value zone on
    the left, a divider, and a dedicated control zone on the right. A
    decorative arrow just puts a text caret under the cursor, so each of
    these is a real hit area.
@@ -215,12 +215,12 @@
    A native <select> is genuinely better on mobile (OS wheel picker) and
    can't be opened programmatically across browsers. So keep it, lay it
    transparently over the whole field, and paint our own chrome beneath:
-   a click anywhere — arrow included — opens the real picker. */
+   a click anywhere - arrow included - opens the real picker. */
 .pick select{position:absolute;inset:0;width:100%;height:100%;
   opacity:0;cursor:pointer;z-index:2;font:inherit;-webkit-appearance:none;appearance:none}
 .pick .cval{font-size:15px;font-weight:600;color:var(--ink);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-/* NOT .empty — that class is the results empty-state, which carries a
+/* NOT .empty - that class is the results empty-state, which carries a
    dashed border and 72px of padding and would blow the field open */
 .pick .cval.none{color:var(--ink-3);font-weight:500}
 .pick .ctext{cursor:pointer}
@@ -235,7 +235,7 @@
 .dateish input::-webkit-calendar-picker-indicator{display:none}
 .dateish input{font-size:15px}
 .dateish:focus-within .cbtn{background:var(--indigo);color:#fff;border-left-color:var(--ink)}
-/* wider than its field — "General Luna, Surigao del Norte · Caraga" does
+/* wider than its field - "General Luna, Surigao del Norte · Caraga" does
    not fit in a third of a search bar */
 .combolist{position:absolute;left:0;right:auto;min-width:100%;width:382px;
   max-width:92vw;top:calc(100% + 10px);z-index:70;
@@ -262,7 +262,7 @@
 .copt mark{background:var(--yellow);color:inherit;border-radius:3px;padding:0 1px}
 .cnone{padding:20px 12px;text-align:center;color:var(--ink-2);font-size:14px}
 .cnone b{display:block;color:var(--ink);margin-bottom:4px}
-/* tells the user the list isn't the limit — the whole country is */
+/* tells the user the list isn't the limit - the whole country is */
 .chint{position:sticky;bottom:-6px;margin:6px -6px -6px;padding:10px 14px;
   background:var(--yellow-tint);border-top:2px solid var(--hair);
   font-size:12px;font-weight:600;color:var(--ink-2);text-align:center}
@@ -402,13 +402,13 @@
   .mapband .mapvis{border-left:0;border-top:var(--bd);min-height:320px}
   .vgrid{grid-template-columns:1fr}
   .vbottom{grid-template-columns:1fr;gap:var(--s6)}
-  /* headline no longer overlays — panels shrink, text gets its own band */
+  /* headline no longer overlays - panels shrink, text gets its own band */
   .hero3{height:auto;display:flex;flex-direction:column}
   .heroover{order:-1}
   .panels{position:static;flex-direction:column}
   .panel{flex:none;height:210px;border-right:0;border-bottom:var(--bd)}
   .panel:hover,.panel.on{flex-grow:0}
-  /* no focus exchange when stacked — touch leaves :hover stuck on the
+  /* no focus exchange when stacked - touch leaves :hover stuck on the
      last-tapped panel, which would permanently dim the other two */
   .panels:hover .panel:not(:hover) .pimg{transform:scale(1.04);filter:var(--grade)}
   .panels:hover .panel:not(:hover) .ptint{opacity:.24}
@@ -467,7 +467,7 @@
 <div class="geo">
   <div class="wrap">
     <span class="tag">AI Located</span>
-    <span>Nakita ka namin sa <b id="geo-city">Davao City</b> — showing
+    <span>Nakita ka namin sa <b id="geo-city">Davao City</b> - showing
       <b id="geo-count">12</b> companies <span id="geo-note">within 50 km.</span></span>
     <button class="chg" id="geo-change">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
@@ -529,7 +529,7 @@
   <!-- headline sits over the sky area of all three photos -->
   <div class="heroover">
     <div class="wrap">
-      <h1>Rent anything on <span class="hl">wheels</span> — anywhere in PH.</h1>
+      <h1>Rent anything on <span class="hl">wheels</span> - anywhere in PH.</h1>
       <p class="lede">One place for vehicles, heavy equipment and 24/7 towing. We find the companies nearest you, automatically.</p>
       <form class="block searchblock" id="heroSearch" onsubmit="return false">
         <div class="field split combo">
@@ -590,7 +590,7 @@
     <span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></span>
     <div>
       <h3>Nasiraan ka ba? Need a tow right now?</h3>
-      <p>Skip the browsing — we broadcast to the nearest available trucks and the first to accept is dispatched.</p>
+      <p>Skip the browsing - we broadcast to the nearest available trucks and the first to accept is dispatched.</p>
     </div>
     <a class="btn btn-r btn-lg" href="tow.html">Tow me now</a>
   </div>
@@ -645,11 +645,11 @@
   <section class="mapband" id="how">
     <div class="mapinfo">
       <h2>Hindi mo kailangang mag-search ng city.</h2>
-      <p>Our matching engine reads your usual booking area, session signals and past rentals to lock your region — then only shows companies that actually serve you.</p>
+      <p>Our matching engine reads your usual booking area, session signals and past rentals to lock your region - then only shows companies that actually serve you.</p>
       <div class="howto">
-        <div class="how"><span class="hnum">1</span><p><b>We detect your area</b> from usage patterns — no manual setup, no GPS prompt on first visit.</p></div>
+        <div class="how"><span class="hnum">1</span><p><b>We detect your area</b> from usage patterns - no manual setup, no GPS prompt on first visit.</p></div>
         <div class="how"><span class="hnum">2</span><p><b>We filter by service radius</b> so a Cebu company never shows up for a Davao job.</p></div>
-        <div class="how"><span class="hnum">3</span><p><b>You stay in control</b> — override the region any time, and we remember it.</p></div>
+        <div class="how"><span class="hnum">3</span><p><b>You stay in control</b> - override the region any time, and we remember it.</p></div>
       </div>
       <a class="btn btn-w" href="register.html">See how matching works</a>
     </div>
@@ -671,7 +671,7 @@
     <div class="vgrid">
       <div class="vcard"><span class="n">STEP 01</span><h3>Register &amp; verify</h3><p>Submit your DTI/SEC permit, LTO registration and insurance. Verified badge in around 24 hours.</p></div>
       <div class="vcard"><span class="n">STEP 02</span><h3>Design your page</h3><p>Pick a layout, upload your logo and cover, set your brand colors, and claim your frservices.ph link.</p></div>
-      <div class="vcard"><span class="n">STEP 03</span><h3>Get geo-matched bookings</h3><p>Set your service radius. Renters in your area see you first — no ads, no bidding.</p></div>
+      <div class="vcard"><span class="n">STEP 03</span><h3>Get geo-matched bookings</h3><p>Set your service radius. Renters in your area see you first - no ads, no bidding.</p></div>
     </div>
 
     <div class="vbottom">
@@ -705,7 +705,7 @@
       </a>
       <div>
         <h2 style="font-size:clamp(24px,3vw,34px);margin-bottom:var(--s3)">Every company gets its own storefront.</h2>
-        <p style="color:#B9BDCC;font-size:16px;margin:0 0 var(--s5)">Your logo, your cover photo, your colors, your sections — plus a rate card, live availability calendar, gallery, and reviews. It looks like your brand, not ours.</p>
+        <p style="color:#B9BDCC;font-size:16px;margin:0 0 var(--s5)">Your logo, your cover photo, your colors, your sections - plus a rate card, live availability calendar, gallery, and reviews. It looks like your brand, not ours.</p>
         <a class="btn btn-y btn-lg" href="register.html">Create my company page</a>
       </div>
     </div>
@@ -719,7 +719,7 @@
     <div class="lm-head">
       <div>
         <h2 id="lm-title">Saan ka mag-re-rent?</h2>
-        <p>Booking somewhere else? Search any of the 1,634 cities and municipalities in the Philippines — you don't have to be there to book.</p>
+        <p>Booking somewhere else? Search any of the 1,634 cities and municipalities in the Philippines - you don't have to be there to book.</p>
       </div>
       <button class="lm-x" data-lm-close aria-label="Close">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
@@ -743,7 +743,7 @@
           <span class="m"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#12131A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg></span>
           FR SERVICES
         </a>
-        <p class="small muted" style="max-width:34ch;margin:0">Fleet rental marketplace for the Philippines. Vehicles, heavy equipment and towing — from verified local companies.</p>
+        <p class="small muted" style="max-width:34ch;margin:0">Fleet rental marketplace for the Philippines. Vehicles, heavy equipment and towing - from verified local companies.</p>
       </div>
       <div><h4>Rent</h4><ul>
         <li><a href="index.html">Vehicles</a></li>
@@ -762,7 +762,7 @@
       </ul></div>
     </div>
     <div class="fbot">
-      <span>© 2026 FR Services Fleet Services PH · Static prototype — demo data only</span>
+      <span>© 2026 FR Services Fleet Services PH · Static prototype - demo data only</span>
       <span>Vibrant &amp; Block-based · Space Grotesk + Inter</span>
     </div>
   </div>
@@ -775,7 +775,7 @@
 <script>
 /* =====================================================================
    ONE filter state. The hero search form, the category panels, the
-   toolbar chips and the sort control all write here — nothing filters
+   toolbar chips and the sort control all write here - nothing filters
    independently, so they can never disagree about what's on screen.
    ===================================================================== */
 const FILTERS = {
@@ -794,7 +794,7 @@ const SORT_LABEL = { near:'sorted by distance', rating:'sorted by rating',
 $('s-loc').value = FILTERS.city;
 
 /* =====================================================================
-   LOCATION PICKER — searches all 1,634 PSGC cities/municipalities.
+   LOCATION PICKER - searches all 1,634 PSGC cities/municipalities.
    Built once and used twice: as a dropdown under the hero search field,
    and as a modal from the geo bar's "Change location".
 
@@ -830,7 +830,7 @@ function locRow(p, q, n){
 }
 
 /* Build the option list for a query. Empty query shows where we actually
-   operate — otherwise the picker is 1,600 dead ends with a dozen live
+   operate - otherwise the picker is 1,600 dead ends with a dozen live
    ones buried among them. */
 function locRows(q){
   /* Resolve a {name, province} to its full PSGC record for display. */
@@ -842,8 +842,8 @@ function locRows(q){
   }
 
   if (!q){
-    /* Nothing typed yet. Lead with popular destinations — those are the
-       searches that actually happen — then the full covered list, then
+    /* Nothing typed yet. Lead with popular destinations - those are the
+       searches that actually happen - then the full covered list, then
        say plainly that the other 1,600 places are searchable too. */
     const popular = FR_POPULAR.map(resolve);
     const seen = new Set(popular.map(p => normCity(p.name) + '|' + normCity(p.province)));
@@ -855,7 +855,7 @@ function locRows(q){
            '<div class="cgroup">More cities we cover</div>' + cov.join('') +
            `<div class="chint">Type to search all ${PH_PLACES.length.toLocaleString('en-PH')} cities and municipalities in the Philippines</div>`;
   }
-  /* Destination nicknames that aren't LGUs — "Boracay" is a barangay of
+  /* Destination nicknames that aren't LGUs - "Boracay" is a barangay of
      Malay, "BGC" is part of Taguig. Surface the containing municipality
      and say why, rather than returning nothing. */
   let html = '', aliasIdx = -1;
@@ -925,7 +925,7 @@ function makeLocPicker({ input, list, onPick, modal, toggle }){
      still focused, so a second click would fire no focus event */
   input.addEventListener('click', () => { if (list.hidden) open(''); });
   input.addEventListener('focus', () => {
-    /* select-all in a timeout so the click's mouseup doesn't undo it —
+    /* select-all in a timeout so the click's mouseup doesn't undo it -
        typing then replaces the pre-filled city instead of appending */
     setTimeout(() => input.select(), 0);
     open('');
@@ -941,7 +941,7 @@ function makeLocPicker({ input, list, onPick, modal, toggle }){
     else if (e.key === 'Escape') close();
   });
   list.addEventListener('mousedown', e => {
-    /* mousedown, not click — blur would tear the list down first */
+    /* mousedown, not click - blur would tear the list down first */
     const o = e.target.closest('.copt');
     if (o){ e.preventDefault(); onPick(o.dataset.val, o.dataset.prov); }
   });
@@ -961,7 +961,7 @@ const heroPicker = makeLocPicker({
   input: $('s-loc'), list: $('loc-list'), toggle: $('s-loc-toggle'),
   onPick(val, prov){ setCity(val, prov); heroPicker.close(); }
 });
-/* clicking the label or the padding around the input focuses it —
+/* clicking the label or the padding around the input focuses it -
    scoped to the text zone so the browse button keeps its own click */
 document.querySelector('.combo .ctext')
   .addEventListener('click', () => $('s-loc').focus());
@@ -985,7 +985,7 @@ function setCity(val, prov){
   const n = providersIn(val, prov);
   $('geo-city').textContent = val;
   $('geo-count').textContent = n;
-  $('geo-note').textContent = n ? 'within 50 km.' : '— no providers here yet.';
+  $('geo-note').textContent = n ? 'within 50 km.' : '- no providers here yet.';
   $('s-loc').value = val;
   render();
 }
@@ -1018,7 +1018,7 @@ function syncTypeOptions(){
   sel.innerHTML = '<option value="">Any type</option>' +
     list.map(t => `<option value="${t}">${t}</option>`).join('');
   /* a type that doesn't exist in the new category must not silently
-     keep filtering — drop it and tell render() to redraw the chips */
+     keep filtering - drop it and tell render() to redraw the chips */
   FILTERS.type = list.includes(keep) ? keep : '';
   sel.value = FILTERS.type;
   paintTypeValue();
@@ -1141,14 +1141,14 @@ document.addEventListener('click', e => {
 $('fb-clear').addEventListener('click', clearAll);
 
 /* =====================================================================
-   LIVE MAP — Leaflet + OpenStreetMap.
+   LIVE MAP - Leaflet + OpenStreetMap.
    Reads the same FILTERS object as the results grid, so the pins and the
    cards can never disagree. Each pin is an <a> to the company page.
 
    To move to Google Maps: keep syncMap()'s shape, replace L.map/L.tileLayer
    with google.maps.Map and the divIcon markers with AdvancedMarkerElement
    (which also takes arbitrary DOM, so .gpin carries over unchanged).
-   That path needs an API key + billing — see ARCHITECTURE.md §12.
+   That path needs an API key + billing - see ARCHITECTURE.md §12.
    ===================================================================== */
 let MAP = null, PINS = null;
 
@@ -1161,10 +1161,10 @@ function initMap(){
       'The provider list below is unaffected.</div>');
     return;
   }
-  /* Wheel zoom on, at Leaflet's stock sensitivity — one level per notch,
+  /* Wheel zoom on, at Leaflet's stock sensitivity - one level per notch,
      the same feel as Google Maps. Measured: raising wheelPxPerZoomLevel
      and setting zoomSnap:0.5 made it *worse*, not smoother, because
-     Leaflet snaps with Math.ceil — a gesture jumped 2.5 levels. */
+     Leaflet snaps with Math.ceil - a gesture jumped 2.5 levels. */
   MAP = L.map(host, {
     scrollWheelZoom: true,
     zoomControl: true,
@@ -1195,7 +1195,7 @@ function syncMap(){
     pts.push(here);
   }
 
-  /* providers currently in the result set — capped so a nationwide
+  /* providers currently in the result set - capped so a nationwide
      search doesn't drop 40 overlapping bubbles on one screen */
   const list = sortCompanies(filterCompanies(FILTERS), 'near')
     .filter(c => typeof c.lat === 'number').slice(0, 24);
@@ -1206,7 +1206,7 @@ function syncMap(){
     const amount = peso(c.price.replace(/,/g, ''));
     const label = c.cat === 'towing' ? 'Tow ' + amount : amount;
     L.marker([c.lat, c.lon], { icon: pin(
-      `<a class="${cls}" href="company.html?c=${c.id}" title="${c.name} — ${c.loc}">${label}</a>`
+      `<a class="${cls}" href="company.html?c=${c.id}" title="${c.name} - ${c.loc}">${label}</a>`
     )}).addTo(PINS);
     pts.push([c.lat, c.lon]);
   });
@@ -1216,10 +1216,10 @@ function syncMap(){
 
   $('fleetmap').nextElementSibling.textContent = list.length
     ? 'Scroll to zoom · tap a price to open that company'
-    : 'No providers here yet — try another city';
+    : 'No providers here yet - try another city';
 }
 
-/* Location override — in production this writes the explicit choice that
+/* Location override - in production this writes the explicit choice that
    outranks every other signal in the geo cascade (ARCHITECTURE.md §2). */
 $('geo-change').addEventListener('click', openLocModal);
 

@@ -1,7 +1,7 @@
 
 /* =====================================================================
    ONE filter state. The hero search form, the category panels, the
-   toolbar chips and the sort control all write here — nothing filters
+   toolbar chips and the sort control all write here - nothing filters
    independently, so they can never disagree about what's on screen.
    ===================================================================== */
 const FILTERS = {
@@ -20,7 +20,7 @@ const SORT_LABEL = { near:'sorted by distance', rating:'sorted by rating',
 $('s-loc').value = FILTERS.city;
 
 /* =====================================================================
-   LOCATION PICKER — searches all 1,634 PSGC cities/municipalities.
+   LOCATION PICKER - searches all 1,634 PSGC cities/municipalities.
    Built once and used twice: as a dropdown under the hero search field,
    and as a modal from the geo bar's "Change location".
 
@@ -56,7 +56,7 @@ function locRow(p, q, n){
 }
 
 /* Build the option list for a query. Empty query shows where we actually
-   operate — otherwise the picker is 1,600 dead ends with a dozen live
+   operate - otherwise the picker is 1,600 dead ends with a dozen live
    ones buried among them. */
 function locRows(q){
   /* Resolve a {name, province} to its full PSGC record for display. */
@@ -68,8 +68,8 @@ function locRows(q){
   }
 
   if (!q){
-    /* Nothing typed yet. Lead with popular destinations — those are the
-       searches that actually happen — then the full covered list, then
+    /* Nothing typed yet. Lead with popular destinations - those are the
+       searches that actually happen - then the full covered list, then
        say plainly that the other 1,600 places are searchable too. */
     const popular = FR_POPULAR.map(resolve);
     const seen = new Set(popular.map(p => normCity(p.name) + '|' + normCity(p.province)));
@@ -81,7 +81,7 @@ function locRows(q){
            '<div class="cgroup">More cities we cover</div>' + cov.join('') +
            `<div class="chint">Type to search all ${PH_PLACES.length.toLocaleString('en-PH')} cities and municipalities in the Philippines</div>`;
   }
-  /* Destination nicknames that aren't LGUs — "Boracay" is a barangay of
+  /* Destination nicknames that aren't LGUs - "Boracay" is a barangay of
      Malay, "BGC" is part of Taguig. Surface the containing municipality
      and say why, rather than returning nothing. */
   let html = '', aliasIdx = -1;
@@ -151,7 +151,7 @@ function makeLocPicker({ input, list, onPick, modal, toggle }){
      still focused, so a second click would fire no focus event */
   input.addEventListener('click', () => { if (list.hidden) open(''); });
   input.addEventListener('focus', () => {
-    /* select-all in a timeout so the click's mouseup doesn't undo it —
+    /* select-all in a timeout so the click's mouseup doesn't undo it -
        typing then replaces the pre-filled city instead of appending */
     setTimeout(() => input.select(), 0);
     open('');
@@ -167,7 +167,7 @@ function makeLocPicker({ input, list, onPick, modal, toggle }){
     else if (e.key === 'Escape') close();
   });
   list.addEventListener('mousedown', e => {
-    /* mousedown, not click — blur would tear the list down first */
+    /* mousedown, not click - blur would tear the list down first */
     const o = e.target.closest('.copt');
     if (o){ e.preventDefault(); onPick(o.dataset.val, o.dataset.prov); }
   });
@@ -187,7 +187,7 @@ const heroPicker = makeLocPicker({
   input: $('s-loc'), list: $('loc-list'), toggle: $('s-loc-toggle'),
   onPick(val, prov){ setCity(val, prov); heroPicker.close(); }
 });
-/* clicking the label or the padding around the input focuses it —
+/* clicking the label or the padding around the input focuses it -
    scoped to the text zone so the browse button keeps its own click */
 document.querySelector('.combo .ctext')
   .addEventListener('click', () => $('s-loc').focus());
@@ -207,7 +207,7 @@ const modalPicker = makeLocPicker({
    names repeat across the country. */
 /* `explicit` distinguishes a renter picking a city from the first paint
    seeding the fallback one. Both move the origin; only one of them is a
-   choice, and the geo bar reports provenance — labelling the default
+   choice, and the geo bar reports provenance - labelling the default
    "You chose this" on a first visit is a small lie that undermines the
    one part of the bar that is meant to be checkable. */
 function setCity(val, prov, opts){
@@ -217,7 +217,7 @@ function setCity(val, prov, opts){
 
   /* Choosing a city by hand moves the origin to that city, so distances
      and the map follow the choice. Without this the cards would say "2 km"
-     while showing companies in a city 900 km away — the distance would
+     while showing companies in a city 900 km away - the distance would
      still be measured from the abandoned GPS fix. */
   const at = cityLatLon(val);
   if (at){
@@ -234,8 +234,8 @@ function setCity(val, prov, opts){
 /* ---------------------------------------------------------------------
    The headline numbers.
 
-   Every one of these was hardcoded — "1,900+ registered companies",
-   "631 units", "4.86 average rating" — which was fine over a seeded
+   Every one of these was hardcoded - "1,900+ registered companies",
+   "631 units", "4.86 average rating" - which was fine over a seeded
    dataset and became a straightforward falsehood the moment the
    marketplace was emptied. A listing site inflating its own inventory is
    the exact thing renters are right to distrust, so they are derived, and
@@ -261,11 +261,11 @@ function paintHeadline(){
   const avg = $('st-avg');
   if (avg) avg.textContent = rated.length
     ? (rated.reduce((s, c) => s + c.rating, 0) / rated.length).toFixed(2)
-    : '—';
+    : '-';
 
   /* The "example storefront" links pointed at a demo company that no
      longer exists. Point them at a real one when there is one, and at
-     registration when there is not — a link to a 404 is worse than a link
+     registration when there is not - a link to a 404 is worse than a link
      to the thing that fixes it. */
   const first = FR_COMPANIES[0];
   for (const id of ['sf-link', 'sf-foot']){
@@ -293,9 +293,9 @@ function paintGeoBar(){
 
   const total = FR_COMPANIES.length;
   $('geo-note').textContent =
-    !total                      ? '— none registered yet.'
+    !total                      ? '- none registered yet.'
     : n                         ? 'that reach you.'
-    : '— none of the ' + total + ' registered ' +
+    : '- none of the ' + total + ' registered ' +
       (total === 1 ? 'company reaches' : 'companies reach') + ' here yet.';
 
   /* The accuracy figure is the one number that makes "exact" checkable. */
@@ -311,8 +311,8 @@ function paintGeoBar(){
 
    On an explicit click, never on load. A geolocation prompt that fires by
    itself is the fastest way to get permanently blocked: the browser
-   remembers the denial, and the one moment the renter actually wants it —
-   a breakdown on the highway, on the tow page — is the moment it silently
+   remembers the denial, and the one moment the renter actually wants it -
+   a breakdown on the highway, on the tow page - is the moment it silently
    fails. Ask when asking means something.
    --------------------------------------------------------------------- */
 async function useMyLocation(){
@@ -321,7 +321,7 @@ async function useMyLocation(){
   const label = btn.innerHTML;
   tag.classList.add('live');
   tag.textContent = 'Locating…';
-  msg.innerHTML = 'Waiting for your device. Your browser will ask for permission — ' +
+  msg.innerHTML = 'Waiting for your device. Your browser will ask for permission - ' +
                   'nothing is sent anywhere, the coordinates stay in this page.';
 
   try {
@@ -332,7 +332,7 @@ async function useMyLocation(){
     FR_GEO.source = 'geolocation';
     frNameGeo();
 
-    /* The city label follows the fix, and so does the filter — otherwise
+    /* The city label follows the fix, and so does the filter - otherwise
        the search stays pinned to the old city and "exact location" changes
        nothing anyone can see. */
     FILTERS.city = FR_GEO.city;
@@ -345,7 +345,7 @@ async function useMyLocation(){
 
     if (fix.outside)
       msg.innerHTML = 'You appear to be outside the Philippines. Your location ' +
-        'is set, but every company here operates locally — pick the Philippine ' +
+        'is set, but every company here operates locally - pick the Philippine ' +
         'city you need the unit delivered to instead.';
     else if (!FR_GEO.city)
       msg.innerHTML = 'Located to within about <b>' + fix.accuracy + ' m</b>. ' +
@@ -357,7 +357,7 @@ async function useMyLocation(){
     /* A refusal is an answer. Say what happens next instead of scolding. */
     msg.innerHTML = err.message +
       (err.code === 'denied'
-        ? ' Your browser keeps that choice — to change it, use the padlock ' +
+        ? ' Your browser keeps that choice - to change it, use the padlock ' +
           'icon in the address bar and allow location for this site.'
         : '');
   } finally {
@@ -395,7 +395,7 @@ function syncTypeOptions(){
   sel.innerHTML = '<option value="">Any type</option>' +
     list.map(t => `<option value="${t}">${t}</option>`).join('');
   /* a type that doesn't exist in the new category must not silently
-     keep filtering — drop it and tell render() to redraw the chips */
+     keep filtering - drop it and tell render() to redraw the chips */
   FILTERS.type = list.includes(keep) ? keep : '';
   sel.value = FILTERS.type;
   paintTypeValue();
@@ -436,7 +436,7 @@ function emptyState(){
       <h3>No companies have registered yet</h3>
       <p>FR Services lists rental companies that have signed up and had their
          DTI registration, mayor's permit and BIR 2303 checked. Nobody has
-         completed that yet, so there is nothing to show — this is a real
+         completed that yet, so there is nothing to show - this is a real
          empty marketplace, not a failed search.</p>
       <a class="btn btn-y" href="/register">List the first company</a>
     </div>`;
@@ -538,14 +538,14 @@ document.addEventListener('click', e => {
 $('fb-clear').addEventListener('click', clearAll);
 
 /* =====================================================================
-   LIVE MAP — Leaflet + OpenStreetMap.
+   LIVE MAP - Leaflet + OpenStreetMap.
    Reads the same FILTERS object as the results grid, so the pins and the
    cards can never disagree. Each pin is an <a> to the company page.
 
    To move to Google Maps: keep syncMap()'s shape, replace L.map/L.tileLayer
    with google.maps.Map and the divIcon markers with AdvancedMarkerElement
    (which also takes arbitrary DOM, so .gpin carries over unchanged).
-   That path needs an API key + billing — see ARCHITECTURE.md §12.
+   That path needs an API key + billing - see ARCHITECTURE.md §12.
    ===================================================================== */
 let MAP = null, PINS = null;
 
@@ -558,10 +558,10 @@ function initMap(){
       'The provider list below is unaffected.</div>');
     return;
   }
-  /* Wheel zoom on, at Leaflet's stock sensitivity — one level per notch,
+  /* Wheel zoom on, at Leaflet's stock sensitivity - one level per notch,
      the same feel as Google Maps. Measured: raising wheelPxPerZoomLevel
      and setting zoomSnap:0.5 made it *worse*, not smoother, because
-     Leaflet snaps with Math.ceil — a gesture jumped 2.5 levels. */
+     Leaflet snaps with Math.ceil - a gesture jumped 2.5 levels. */
   MAP = L.map(host, {
     scrollWheelZoom: true,
     zoomControl: true,
@@ -584,7 +584,7 @@ function syncMap(){
   const pin = (html) => L.divIcon({ html, className: '', iconSize: [0, 0] });
   const pts = [];
 
-  /* The viewer, at the real origin — FR_GEO, not the chosen city's centre.
+  /* The viewer, at the real origin - FR_GEO, not the chosen city's centre.
      Those are the same thing when a city was picked by hand (setCity moves
      FR_GEO to it) and very different after a GPS fix, where the whole point
      is the actual spot rather than the middle of the city. */
@@ -594,7 +594,7 @@ function syncMap(){
   /* The accuracy circle is the honest part of an "exact location" claim: a
      ±2 km fix drawn as a 12-pixel dot is a lie told with a marker. Drawn
      only for a real fix, and only when it is big enough to mean something
-     at this zoom — a 20 m circle is smaller than the pin over it. */
+     at this zoom - a 20 m circle is smaller than the pin over it. */
   if (exact && FR_GEO.accuracy > 40){
     L.circle(here, {
       radius: FR_GEO.accuracy,
@@ -609,7 +609,7 @@ function syncMap(){
   }).addTo(PINS);
   pts.push(here);
 
-  /* Providers currently in the result set — capped so a nationwide search
+  /* Providers currently in the result set - capped so a nationwide search
      doesn't drop dozens of overlapping bubbles on one screen. */
   const all = sortCompanies(filterCompanies(FILTERS), 'near')
     .filter(c => typeof c.lat === 'number');
@@ -618,14 +618,14 @@ function syncMap(){
   list.forEach(c => {
     const cls = c.cat === 'towing' ? 'gpin tow' : 'gpin';
     const n = +String(c.price).replace(/,/g, '');
-    /* A company that has not set a rate gets its name, not "₱0" — which
+    /* A company that has not set a rate gets its name, not "₱0" - which
        would read as free rather than as unpriced. */
     const label = !n ? escPin(c.name)
                 : c.cat === 'towing' ? 'Tow ' + peso(n)
                 : peso(n);
     const km = distanceKm(c);
     L.marker([c.lat, c.lon], { icon: pin(
-      `<a class="${cls}" href="/company?c=${c.id}" title="${escPin(c.name)} — ${escPin(c.loc)}${
+      `<a class="${cls}" href="/company?c=${c.id}" title="${escPin(c.name)} - ${escPin(c.loc)}${
         km == null ? '' : ' · ' + kmLabel(km)}">${label}</a>`
     )}).addTo(PINS);
     pts.push([c.lat, c.lon]);
@@ -633,14 +633,14 @@ function syncMap(){
 
   /* One point is the viewer alone. Fitting bounds to it zooms to the max,
      which on an empty marketplace lands you on a street corner with no
-     context at all — hold a city-wide view instead. */
+     context at all - hold a city-wide view instead. */
   if (pts.length > 1)        MAP.fitBounds(pts, { padding: [46, 46], maxZoom: exact ? 15 : 13 });
   else                       MAP.setView(here, exact ? 14 : 11);
 
   const note = $('fleetmap').nextElementSibling;
   note.textContent =
-      !FR_COMPANIES.length ? 'No companies registered yet — the map fills in as they join'
-    : !all.length           ? 'No providers reach here yet — try another city'
+      !FR_COMPANIES.length ? 'No companies registered yet - the map fills in as they join'
+    : !all.length           ? 'No providers reach here yet - try another city'
     : all.length > list.length
         ? `Showing the ${list.length} nearest of ${all.length} · tap a price to open that company`
         : 'Scroll to zoom · tap a price to open that company';
@@ -654,7 +654,7 @@ function escPin(s){
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-/* Location override — in production this writes the explicit choice that
+/* Location override - in production this writes the explicit choice that
    outranks every other signal in the geo cascade (ARCHITECTURE.md §2). */
 $('geo-change').addEventListener('click', openLocModal);
 
@@ -662,7 +662,7 @@ syncTypeOptions();
 paintHeadline();
 
 /* First paint. A fix kept from a previous visit was already adopted by
-   data.js, so honour it rather than resetting to the fallback city —
+   data.js, so honour it rather than resetting to the fallback city -
    setCity() would overwrite the coordinates with the city centre and throw
    away accuracy the renter already granted us. */
 if (FR_GEO.source === 'geolocation'){

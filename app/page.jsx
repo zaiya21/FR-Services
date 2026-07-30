@@ -7,7 +7,7 @@
 // this file, so every tile collapsed into normal flow and the map rendered
 // as a small square of stacked tiles instead of filling its panel.
 //
-// From npm rather than the CDN purely so the order is decidable — import
+// From npm rather than the CDN purely so the order is decidable - import
 // order is preserved, whereas a <link> hoisted by React lands wherever it
 // lands relative to Next's own CSS chunks, and here that is not cosmetic:
 // leaflet.css sets `.leaflet-div-icon{background:#fff;border:1px solid #666}`
@@ -22,7 +22,7 @@ import Markup from './markup';
 import LegacyScripts from './_LegacyScripts';
 
 export const metadata = {
-  title: "FR Services — Rent vehicles, heavy equipment & towing anywhere in the Philippines",
+  title: "FR Services - Rent vehicles, heavy equipment & towing anywhere in the Philippines",
   description: "One marketplace for vehicle rental, heavy equipment hire and 24/7 towing across all 17 regions of the Philippines. We match you with verified companies that actually serve your area."
 };
 

@@ -101,7 +101,7 @@ function slicePath(cx, cy, r, a0, a1){
   const [x0, y0] = pol(cx, cy, r, a0), [x1, y1] = pol(cx, cy, r, a1);
   return `M ${cx} ${cy} L ${x0} ${y0} A ${r} ${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1} ${y1} Z`;
 }
-/* Same pie the company console uses — see admin.html for the reasoning
+/* Same pie the company console uses - see admin.html for the reasoning
    behind the in-slice fit test and the grey remainder. */
 function paintPie(hostId, keyId, rows, total, labelOf, valueOf){
   const host = $(hostId), key = $(keyId);
@@ -326,7 +326,7 @@ function paintQueue(){
   $('qExempt').textContent = exempt;
 
   /* One entry per company, its matching documents inside. `seen`, not
-     `byId` — data.js already exports a byId() and shadowing it here would
+     `byId` - data.js already exports a byId() and shadowing it here would
      be a trap for the next edit. */
   const rows = queueRows();
   const groups = [];
@@ -350,7 +350,7 @@ function paintQueue(){
                         (b.docs.length - a.docs.length) || a.name.localeCompare(b.name));
 
   /* A single match is almost always a deliberate jump from Companies or
-     Monitoring — open it rather than making them click twice. */
+     Monitoring - open it rather than making them click twice. */
   if (groups.length === 1) qOpen.add(groups[0].id);
 
   $('qCount').textContent =
@@ -389,7 +389,7 @@ function paintQueue(){
               ${d.file
                 ? `<a class="qfile" href="${d.file.data}" target="_blank" rel="noopener noreferrer"
                       download="${esc(d.file.name)}">${FILE_SVG}Open ${esc(d.file.name)}</a>`
-                : '<span class="qnofile">No file attached — approving this would be approving a typed claim.</span>'}
+                : '<span class="qnofile">No file attached - approving this would be approving a typed claim.</span>'}
               ${d.reviewNote
                 ? `<span class="qremark"><b>Remark:</b> ${esc(d.reviewNote)}</span>` : ''}
             </div>
@@ -434,7 +434,7 @@ $('qList').addEventListener('click', e => {
    VERDICT DIALOG
    A verdict is a decision that lands on someone else's public page, so it
    gets a confirmation step and a remark rather than firing off a single
-   click. The remark is required for a rejection — telling a company "no"
+   click. The remark is required for a rejection - telling a company "no"
    without saying why leaves them nothing to act on.
    ===================================================================== */
 const VERDICTS = {
@@ -456,7 +456,7 @@ const VERDICTS = {
     button:'Reject document', tone:'bad',
     effect:'The document is marked <b>Not accepted</b> and the company\'s verified badge is withdrawn while it stands.',
     quick:[
-      'The scan is unreadable — please re-upload a clearer copy.',
+      'The scan is unreadable - please re-upload a clearer copy.',
       'The issuing office has no record of this document.',
       'The details entered do not match the attached file.',
       'This document has expired. Upload the current one.',
@@ -471,7 +471,7 @@ const VERDICTS = {
     quick:[
       'Needs a second reviewer before a decision.',
       'Waiting on confirmation from the issuing office.',
-      'Approved in error — returning for a proper check.'
+      'Approved in error - returning for a proper check.'
     ]
   }
 };
@@ -727,7 +727,7 @@ function paintMonitoring(){
     <tr>
       <td class="strong">${esc(d.companyName)}</td>
       <td>${esc(d.name)}</td>
-      <td>${esc(d.issuer || '—')}</td>
+      <td>${esc(d.issuer || '-')}</td>
       <td class="nowrap">${esc(fmtDate(d.expires))}</td>
       <td class="num">${stPill(d)}</td>
     </tr>`).join('')
@@ -741,9 +741,9 @@ function paintMonitoring(){
       <td class="strong">${esc(c.name)}</td>
       <td>${esc(c.region)}</td>
       <td class="num">${c.docs.verified} / ${REVIEWABLE_TYPES.length}</td>
-      <td class="num">${c.docs.reviewableExpired || '—'}</td>
-      <td class="num">${c.docs.rejected || '—'}</td>
-      <td class="num">${c.docs.pending || '—'}</td>
+      <td class="num">${c.docs.reviewableExpired || '-'}</td>
+      <td class="num">${c.docs.rejected || '-'}</td>
+      <td class="num">${c.docs.pending || '-'}</td>
       <td class="num"><button class="btn btn-w btn-sm" data-docs2="${esc(c.id)}">Review</button></td>
     </tr>`).join('')
    : '<tr><td colspan="7" class="emptyrow">Every badge is currently justified.</td></tr>';
@@ -758,7 +758,7 @@ function paintMonitoring(){
       <td class="num">${(g.gmv / totalG * 100).toFixed(1)}%</td>
     </tr>`).join('');
 
-  /* Prototype diagnostics — honest about what they are. */
+  /* Prototype diagnostics - honest about what they are. */
   let used = 0;
   try {
     for (let i = 0; i < localStorage.length; i++){
@@ -787,7 +787,7 @@ $('mnBadges').addEventListener('click', e => {
 
 /* =====================================================================
    SIGN-IN GATE
-   The console is not painted until there is a session — locking a page
+   The console is not painted until there is a session - locking a page
    whose data is already in the DOM would be theatre.
    ===================================================================== */
 const gate = $('gate');
@@ -862,7 +862,7 @@ $('askForm').addEventListener('submit', () => {
      so is better than leaving the operator waiting for an email. */
   $('newCode').innerHTML = r.sent
     ? `Your code is <b style="letter-spacing:.2em">${esc(r.code)}</b>.<br>` +
-      `<span style="font-weight:500">Shown here because this prototype has no mail server — in production it would be emailed and never displayed.</span>`
+      `<span style="font-weight:500">Shown here because this prototype has no mail server - in production it would be emailed and never displayed.</span>`
     : `<span style="font-weight:500">If that address is registered, a code has been issued. ` +
       `We don't confirm either way, so this form can't be used to find out who has an account.</span>`;
 });

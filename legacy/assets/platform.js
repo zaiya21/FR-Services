@@ -1,11 +1,11 @@
 /* =====================================================================
-   PLATFORM — the FR Services side of the marketplace
+   PLATFORM - the FR Services side of the marketplace
    ---------------------------------------------------------------------
    The company admin answers "how is my yard doing". This answers "how is
    the marketplace doing, and which sellers can renters trust".
 
    THE BOUNDARY THIS FILE KEEPS. A platform operator sees marketplace
-   activity — bookings, gross value, commission, documents, reports,
+   activity - bookings, gross value, commission, documents, reports,
    compliance. They do NOT see a company's private books: the expense
    ledger a seller keeps in `fr.expenses.<id>` is theirs, not ours, and
    nothing here reads it. Being the landlord is not the same as being the
@@ -14,7 +14,7 @@
 
    The one thing this side CAN write that the company side cannot is a
    document's `review` state. That asymmetry is the whole point of the
-   verification model in ops.js — see ARCHITECTURE.md.
+   verification model in ops.js - see ARCHITECTURE.md.
 
    COST. A full scan regenerates every company's bookings: ~750 ms for 42
    companies. That is fine once per view and far too slow per keystroke,
@@ -24,14 +24,14 @@
 
 /* =====================================================================
    HOW FR SERVICES EARNS
-   Listing is free — there is no subscription. Income is commission on
+   Listing is free - there is no subscription. Income is commission on
    completed bookings, and the rate follows the service line:
 
      rentals (vehicles and heavy equipment)   8%
      emergency towing                        12%
 
    Towing carries the higher rate because it is dispatch work: short
-   notice, small ticket, and the platform is doing the hard part — finding
+   notice, small ticket, and the platform is doing the hard part - finding
    an available truck at 2am is the service being sold. A rental booking
    is planned days ahead and the yard would likely have got it anyway.
 
@@ -62,7 +62,7 @@ const PLATFORM_PRICING = [
   { key:'rentals', label:'Vehicle & equipment rental', value:'8% commission',
     note:'Charged on the booking total, on confirmed bookings only.' },
   { key:'towing', label:'Emergency towing', value:'12% commission',
-    note:'Higher because dispatch is the service — finding an available truck at short notice.' }
+    note:'Higher because dispatch is the service - finding an available truck at short notice.' }
 ];
 
 const REVIEW_QUEUE_STATES = ['pending', 'verified', 'rejected'];
@@ -182,7 +182,7 @@ function setReportState(id, state, note){
    verdict is written.
    ===================================================================== */
 
-/* A rejection with no reason is useless to the company receiving it — they
+/* A rejection with no reason is useless to the company receiving it - they
    cannot fix what they have not been told. Approvals and returns can stand
    on their own, so the remark is optional there. */
 const REVIEW_NOTE_REQUIRED = ['rejected'];
@@ -199,7 +199,7 @@ function setDocReview(companyId, docId, review, note){
   const remark = String(note == null ? '' : note)
     .replace(/[\u0000-\u001f\u007f]/g, '').trim().slice(0, MAX_REVIEW_NOTE);
   if (REVIEW_NOTE_REQUIRED.includes(review) && !remark)
-    return { ok:false, error:'Say why it was rejected — the company needs something to act on.' };
+    return { ok:false, error:'Say why it was rejected - the company needs something to act on.' };
 
   const rows = loadDocs(companyId);
   const d = rows.find(x => x.id === docId);
@@ -236,7 +236,7 @@ function allDocuments(today){
       }));
     });
   });
-  /* Oldest unreviewed first — a queue is worked front to back. */
+  /* Oldest unreviewed first - a queue is worked front to back. */
   const rank = { pending: 0, rejected: 1, verified: 2, exempt: 3 };
   return out.sort((a, b) =>
     (rank[a.review] - rank[b.review]) ||
@@ -293,7 +293,7 @@ function platformScan(from, to, today){
   /* The trend bucket follows the window, for the same reason it does in
      the company console: month buckets inside a 30-day view produce two
      bars, one of which covers a single day. Buckets are built here from
-     BOOKINGS ONLY — opsSeries would have been the obvious reuse, but it
+     BOOKINGS ONLY - opsSeries would have been the obvious reuse, but it
      folds in the company's expense ledger, which this side must not read. */
   const span = daysBetween(from, to) + 1;
   const mode = span <= 16 ? 'day' : span <= 120 ? 'week' : 'month';
@@ -348,7 +348,7 @@ function platformScan(from, to, today){
 
     return {
       id: co.id, name: co.name, loc: co.loc,
-      region: place.province || place.name || '—',
+      region: place.province || place.name || '-',
       cats: (typeof catsOf === 'function') ? catsOf(co) : [co.cat],
       rating: co.rating, reviews: co.reviews, since: co.since,
       fleetSize: s.fleetSize, fleetQty: s.fleetQty,
@@ -365,7 +365,7 @@ function platformScan(from, to, today){
       /* A badge is only worth anything if it can be lost. It now means
          something precise: all three registration documents on file, all
          three approved, none of them expired. Insurance and OR/CRs do not
-         enter into it — the platform never checked those, so they cannot
+         enter into it - the platform never checked those, so they cannot
          earn or forfeit a badge. */
       badgeOk: d.verified === REVIEWABLE_TYPES.length &&
                d.reviewable === REVIEWABLE_TYPES.length &&
@@ -395,7 +395,7 @@ function platformScan(from, to, today){
       fleet: sum('fleetQty'),
       listings: sum('fleetSize'),
       avgValue: sum('liveBookings') ? Math.round(sum('gmv') / sum('liveBookings')) : 0,
-      /* the blended rate across every line — what the marketplace actually
+      /* the blended rate across every line - what the marketplace actually
          takes, as opposed to either headline number */
       effectiveRate: sum('gmv')
         ? Math.round(sum('commission') / sum('gmv') * 1000) / 10 : 0,
@@ -407,7 +407,7 @@ function platformScan(from, to, today){
     },
     docs: {
       total: docs.length,
-      /* verdict counts are over the reviewable three only — an exempt
+      /* verdict counts are over the reviewable three only - an exempt
          document has no verdict to count */
       reviewable: docs.filter(d => d.reviewable).length,
       pending: docs.filter(d => d.review === 'pending').length,
@@ -446,7 +446,7 @@ function platformScanClear(){ _scan = { key:null, data:null }; }
 function groupBy(rows, keyOf){
   const m = {};
   rows.forEach(r => {
-    const k = keyOf(r) || '—';
+    const k = keyOf(r) || '-';
     const g = m[k] = m[k] || { key:k, companies:0, gmv:0, bookings:0, commission:0 };
     g.companies++; g.gmv += r.gmv; g.bookings += r.bookings; g.commission += r.commission;
   });
@@ -454,7 +454,7 @@ function groupBy(rows, keyOf){
 }
 
 /* =====================================================================
-   MONITORING — what a platform operator should act on today
+   MONITORING - what a platform operator should act on today
    ===================================================================== */
 function platformAlerts(from, to, today){
   const t = today || opsToday();
@@ -474,7 +474,7 @@ function platformAlerts(from, to, today){
   if (pubExpired.length)
     out.push({ level:'urgent',
       title: `${pubExpired.length} approved document${pubExpired.length > 1 ? 's have' : ' has'} expired while still published`,
-      body: pubExpired.slice(0, 3).map(d => d.companyName + ' — ' + d.name).join('; ') +
+      body: pubExpired.slice(0, 3).map(d => d.companyName + ' - ' + d.name).join('; ') +
             (pubExpired.length > 3 ? '…' : ''),
       go: 'review' });
 

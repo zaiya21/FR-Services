@@ -1,9 +1,9 @@
 /* =====================================================================
-   FR SERVICES — Fleet Rental Services PH
+   FR SERVICES - Fleet Rental Services PH
    Shared design system
    Style:  Vibrant & Block-based + Bento (ui-ux-pro-max)
    Type:   Space Grotesk (display) + Inter (body)
-   Color:  Brand green sampled from logo.png, paired with harvest gold —
+   Color:  Brand green sampled from logo.png, paired with harvest gold -
            the "Earth green + harvest gold" pairing validated in the
            ui-ux-pro-max colour DB (#50 Agriculture/Farm Tech).
 
@@ -16,7 +16,7 @@
    CONTRAST (white text unless noted)
      brand   #057A2F  5.48:1  AA
      accent  #F2B705  9.32:1 against --ink (gold carries dark text)
-     action  #C2410C  5.32:1  AA   — deliberately darker than #EA580C,
+     action  #C2410C  5.32:1  AA   - deliberately darker than #EA580C,
                                      which is only 3.6:1 and fails AA
      equip   #475569  7.46:1  AA
      tow     #B91C1C  6.40:1  AA
@@ -28,14 +28,14 @@
   --ink:#12131A; --ink-2:#4A4F63; --ink-3:#8A90A6; --ink-4:#C3C7D6;
   /* surface */
   --bg:#FBFAF7; --surface:#FFFFFF; --surface-2:#F4F2ED; --hair:#E0DDD5;
-  /* brand — straight off the logo */
+  /* brand - straight off the logo */
   --brand:#057A2F; --brand-lt:#2E9A33; --brand-dk:#024A1E; --brand-tint:#E8F6EC;
   --brand-grad:linear-gradient(135deg,#2E9A33 0%,#057A2F 55%,#024A1E 100%);
   /* accent: harvest gold, dark text on top */
   --accent:#F2B705; --accent-2:#FFD24A; --accent-tint:#FEF6DC;
   /* action: for CTAs that need white text (emergency, destructive-ish) */
   --action:#C2410C; --action-tint:#FDEEE6;
-  /* category coding — green / steel / red reads semantically:
+  /* category coding - green / steel / red reads semantically:
      go, industrial, emergency. Used consistently across every page. */
   --c-vehicle:#057A2F; --c-vehicle-tint:#E8F6EC;
   --c-equip:#475569;   --c-equip-tint:#EEF2F6;
@@ -67,7 +67,7 @@
 /* ---------- 2. RESET ---------- */
 *{box-sizing:border-box}
 /* The UA's [hidden] rule is display:none at the lowest precedence, so any
-   class that sets display — .btn is inline-flex — silently defeats it and
+   class that sets display - .btn is inline-flex - silently defeats it and
    the element stays on screen. Make hidden actually mean hidden. */
 [hidden]{display:none !important}
 html{scroll-behavior:smooth}
@@ -127,7 +127,7 @@ nav.top{position:sticky;top:0;z-index:80;background:var(--bg);border-bottom:var(
 .nlinks{display:flex;gap:var(--s5);margin-left:var(--s6);font-size:14.5px;font-weight:600}
 .nlinks a{padding:5px 0;border-bottom:2.5px solid transparent}
 .nlinks a:hover,.nlinks a.on{border-bottom-color:var(--ink)}
-/* the signed-in slot in the nav — name plus a way out */
+/* the signed-in slot in the nav - name plus a way out */
 .nauth{display:inline-flex;align-items:center;gap:var(--s3)}
 .authwho{font-size:13.5px;font-weight:700;max-width:170px;overflow:hidden;
   text-overflow:ellipsis;white-space:nowrap}
@@ -156,7 +156,7 @@ nav.top{position:sticky;top:0;z-index:80;background:var(--bg);border-bottom:var(
 .geo .chg.gps{background:var(--yellow);color:var(--ink);border-color:var(--ink)}
 .geo .chg.gps:hover{background:#fff;color:var(--ink);border-color:var(--ink)}
 .geo .chg.gps[disabled]{opacity:.6;cursor:progress}
-/* Locating, and exact — the tag stops claiming a guess is a fix. */
+/* Locating, and exact - the tag stops claiming a guess is a fix. */
 .geo .tag.live{background:#fff;color:var(--indigo);border-color:#fff}
 .geo .tag.exact{background:var(--brand-2, #2E9A33);color:#fff;border-color:#fff}
 .geomsg{padding:0 var(--s5)}
@@ -204,7 +204,7 @@ nav.top{position:sticky;top:0;z-index:80;background:var(--bg);border-bottom:var(
   color:#fff;border-radius:var(--r-pill);padding:3px 9px;font-size:12px;font-weight:700}
 .rate-pill svg{width:11px;height:11px;color:var(--yellow)}
 /* An unreviewed listing. Outlined rather than solid ink so it reads as an
-   absence of ratings and not as a score — a filled pill in the same slot
+   absence of ratings and not as a score - a filled pill in the same slot
    as "4.94" gets read as a number whatever it says. */
 .rate-pill.new{background:transparent;color:var(--ink-2);
   border:var(--bd-thin);font-weight:600}
@@ -216,7 +216,7 @@ nav.top{position:sticky;top:0;z-index:80;background:var(--bg);border-bottom:var(
   transition:transform .18s var(--ease),box-shadow .18s var(--ease)}
 .co:hover,.co:focus-within{transform:translate(-3px,-3px);box-shadow:var(--off-lift)}
 /* Photo, not a glyph. Placeholder imagery until the company uploads its
-   own gallery — swap the background-image source, nothing else changes. */
+   own gallery - swap the background-image source, nothing else changes. */
 .cotop{position:relative;height:168px;border-bottom:var(--bd);
   background-color:var(--surface-2);background-size:cover;
   background-repeat:no-repeat;overflow:hidden}

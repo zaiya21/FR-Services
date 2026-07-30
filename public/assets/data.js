@@ -1,5 +1,5 @@
 /* =====================================================================
-   FR SERVICES — shared data + helpers.
+   FR SERVICES - shared data + helpers.
 
    Companies come from the registry (registry.js), which holds what people
    actually registered. Nothing here is seeded. Requires geo.js loaded
@@ -8,7 +8,7 @@
 
 /* ---------- Where the renter is --------------------------------------
    The starting point, not the answer. A stored fix from geo.js overrides
-   it on load, and an explicit city choice overrides both — detection is a
+   it on load, and an explicit city choice overrides both - detection is a
    convenience, never a cage (ARCHITECTURE.md §2).
 
    `source` says which of those we are showing, and the UI is expected to
@@ -35,7 +35,7 @@ const FR_GEO = {
   FR_GEO.lat = fix.lat; FR_GEO.lon = fix.lon;
   FR_GEO.accuracy = fix.accuracy;
   FR_GEO.source = 'geolocation';
-  /* The city label is filled in by frNameGeo() once CITY_XY exists —
+  /* The city label is filled in by frNameGeo() once CITY_XY exists -
      it is declared further down this file. */
 })();
 
@@ -70,7 +70,7 @@ function frRecount(){
 /* ---------- Companies ----------------------------------------------
    Every company here is one that somebody registered. The list comes
    from the registry (registry.js) and is EMPTY until the first
-   registration completes — there is no demo set behind it any more.
+   registration completes - there is no demo set behind it any more.
 
    Mutated in place, never reassigned: this is a `const` that the
    marketplace, the storefront, the platform console and the map all
@@ -87,9 +87,9 @@ function frReloadCompanies(){
   return FR_COMPANIES;
 }
 
-/* Unit types offered per category — drives the "Unit type" dropdown. */
+/* Unit types offered per category - drives the "Unit type" dropdown. */
 const FR_TYPES = {
-  /* Motorcycle is a thing you rent, so it lives here — not under towing,
+  /* Motorcycle is a thing you rent, so it lives here - not under towing,
      where it only ever described what was being recovered. */
   vehicles:  ["Sedan","SUV","Van","Pickup","Truck","Motorcycle"],
   equipment: ["Excavator","Backhoe","Crane","Bulldozer","Dump Truck","Boom Lift","Compactor","Loader"],
@@ -97,7 +97,7 @@ const FR_TYPES = {
 };
 
 
-/* Destinations worth surfacing before anyone types — the searches that
+/* Destinations worth surfacing before anyone types - the searches that
    actually happen. `as` is the name people use when it differs from the
    LGU: nobody searches "Malay, Aklan", they search "Boracay". */
 const FR_POPULAR = [
@@ -122,7 +122,7 @@ function splitPlace(s){
                : { name:s.slice(0, i).trim(), province:s.slice(i + 1).trim() };
 }
 
-/* Every place a company serves, deduped — the "we actually cover this"
+/* Every place a company serves, deduped - the "we actually cover this"
    list, used to surface useful options in the location picker ahead of
    the other 1,600 places we have no providers in yet. Deduped on the
    normalised name+province so "Digos" and "Digos City" collapse to one. */
@@ -138,7 +138,7 @@ const FR_COVERED = (() => {
 
 /* ---------- Filtering + sorting (single source of truth) --------------- */
 
-/* A company may run more than one service line — plenty of Philippine
+/* A company may run more than one service line - plenty of Philippine
    operators rent vehicles, hire out equipment AND run a tow truck. `cat`
    stays as the primary line (it drives the card photo and the default
    icon); `cats` is the full set. Anything without `cats` is single-line. */
@@ -166,7 +166,7 @@ function normCity(s){
 
    Now a geometric question, because a registered company has a real pin
    and a real radius. The old model was a hand-written list of city names
-   per company, which cannot be right for user-registered data — nobody
+   per company, which cannot be right for user-registered data - nobody
    is going to type out the forty municipalities inside an 80 km circle,
    and a radius slider that does not actually decide anything is a
    decoration.
@@ -195,7 +195,7 @@ function citySearchable(c, city, province){
     return km != null && km <= (Number(c.radius) || 0);
   }
 
-  /* No coordinates for that place — fall back to the stored name list. */
+  /* No coordinates for that place - fall back to the stored name list. */
   return (c.serves || []).some(s => {
     const p = splitPlace(s);
     if (!normCity(p.name).includes(q)) return false;
@@ -225,7 +225,7 @@ function distanceKm(c){
 }
 
 /* Refresh the cached distance on every company. Called whenever FR_GEO
-   moves — a new fix, or a city chosen by hand. */
+   moves - a new fix, or a city chosen by hand. */
 function frRedistance(){
   for (const c of FR_COMPANIES){
     const km = distanceKm(c);
@@ -240,7 +240,7 @@ function filterCompanies(f){
   return FR_COMPANIES.filter(c => {
     if (f.cat      && !catsOf(c).includes(f.cat))         return false;
     /* A multi-service company offers both towing and excavators, but not
-       an excavator *as* a towing service — so when a category and a type
+       an excavator *as* a towing service - so when a category and a type
        are both set, the type has to belong to that category. */
     if (f.cat && f.type && !(FR_TYPES[f.cat] || []).includes(f.type)) return false;
     if (!citySearchable(c, f.city, f.province))           return false;
@@ -265,7 +265,7 @@ function sortCompanies(list, sort){
   const km = c => { const v = distanceKm(c); return v == null ? Infinity : v; };
   if (sort === 'near')   out.sort((a,b) => km(a) - km(b));
   /* Unrated companies sort last under "rating" rather than first. A new
-     listing has rating 0, and 0 beats 4.9 on an ascending comparator —
+     listing has rating 0, and 0 beats 4.9 on an ascending comparator -
      which would have put every brand-new company at the top of a
      best-rated list. */
   if (sort === 'rating') out.sort((a,b) =>
@@ -286,17 +286,17 @@ function sortCompanies(list, sort){
    ------------------------------------------------------------------- */
 const FR_UNITS = {};
 
-/* Add-ons a company sells alongside the unit — pickup, drop-off, an
+/* Add-ons a company sells alongside the unit - pickup, drop-off, an
    operator. Owner-defined, so this starts empty. */
 const FR_SERVICES = {};
 
-/* Reviews arrive from completed bookings. Empty until there are any —
+/* Reviews arrive from completed bookings. Empty until there are any -
    a storefront showing borrowed praise is a lie with a star rating. */
 const FR_REVIEWS = [];
 
 /* ---------- Coordinates ------------------------------------------------
    PSGC carries no lat/lon, so these are hand-set per place. They are no
-   longer used to place companies — a registered company supplies its own
+   longer used to place companies - a registered company supplies its own
    pin. They are still what lets the marketplace answer "which companies
    reach Cebu City", and what names a GPS fix (nearestCity in geo.js).
 
@@ -354,7 +354,7 @@ function frNameGeo(){
    A registered company has no `status` field and must not: "Available
    now" is a claim about this minute, and the only honest source for it is
    what is actually in the yard. A brand-new company with an empty fleet
-   is "Setting up" — not "Available now", which would send a renter to a
+   is "Setting up" - not "Available now", which would send a renter to a
    storefront with nothing on it.
    --------------------------------------------------------------------- */
 function frStatus(c){
@@ -426,7 +426,7 @@ function inCategory(cat){ return FR_COMPANIES.filter(c => c.cat === cat); }
 function qs(key){ return new URLSearchParams(location.search).get(key); }
 
 /* Placeholder photography, one per category. These are the same generated
-   originals as the hero panels, reused until a company uploads its own —
+   originals as the hero panels, reused until a company uploads its own -
    see `company_theme.gallery` in ARCHITECTURE.md §3. Because every vehicle
    company would otherwise show an identical crop, the focal point is
    shifted deterministically per company id. */
@@ -488,7 +488,7 @@ frNameGeo();
 frRedistance();
 frRecount();
 
-/* Favourite toggle — delegated, works on any page that renders cards. */
+/* Favourite toggle - delegated, works on any page that renders cards. */
 document.addEventListener('click', e => {
   const f = e.target.closest('[data-fav]');
   if (f) { f.classList.toggle('on'); e.preventDefault(); }

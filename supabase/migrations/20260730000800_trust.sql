@@ -1,11 +1,11 @@
 -- =====================================================================
--- TRUST & SAFETY — renter reports, reviews, saved companies.
+-- TRUST & SAFETY - renter reports, reviews, saved companies.
 --
 -- The report table has an unusual read rule: the company being reported
 -- cannot see the report. That is not an oversight. A renter who ticks
 -- "keep me anonymous" is told the company will not see who complained,
 -- and the only way to keep that promise is for the company to have no read
--- path at all — a report's wording routinely identifies its author even
+-- path at all - a report's wording routinely identifies its author even
 -- with the name removed ("I collected the van on Tuesday afternoon").
 -- =====================================================================
 
@@ -58,7 +58,7 @@ create trigger reports_guard_state before update on public.company_reports
   for each row execute function app.guard_report_state();
 
 -- ---------------------------------------------------------------------
--- Reviews. A rating is a renter's, and only after a completed hire —
+-- Reviews. A rating is a renter's, and only after a completed hire -
 -- which is what stops a review farm being a text field.
 -- ---------------------------------------------------------------------
 create table public.company_reviews (
@@ -120,7 +120,7 @@ alter table public.company_reviews enable row level security;
 alter table public.saved_companies enable row level security;
 
 -- The reporter sees their own; the platform sees all. The company sees
--- none — see the note at the top of this file.
+-- none - see the note at the top of this file.
 create policy reports_read on public.company_reports
   for select to authenticated
   using (

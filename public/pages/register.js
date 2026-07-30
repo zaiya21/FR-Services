@@ -26,12 +26,12 @@ document.getElementById('w-next').addEventListener('click', () => {
     return;
   }
   /* Step 3 is the second gate. Without coordinates the company registers
-     into a marketplace that can never surface it — every search is a
-     distance query — so this cannot be deferred to "later in settings"
+     into a marketplace that can never surface it - every search is a
+     distance query - so this cannot be deferred to "later in settings"
      any more than the permits can. */
   if (step === 3 && !coordsSet()){
     coordMsg('err', 'Your coordinates are needed before you continue. Paste them ' +
-                    'above, tap “I am at the yard now”, or open the guide — it takes ' +
+                    'above, tap “I am at the yard now”, or open the guide - it takes ' +
                     'about thirty seconds in Google Maps.');
     document.getElementById('coordSec').scrollIntoView({ block:'center', behavior:'smooth' });
     return;
@@ -54,7 +54,7 @@ document.querySelectorAll('.wstep').forEach(s =>
   }));
 
 /* =====================================================================
-   SUBMIT — this now actually creates the company.
+   SUBMIT - this now actually creates the company.
 
    It used to show a reference number and throw the form away, which was
    honest enough while the marketplace ran on fixtures. With the fixtures
@@ -63,7 +63,7 @@ document.querySelectorAll('.wstep').forEach(s =>
    the company appears on the marketplace with its pin on the map.
 
    Still local storage, not a server. What that means concretely is stated
-   on the confirmation screen rather than implied — a registration that
+   on the confirmation screen rather than implied - a registration that
    quietly lives in one browser is a fact the owner should know.
    ===================================================================== */
 function submitRegistration(){
@@ -101,7 +101,7 @@ function submitRegistration(){
     return;
   }
 
-  /* The three permits go in as pending — the same queue the platform
+  /* The three permits go in as pending - the same queue the platform
      console reviews. Files are held in memory by this wizard and cannot
      survive the page, so what is recorded is the fact of the upload and
      its filename, which is what the reviewer's queue keys on. */
@@ -117,7 +117,7 @@ function submitRegistration(){
       if (docs.length) saveDocs(out.id, docs);
     }
   } catch (e) {
-    /* Documents failing to persist must not lose the company — the owner
+    /* Documents failing to persist must not lose the company - the owner
        can re-upload from the admin console, but cannot re-register. */
   }
 
@@ -152,7 +152,7 @@ function submitRegistration(){
   note.style.lineHeight = '1.6';
   note.textContent =
     'Saved in this browser. This prototype has no server yet, so your company ' +
-    'is visible on this device only — clearing site data removes it. Your yard ' +
+    'is visible on this device only - clearing site data removes it. Your yard ' +
     'is pinned at ' + formatCoords(COORD.lat, COORD.lon) + '.';
   done.appendChild(note);
 
@@ -162,7 +162,7 @@ function submitRegistration(){
 }
 
 /* =====================================================================
-   STEP 2 — VERIFICATION DOCUMENTS
+   STEP 2 - VERIFICATION DOCUMENTS
    Three required, with a file each. Everything else is optional and says
    so. The list is built from DOC_TYPES in ops.js rather than typed here,
    so "what FR Services verifies" has exactly one definition.
@@ -170,7 +170,7 @@ function submitRegistration(){
 const REQ_HINT = {
   dti:    'Certificate of business name registration.',
   permit: 'Current year, from your city or municipal hall.',
-  bir:    'Certificate of registration — Form 2303.'
+  bir:    'Certificate of registration - Form 2303.'
 };
 const OPT_TYPES = [
   { id:'insurance', label:'Insurance certificate',        hint:'Comprehensive or CTPL cover.' },
@@ -206,7 +206,7 @@ function uploadRow(id, label, hint, required){
 }
 
 /* Has the operator tried to move on yet? Before that, an empty required
-   row is just an empty row — flagging it red on arrival is nagging. */
+   row is just an empty row - flagging it red on arrival is nagging. */
 let docTouched = false;
 
 function requiredTypes(){
@@ -246,7 +246,7 @@ function showDocError(){
   const err = document.getElementById('docErr');
   err.textContent =
     'Attach a file for ' + missingRequired().map(t => t.label).join(', ') +
-    ' before continuing. These three are what we verify — without them there is nothing to check.';
+    ' before continuing. These three are what we verify - without them there is nothing to check.';
   document.getElementById('reqBar').scrollIntoView({ block:'center', behavior:'smooth' });
 }
 
@@ -318,13 +318,13 @@ document.querySelectorAll('.upl').forEach(u => u.addEventListener('click', e => 
 }));
 
 /* =====================================================================
-   STEP 3 — WHERE THE YARD IS
+   STEP 3 - WHERE THE YARD IS
 
    The coordinate pair is the only piece of this form the marketplace
    cannot work without: matching is by distance, so a company with no pin
    is invisible to every search. Three ways in, because owners arrive with
-   different things in hand — a pasted string, a phone standing in the
-   yard, or a finger on a map — and all three converge on the same two
+   different things in hand - a pasted string, a phone standing in the
+   yard, or a finger on a map - and all three converge on the same two
    numbers.
    ===================================================================== */
 let COORD = { lat:null, lon:null, accuracy:null, source:null };
@@ -343,7 +343,7 @@ const coordsSet = () => typeof COORD.lat === 'number' && typeof COORD.lon === 'n
 /* One place writes the coordinate state, so the two number fields, the
    paste box, the map pin and the preview can never disagree about where
    the yard is. `from` says which input caused it, and that input is the
-   one field NOT written back — retyping a value into the box someone is
+   one field NOT written back - retyping a value into the box someone is
    still typing in moves their cursor. */
 function setCoords(lat, lon, opts){
   const o = opts || {};
@@ -376,7 +376,7 @@ function showCoordMap(lat, lon, zoom){
   document.getElementById('coordNote').hidden = false;
 
   if (!window.L){
-    wrap.innerHTML = '<p class="coordnote" style="padding:14px">Map unavailable — ' +
+    wrap.innerHTML = '<p class="coordnote" style="padding:14px">Map unavailable - ' +
       'the coordinates above are still saved.</p>';
     return;
   }
@@ -424,7 +424,7 @@ function showCoordMap(lat, lon, zoom){
   }
 }
 
-/* Shared tail for a point that arrived already parsed — from the map, or
+/* Shared tail for a point that arrived already parsed - from the map, or
    from the device. Still range-checked: a dragged pin can leave the
    country as easily as a typed one. */
 function applyPoint(lat, lon, from){
@@ -483,7 +483,7 @@ document.getElementById('r-gps').addEventListener('click', async (e) => {
       'Your device reports <b>' + formatCoords(fix.lat, fix.lon) + '</b>, accurate to ' +
       'about <b>' + fix.accuracy + ' m</b>.' +
       (fix.accuracy > 100
-        ? ' That is a wide fix — probably a wifi or cell estimate rather than GPS. ' +
+        ? ' That is a wide fix - probably a wifi or cell estimate rather than GPS. ' +
           'Drag the pin onto your gate, or step outside and try again.'
         : ' Check the pin is on your gate and drag it if not.'));
   } catch (err) {
@@ -511,7 +511,7 @@ document.getElementById('r-guide-close').addEventListener('click', () => {
    "est. N renters" figure computed as km × 248. Both were fixtures, and
    both became false the moment coordinates were real: a company in Cebu
    was shown a list of cities in Davao Region, and the renter estimate was
-   a number with no source at all. Now it is measured — from the owner's
+   a number with no source at all. Now it is measured - from the owner's
    own pin, against the same coordinate table the marketplace searches.  */
 function reachedCities(lat, lon, km){
   if (typeof CITY_XY === 'undefined' || typeof haversineKm !== 'function') return [];

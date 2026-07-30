@@ -4,7 +4,7 @@
    The owner's editing surface. Everything here writes to one theme object
    which company.html then renders. Platform-owned elements (verified
    badge, rating, reviews, report link) are NOT editable from this screen
-   by design — see ARCHITECTURE.md §4.
+   by design - see ARCHITECTURE.md §4.
    ===================================================================== */
 .adminbar{background:var(--ink);color:#fff;border-bottom:var(--bd)}
 .adminbar .wrap{display:flex;align-items:center;gap:var(--s4);
@@ -15,7 +15,7 @@
 .adminbar b{font-size:14.5px}
 .adminbar .who{margin-left:auto;display:flex;align-items:center;gap:var(--s3);font-size:13px;
   color:#B9BDCC;flex-wrap:wrap}
-/* platform-owned pill — same fixed colours the storefront uses */
+/* platform-owned pill - same fixed colours the storefront uses */
 .pill-plat{background:var(--ok);color:#fff;border:2px solid var(--ink);
   border-radius:var(--r-pill);font-size:10.5px;font-weight:700;padding:2px 9px;
   display:inline-flex;align-items:center;gap:4px}
@@ -129,11 +129,11 @@
 .thumb .t-body{flex:1;padding:13px 7px 7px;display:flex;flex-direction:column;gap:3px}
 .thumb .t-bar{height:5px;background:var(--co-primary);width:52%;border-radius:2px}
 .thumb .t-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;flex:1}
-/* tinted, not plain surface — on a pale backdrop a white tile on white
+/* tinted, not plain surface - on a pale backdrop a white tile on white
    made every thumbnail look identical */
 .thumb .t-tile{background:var(--co-primary-tint);border:1px solid var(--co-line);
   border-radius:3px}
-/* per-layout miniature traits — mirrors the real skins */
+/* per-layout miniature traits - mirrors the real skins */
 .lay-block  .t-tile,.lay-block  .t-logo{border-width:1.5px;box-shadow:1.5px 1.5px 0 var(--co-ink)}
 .lay-swiss  .t-tile{border-radius:0;box-shadow:none}
 .lay-swiss  .t-logo{border-radius:0}
@@ -190,7 +190,7 @@
   padding:0 6px;cursor:pointer;color:var(--ink)}
 .gpick:focus{outline:none;border-color:var(--brand)}
 
-/* the add tile — the whole thing is the file picker */
+/* the add tile - the whole thing is the file picker */
 .gadd{height:112px;display:grid;place-items:center;align-content:center;gap:1px;
   background:var(--surface-2);border:2px dashed var(--hair);border-radius:var(--r);
   cursor:pointer;color:var(--ink-3);text-align:center;
@@ -226,7 +226,7 @@
 .um-card{position:relative;width:100%;max-width:760px;background:var(--surface);
   border:var(--bd);border-radius:var(--r-lg);box-shadow:var(--off-lift);
   padding:var(--s5);margin-bottom:var(--s6)}
-/* Close belongs in the card's own corner, not in the header's flow — that
+/* Close belongs in the card's own corner, not in the header's flow - that
    way it is in the same place in every dialog whatever the title does. */
 .um-card .lm-x{position:absolute;top:12px;right:12px;z-index:3;
   width:38px;height:38px;border-radius:11px;border:var(--bd-thin);
@@ -380,7 +380,7 @@
 .kpi .k-note b{color:var(--ok)}
 .kpi .k-note b.down{color:var(--danger)}
 
-/* ---- charts, drawn as plain elements — no chart library ---- */
+/* ---- charts, drawn as plain elements - no chart library ---- */
 .chartcard{background:var(--surface);border:var(--bd);border-radius:var(--r-lg);
   box-shadow:var(--off-sm);padding:var(--s5);margin-bottom:var(--s5)}
 .chartcard h3{font-size:16px;margin-bottom:3px}
@@ -389,7 +389,7 @@
    Derived, not hand-picked: candidate orderings of the FR hue families were
    enumerated and validated (OKLab CVD ΔE under protanopia/deuteranopia, the
    normal-vision floor, the lightness band, the chroma floor, and contrast on
-   the white card). This order clears every gate on the adjacent pairlist —
+   the white card). This order clears every gate on the adjacent pairlist -
    worst adjacent CVD ΔE 19.0, normal-vision 23.3, all six ≥ 3:1.
    The brand green leads because it is the brand.
 
@@ -397,7 +397,7 @@
    measures 1.82:1 on white and sits outside the lightness band. Chart marks
    take the stepped-down gold instead. */
 :root{
-  --c1:#057A2F;  /* green  — brand */
+  --c1:#057A2F;  /* green  - brand */
   --c2:#1D4ED8;  /* blue   */
   --c3:#B8860B;  /* gold   */
   --c4:#0891B2;  /* teal   */
@@ -416,7 +416,7 @@
   font-weight:600;color:var(--ink-3);font-variant-numeric:tabular-nums;white-space:nowrap}
 .c-plot{grid-area:1/2;position:relative;border-left:1px solid var(--c-axis);
   border-bottom:1px solid var(--c-axis);min-width:0}
-/* solid hairlines, one shade off the surface — never dashed */
+/* solid hairlines, one shade off the surface - never dashed */
 .c-plot .gl{position:absolute;left:0;right:0;height:1px;background:var(--c-grid)}
 .c-x{grid-area:2/2;display:flex;padding-top:7px;min-width:0}
 .c-x span{flex:1 1 0;text-align:center;font-size:10.5px;font-weight:700;
@@ -436,7 +436,7 @@
 .legend i{width:11px;height:11px;border-radius:3px;
   display:inline-block;margin-right:6px;vertical-align:-1px}
 
-/* one tooltip element, moved and refilled — never one per mark */
+/* one tooltip element, moved and refilled - never one per mark */
 .c-tip{position:fixed;z-index:90;background:var(--ink);color:#fff;border-radius:9px;
   padding:8px 11px;font-size:12px;line-height:1.5;pointer-events:none;
   box-shadow:0 6px 22px rgba(0,0,0,.28);white-space:nowrap}
@@ -498,7 +498,7 @@
 .docfile{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;
   color:var(--ink-2)}
 .docfile svg{width:12px;height:12px}
-/* What the reviewer wrote back. Wraps, unlike the other sub-labels — a
+/* What the reviewer wrote back. Wraps, unlike the other sub-labels - a
    rejection reason is the one thing on this row worth reading in full. */
 .revnote{white-space:normal;max-width:260px;line-height:1.45;margin-top:5px;
   padding-left:9px;border-left:3px solid var(--hair);color:var(--ink-2)}
@@ -551,7 +551,7 @@ table.dt .sub{display:block;font-size:11.5px;color:var(--ink-3);margin-top:2px}
 table.dt tfoot td{border-top:var(--bd);border-bottom:0;font-weight:700;background:var(--surface-2)}
 .emptyrow{padding:var(--s6);text-align:center;color:var(--ink-3);font-size:14px}
 
-/* status pills — fixed colours, not owner-themed: this is the admin's own
+/* status pills - fixed colours, not owner-themed: this is the admin's own
    console, and a status that changes meaning with a palette is useless */
 .st{display:inline-flex;align-items:center;gap:6px;border-radius:var(--r-pill);
   border:2px solid var(--ink);font-size:11px;font-weight:700;padding:2px 10px;

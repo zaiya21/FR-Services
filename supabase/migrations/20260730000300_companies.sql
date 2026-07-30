@@ -1,12 +1,12 @@
 -- =====================================================================
--- COMPANIES — the storefront and its coverage.
+-- COMPANIES - the storefront and its coverage.
 --
 -- A company row is public: the marketplace has to list it to unsigned
 -- visitors. What is NOT public is anything the seller has not published,
 -- which is why `listed` exists and why the read policy checks it.
 --
 -- Ratings live here as a cached aggregate, not as an owner-writable
--- number. The verified badge is not stored at all — it is derived in 0900
+-- number. The verified badge is not stored at all - it is derived in 0900
 -- from the documents FR Services actually approved, so it cannot be set
 -- by the party it describes.
 -- =====================================================================

@@ -3,7 +3,7 @@ import Markup from './markup';
 import LegacyScripts from '../_LegacyScripts';
 
 export const metadata = {
-  title: "ARKILA — Fleet Services PH · Template C"
+  title: "ARKILA - Fleet Services PH · Template C"
 };
 
 export default function Page(){

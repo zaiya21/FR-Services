@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Platform admin — FR Services</title>
+<title>Platform admin - FR Services</title>
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -73,7 +73,7 @@
 .kpi .k-note b{color:var(--ok)}
 .kpi .k-note b.down{color:var(--danger)}
 
-/* charts — same derived palette as the company console */
+/* charts - same derived palette as the company console */
 :root{
   --c1:#057A2F; --c2:#1D4ED8; --c3:#B8860B; --c4:#0891B2; --c5:#C2410C; --c6:#7C3AED;
   --c-other:#6B7280; --c-grid:#E6E4DE; --c-axis:#C9C6BE;
@@ -114,7 +114,7 @@
   font-variant-numeric:tabular-nums}
 .c-tip[hidden]{display:none !important}
 
-/* Ranked horizontal bars — the right form for many ordered magnitudes.
+/* Ranked horizontal bars - the right form for many ordered magnitudes.
    One hue, because the categories carry no identity beyond their size. */
 .ranked{display:grid;gap:3px}
 .rrow{display:grid;grid-template-columns:minmax(120px,180px) 1fr auto auto;
@@ -122,7 +122,7 @@
   border-bottom:1px solid var(--hair);font-size:13px}
 .rrow:last-child{border-bottom:0}
 .rrow .nm{font-weight:600;min-width:0;overflow:hidden}
-/* `.rmeta`, not `.co` — fr.css already owns `.co` as the marketplace
+/* `.rmeta`, not `.co` - fr.css already owns `.co` as the marketplace
    company card, and the sub-label inherited a full card border. */
 .rrow .rmeta{display:block;font-size:11.5px;color:var(--ink-3);font-weight:500;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -212,7 +212,7 @@ table.dt .sub{display:block;font-size:11.5px;color:var(--ink-3);margin-top:2px}
 
 /* ---- review queue ----
    Grouped by company, not one card per document. An operator works a
-   company at a time — same issuer, same file, often the same phone call —
+   company at a time - same issuer, same file, often the same phone call -
    so three separate cards for one company was three times the scrolling
    and no more information. */
 .qgroups{display:grid;gap:var(--s3)}
@@ -354,7 +354,7 @@ table.dt .sub{display:block;font-size:11.5px;color:var(--ink-3);margin-top:2px}
 /* =====================================================================
    SIGN-IN GATE
    A box over the page, not a landing page. The console behind it is
-   blurred and inert until there is a session — and, importantly, its
+   blurred and inert until there is a session - and, importantly, its
    panes are never painted, so no marketplace data is sitting in the DOM
    waiting to be read out of a screenshot.
    ===================================================================== */
@@ -503,7 +503,7 @@ body.locked > footer{filter:blur(7px);pointer-events:none;user-select:none}
     <div class="kpis" id="ovKpis"></div>
 
     <div class="chartcard">
-      <h3>Gross booking value and commission <small style="font-weight:600;color:var(--ink-3);font-size:12px">— <span id="ovSeriesNote"></span></small></h3>
+      <h3>Gross booking value and commission <small style="font-weight:600;color:var(--ink-3);font-size:12px">- <span id="ovSeriesNote"></span></small></h3>
       <p class="hint">Recognised on the day each hire starts, the same basis the company consoles use.</p>
       <div class="chart">
         <div class="c-y" id="ovY"></div>
@@ -518,7 +518,7 @@ body.locked > footer{filter:blur(7px);pointer-events:none;user-select:none}
 
     <div class="chartcard">
       <h3>Where the volume is</h3>
-      <p class="hint">Gross booking value by the province or city a company is based in. Ranked bars rather than a pie — there are far more than six places, and folding two thirds of them into “Other” would hide most of the map.</p>
+      <p class="hint">Gross booking value by the province or city a company is based in. Ranked bars rather than a pie - there are far more than six places, and folding two thirds of them into “Other” would hide most of the map.</p>
       <div class="ranked" id="ovRegions"></div>
     </div>
 
@@ -542,7 +542,7 @@ body.locked > footer{filter:blur(7px);pointer-events:none;user-select:none}
   <div class="wrap">
     <div class="ahead">
       <h1>Document review</h1>
-      <p>FR Services verifies three documents, and only three: <b>DTI registration</b>, the <b>mayor's permit</b> and <b>BIR 2303</b>. Those establish that a business exists and is registered to trade — the question a renter is really asking. Approving one puts <b>Checked by FR Services</b> on the company's public page, so it means we have seen the original and confirmed it with the issuing office.</p>
+      <p>FR Services verifies three documents, and only three: <b>DTI registration</b>, the <b>mayor's permit</b> and <b>BIR 2303</b>. Those establish that a business exists and is registered to trade - the question a renter is really asking. Approving one puts <b>Checked by FR Services</b> on the company's public page, so it means we have seen the original and confirmed it with the issuing office.</p>
     </div>
 
     <section class="card" style="border-left-width:7px;border-left-color:var(--ink)">
@@ -554,8 +554,8 @@ body.locked > footer{filter:blur(7px);pointer-events:none;user-select:none}
         <div><dt>Return to queue</dt><dd>Back to <b>Company-submitted</b></dd></div>
       </dl>
       <p class="small muted mt3" style="margin-bottom:0">
-        Insurance policies, OR/CRs, PCAB, TESDA and the rest are the owner's own call on what to publish — <b id="qExempt">0</b> such documents are on file and none of them appear here. They are shown to renters as the company's own claim, never as something we stand behind. Reviewing a fleet's worth of OR/CRs would be a promise we could not keep.
-        <br>If a company edits a reviewed document's number, dates or file, it returns here automatically — a verdict describes what we saw, not the row it was attached to.</p>
+        Insurance policies, OR/CRs, PCAB, TESDA and the rest are the owner's own call on what to publish - <b id="qExempt">0</b> such documents are on file and none of them appear here. They are shown to renters as the company's own claim, never as something we stand behind. Reviewing a fleet's worth of OR/CRs would be a promise we could not keep.
+        <br>If a company edits a reviewed document's number, dates or file, it returns here automatically - a verdict describes what we saw, not the row it was attached to.</p>
     </section>
 
     <div class="kpis" id="qKpis"></div>
@@ -602,7 +602,7 @@ body.locked > footer{filter:blur(7px);pointer-events:none;user-select:none}
   <div class="wrap">
     <div class="ahead">
       <h1>Registered companies</h1>
-      <p>Marketplace activity and compliance standing. A seller's own cost ledger is not shown here — the platform sees what happens on the marketplace, not what a company spends running its yard.</p>
+      <p>Marketplace activity and compliance standing. A seller's own cost ledger is not shown here - the platform sees what happens on the marketplace, not what a company spends running its yard.</p>
     </div>
 
     <div class="periodbar">
@@ -694,7 +694,7 @@ body.locked > footer{filter:blur(7px);pointer-events:none;user-select:none}
 
     <div class="chartcard">
       <h3>Documents expiring in the next 90 days</h3>
-      <p class="hint">Published documents only — these are the ones renters are currently reading.</p>
+      <p class="hint">Published documents only - these are the ones renters are currently reading.</p>
       <div class="tblwrap">
         <table class="dt" style="min-width:760px">
           <thead><tr><th>Company</th><th>Document</th><th>Issuer</th><th>Expires</th><th class="num">Status</th></tr></thead>
@@ -705,7 +705,7 @@ body.locked > footer{filter:blur(7px);pointer-events:none;user-select:none}
 
     <div class="chartcard">
       <h3>Badges that are no longer justified</h3>
-      <p class="hint">A badge holds only while all three registration documents — DTI, mayor's permit and BIR 2303 — are on file, approved and current.</p>
+      <p class="hint">A badge holds only while all three registration documents - DTI, mayor's permit and BIR 2303 - are on file, approved and current.</p>
       <div class="tblwrap">
         <table class="dt" style="min-width:760px">
           <thead><tr><th>Company</th><th>Base</th><th class="num">Approved</th><th class="num">Expired</th><th class="num">Rejected</th><th class="num">Awaiting</th><th></th></tr></thead>
@@ -727,7 +727,7 @@ body.locked > footer{filter:blur(7px);pointer-events:none;user-select:none}
 
     <div class="chartcard">
       <h3>Platform health</h3>
-      <p class="hint">Prototype diagnostics — in production these would be service checks, not browser ones.</p>
+      <p class="hint">Prototype diagnostics - in production these would be service checks, not browser ones.</p>
       <dl class="factrow" id="mnHealth"></dl>
     </div>
   </div>
@@ -801,13 +801,13 @@ body.locked > footer{filter:blur(7px);pointer-events:none;user-select:none}
       </form>
 
       <p class="gate-hint">
-        <b>Prototype account</b> — this build ships with one administrator so you can look around.
+        <b>Prototype account</b> - this build ships with one administrator so you can look around.
         <span class="gate-cred" id="credLine"></span>
       </p>
       <p class="gate-warn">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
         <span>There is no server behind this. The check runs in your own browser, so it keeps
-        people out by accident, not on purpose — don't put anything real behind it.</span>
+        people out by accident, not on purpose - don't put anything real behind it.</span>
       </p>
     </div>
 
@@ -970,7 +970,7 @@ function slicePath(cx, cy, r, a0, a1){
   const [x0, y0] = pol(cx, cy, r, a0), [x1, y1] = pol(cx, cy, r, a1);
   return `M ${cx} ${cy} L ${x0} ${y0} A ${r} ${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1} ${y1} Z`;
 }
-/* Same pie the company console uses — see admin.html for the reasoning
+/* Same pie the company console uses - see admin.html for the reasoning
    behind the in-slice fit test and the grey remainder. */
 function paintPie(hostId, keyId, rows, total, labelOf, valueOf){
   const host = $(hostId), key = $(keyId);
@@ -1195,7 +1195,7 @@ function paintQueue(){
   $('qExempt').textContent = exempt;
 
   /* One entry per company, its matching documents inside. `seen`, not
-     `byId` — data.js already exports a byId() and shadowing it here would
+     `byId` - data.js already exports a byId() and shadowing it here would
      be a trap for the next edit. */
   const rows = queueRows();
   const groups = [];
@@ -1219,7 +1219,7 @@ function paintQueue(){
                         (b.docs.length - a.docs.length) || a.name.localeCompare(b.name));
 
   /* A single match is almost always a deliberate jump from Companies or
-     Monitoring — open it rather than making them click twice. */
+     Monitoring - open it rather than making them click twice. */
   if (groups.length === 1) qOpen.add(groups[0].id);
 
   $('qCount').textContent =
@@ -1258,7 +1258,7 @@ function paintQueue(){
               ${d.file
                 ? `<a class="qfile" href="${d.file.data}" target="_blank" rel="noopener noreferrer"
                       download="${esc(d.file.name)}">${FILE_SVG}Open ${esc(d.file.name)}</a>`
-                : '<span class="qnofile">No file attached — approving this would be approving a typed claim.</span>'}
+                : '<span class="qnofile">No file attached - approving this would be approving a typed claim.</span>'}
               ${d.reviewNote
                 ? `<span class="qremark"><b>Remark:</b> ${esc(d.reviewNote)}</span>` : ''}
             </div>
@@ -1303,7 +1303,7 @@ $('qList').addEventListener('click', e => {
    VERDICT DIALOG
    A verdict is a decision that lands on someone else's public page, so it
    gets a confirmation step and a remark rather than firing off a single
-   click. The remark is required for a rejection — telling a company "no"
+   click. The remark is required for a rejection - telling a company "no"
    without saying why leaves them nothing to act on.
    ===================================================================== */
 const VERDICTS = {
@@ -1325,7 +1325,7 @@ const VERDICTS = {
     button:'Reject document', tone:'bad',
     effect:'The document is marked <b>Not accepted</b> and the company\'s verified badge is withdrawn while it stands.',
     quick:[
-      'The scan is unreadable — please re-upload a clearer copy.',
+      'The scan is unreadable - please re-upload a clearer copy.',
       'The issuing office has no record of this document.',
       'The details entered do not match the attached file.',
       'This document has expired. Upload the current one.',
@@ -1340,7 +1340,7 @@ const VERDICTS = {
     quick:[
       'Needs a second reviewer before a decision.',
       'Waiting on confirmation from the issuing office.',
-      'Approved in error — returning for a proper check.'
+      'Approved in error - returning for a proper check.'
     ]
   }
 };
@@ -1596,7 +1596,7 @@ function paintMonitoring(){
     <tr>
       <td class="strong">${esc(d.companyName)}</td>
       <td>${esc(d.name)}</td>
-      <td>${esc(d.issuer || '—')}</td>
+      <td>${esc(d.issuer || '-')}</td>
       <td class="nowrap">${esc(fmtDate(d.expires))}</td>
       <td class="num">${stPill(d)}</td>
     </tr>`).join('')
@@ -1610,9 +1610,9 @@ function paintMonitoring(){
       <td class="strong">${esc(c.name)}</td>
       <td>${esc(c.region)}</td>
       <td class="num">${c.docs.verified} / ${REVIEWABLE_TYPES.length}</td>
-      <td class="num">${c.docs.reviewableExpired || '—'}</td>
-      <td class="num">${c.docs.rejected || '—'}</td>
-      <td class="num">${c.docs.pending || '—'}</td>
+      <td class="num">${c.docs.reviewableExpired || '-'}</td>
+      <td class="num">${c.docs.rejected || '-'}</td>
+      <td class="num">${c.docs.pending || '-'}</td>
       <td class="num"><button class="btn btn-w btn-sm" data-docs2="${esc(c.id)}">Review</button></td>
     </tr>`).join('')
    : '<tr><td colspan="7" class="emptyrow">Every badge is currently justified.</td></tr>';
@@ -1627,7 +1627,7 @@ function paintMonitoring(){
       <td class="num">${(g.gmv / totalG * 100).toFixed(1)}%</td>
     </tr>`).join('');
 
-  /* Prototype diagnostics — honest about what they are. */
+  /* Prototype diagnostics - honest about what they are. */
   let used = 0;
   try {
     for (let i = 0; i < localStorage.length; i++){
@@ -1656,7 +1656,7 @@ $('mnBadges').addEventListener('click', e => {
 
 /* =====================================================================
    SIGN-IN GATE
-   The console is not painted until there is a session — locking a page
+   The console is not painted until there is a session - locking a page
    whose data is already in the DOM would be theatre.
    ===================================================================== */
 const gate = $('gate');
@@ -1731,7 +1731,7 @@ $('askForm').addEventListener('submit', () => {
      so is better than leaving the operator waiting for an email. */
   $('newCode').innerHTML = r.sent
     ? `Your code is <b style="letter-spacing:.2em">${esc(r.code)}</b>.<br>` +
-      `<span style="font-weight:500">Shown here because this prototype has no mail server — in production it would be emailed and never displayed.</span>`
+      `<span style="font-weight:500">Shown here because this prototype has no mail server - in production it would be emailed and never displayed.</span>`
     : `<span style="font-weight:500">If that address is registered, a code has been issued. ` +
       `We don't confirm either way, so this form can't be used to find out who has an account.</span>`;
 });

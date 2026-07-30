@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Company storefront — FR Services</title>
+<title>Company storefront - FR Services</title>
 <meta name="description" content="Verified fleet rental company on FR Services. Browse available units, rates and availability.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,9 +15,9 @@
    COMPANY STOREFRONT
    The --co-* variables below are the ONLY things a company owner controls.
    Platform trust elements (verified badge, rating, reviews, report link)
-   deliberately do NOT use them — see ARCHITECTURE.md §4.
+   deliberately do NOT use them - see ARCHITECTURE.md §4.
    ===================================================================== */
-/* Defaults only — assets/theme.js overwrites these from the owner's saved
+/* Defaults only - assets/theme.js overwrites these from the owner's saved
    theme on load. Declared here so the page renders sanely if that fails. */
 :root{
   --co-primary:#057A2F; --co-on-primary:#FFFFFF;
@@ -71,7 +71,7 @@
   font-weight:700;font-size:15px;display:inline-flex;align-items:center;gap:8px;
   transition:transform .16s var(--ease),box-shadow .16s var(--ease)}
 .idact .btn-brand:hover{transform:translate(-2px,-2px);box-shadow:var(--off)}
-/* saved state — a filled heart and a solid border, so it reads as ON at a
+/* saved state - a filled heart and a solid border, so it reads as ON at a
    glance rather than only through the word beside it */
 #favBtn.is-on{border-color:var(--danger);color:var(--danger)}
 
@@ -120,7 +120,7 @@
   text-decoration:underline;color:var(--co-ink)}
 .doccard .open svg{width:14px;height:14px}
 
-/* platform-owned pills — never themed */
+/* platform-owned pills - never themed */
 .dpill{display:inline-flex;align-items:center;gap:5px;border-radius:var(--r-pill);
   border:2px solid #12131A;font-size:11px;font-weight:700;padding:2px 10px;
   white-space:nowrap;background:#fff;color:#12131A}
@@ -154,7 +154,7 @@
   box-shadow:var(--off);overflow:hidden;display:flex;flex-direction:column;
   transition:transform .18s var(--ease),box-shadow .18s var(--ease)}
 .unit:hover{transform:translate(-3px,-3px);box-shadow:var(--off-lift)}
-/* the product photo slot — present in every layout */
+/* the product photo slot - present in every layout */
 .utop{height:120px;position:relative;border-bottom:var(--bd);
   background-color:var(--brand-tint);background-size:cover;background-position:center;
   color:var(--brand);overflow:hidden}
@@ -267,7 +267,7 @@
 .ownerfab{position:fixed;right:var(--s5);bottom:var(--s5);z-index:90;white-space:nowrap}
 .ownerfab svg{width:16px;height:16px;flex-shrink:0}
 /* inside the admin preview this is a public-visitor view, so owner-only
-   chrome is hidden — otherwise the preview lies about what renters see */
+   chrome is hidden - otherwise the preview lies about what renters see */
 .is-preview .ownerfab,.is-preview .cover .owner{display:none}
 
 /* ---- report company ---- */
@@ -349,7 +349,7 @@
 }
 
 /* =====================================================================
-   OWNER THEMING — deliberately last in the stylesheet.
+   OWNER THEMING - deliberately last in the stylesheet.
    These rules restate selectors that appear above (.unit, .statstrip .tile
    and friends) at equal specificity, so they must come afterwards to win
    on source order. Putting them near the top left every card stuck on the
@@ -407,7 +407,7 @@ body{background:var(--co-bg);color:var(--co-ink)}
 .unit:hover{box-shadow:var(--lay-shadow-hover)}
 .cover{height:var(--lay-cover-h)}
 /* .cover is position:relative for its owner pill, which makes it paint
-   above in-flow siblings — without a stacking position of its own the
+   above in-flow siblings - without a stacking position of its own the
    logo gets sliced off wherever it overlaps the banner. */
 .colog{border-radius:var(--lay-logo-r);border:var(--lay-border);
   box-shadow:var(--lay-logo-shadow);position:relative;z-index:2}
@@ -417,7 +417,7 @@ body{background:var(--co-bg);color:var(--co-ink)}
 .ubody,.block,.block-flat{padding:var(--lay-pad)}
 .uspecs .k{font-family:var(--lay-label);text-transform:var(--lay-label-tt)}
 
-/* ---- 2. Swiss — Minimalism & Swiss Style: hairlines, no shadow, air ---- */
+/* ---- 2. Swiss - Minimalism & Swiss Style: hairlines, no shadow, air ---- */
 [data-co-layout="swiss"]{
   --lay-radius:0px; --lay-radius-sm:0px; --lay-border:1px solid var(--co-line);
   --lay-shadow:none; --lay-shadow-hover:none; --lay-cover-h:170px;
@@ -428,7 +428,7 @@ body{background:var(--co-bg);color:var(--co-ink)}
 [data-co-layout="swiss"] .cotab.on{border-bottom-width:2px}
 [data-co-layout="swiss"] .idmain h1{font-weight:500;letter-spacing:-.04em}
 
-/* ---- 3. Soft — Soft UI Evolution: deep rounding, gentle depth ---- */
+/* ---- 3. Soft - Soft UI Evolution: deep rounding, gentle depth ---- */
 [data-co-layout="soft"]{
   --lay-radius:26px; --lay-radius-sm:var(--r-pill); --lay-border:0;
   --lay-shadow:0 10px 30px rgba(18,19,26,.10),0 2px 6px rgba(18,19,26,.06);
@@ -441,7 +441,7 @@ body{background:var(--co-bg);color:var(--co-ink)}
 [data-co-layout="soft"] .uspecs li,[data-co-layout="soft"] .ufoot{border-color:transparent}
 [data-co-layout="soft"] .uspecs li{border-bottom:1px solid var(--co-line);opacity:.9}
 
-/* ---- 4. Glass — Glassmorphism: frosted panels over the cover ---- */
+/* ---- 4. Glass - Glassmorphism: frosted panels over the cover ---- */
 [data-co-layout="glass"]{
   --lay-radius:20px; --lay-border:1px solid rgba(255,255,255,.35);
   --lay-shadow:0 8px 32px rgba(18,19,26,.18); --lay-shadow-hover:0 14px 44px rgba(18,19,26,.26);
@@ -453,7 +453,7 @@ body{background:var(--co-bg);color:var(--co-ink)}
   background:color-mix(in srgb, var(--co-surface) 62%, transparent);
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 /* The identity sits ON the cover in white, so it must clear the bottom
-   edge entirely — at -96px the last meta line fell onto the pale backdrop
+   edge entirely - at -96px the last meta line fell onto the pale backdrop
    and turned invisible. A scrim guarantees legibility over any cover,
    including a light gold gradient or a bright uploaded photo. */
 [data-co-layout="glass"] .cover::after{content:'';position:absolute;inset:auto 0 0;
@@ -466,7 +466,7 @@ body{background:var(--co-bg);color:var(--co-ink)}
 [data-co-layout="glass"] .idmeta{color:rgba(255,255,255,.92);
   text-shadow:0 1px 10px rgba(0,0,0,.6)}
 
-/* ---- 5. Industrial — Data-Dense: square, tight, monospaced labels ---- */
+/* ---- 5. Industrial - Data-Dense: square, tight, monospaced labels ---- */
 [data-co-layout="industrial"]{
   --lay-radius:0px; --lay-radius-sm:2px; --lay-border:1px solid var(--co-line);
   --lay-shadow:none; --lay-shadow-hover:inset 0 0 0 2px var(--co-primary);
@@ -480,7 +480,7 @@ body{background:var(--co-bg);color:var(--co-ink)}
 [data-co-layout="industrial"] .ubody h3{font-size:15px;letter-spacing:-.01em}
 [data-co-layout="industrial"] .idmain h1{letter-spacing:-.04em}
 
-/* ---- 6. Editorial — Storytelling: tall cover, wide measure ---- */
+/* ---- 6. Editorial - Storytelling: tall cover, wide measure ---- */
 [data-co-layout="editorial"]{
   --lay-radius:0px; --lay-radius-sm:0px; --lay-border:0;
   --lay-shadow:none; --lay-shadow-hover:none; --lay-cover-h:340px;
@@ -494,7 +494,7 @@ body{background:var(--co-bg);color:var(--co-ink)}
   border-top:2px solid var(--co-ink);padding-top:var(--s4)}
 [data-co-layout="editorial"] .cotabs{border-bottom-width:2px}
 
-/* ---- 7. Bento — Bento Box Grid: modular, varied spans ---- */
+/* ---- 7. Bento - Bento Box Grid: modular, varied spans ---- */
 [data-co-layout="bento"]{
   --lay-radius:18px; --lay-border:0;
   --lay-shadow:0 2px 10px rgba(18,19,26,.08); --lay-shadow-hover:0 10px 28px rgba(18,19,26,.14);
@@ -506,7 +506,7 @@ body{background:var(--co-bg);color:var(--co-ink)}
 [data-co-layout="bento"] .unit:first-child .utop{height:160px}
 [data-co-layout="bento"] .unit:nth-child(4){grid-row:span 1}
 
-/* ---- 8. Paper — E-Ink: matte, flat, ruled like print ---- */
+/* ---- 8. Paper - E-Ink: matte, flat, ruled like print ---- */
 [data-co-layout="paper"]{
   --lay-radius:0px; --lay-radius-sm:0px; --lay-border:1px solid var(--co-ink);
   --lay-shadow:none; --lay-shadow-hover:none; --lay-cover-h:120px;
@@ -525,7 +525,7 @@ body{background:var(--co-bg);color:var(--co-ink)}
 [data-co-layout="paper"] .statstrip .tile{border-width:0 1px 0 0}
 [data-co-layout="paper"] .statstrip .tile:last-child{border-right:0}
 
-/* ---- 9. Showcase — Hero-Centric: full-bleed cover, centred identity ---- */
+/* ---- 9. Showcase - Hero-Centric: full-bleed cover, centred identity ---- */
 [data-co-layout="showcase"]{
   --lay-radius:14px; --lay-border:0;
   --lay-shadow:0 4px 18px rgba(18,19,26,.10); --lay-shadow-hover:0 12px 34px rgba(18,19,26,.18);
@@ -547,7 +547,7 @@ body{background:var(--co-bg);color:var(--co-ink)}
 /* an uploaded logo needs the circular mask too, not just the fallback tile */
 [data-co-layout="showcase"] .colog.haslogo img{border-radius:50%}
 
-/* ---- 10. Console — HUD / Sci-Fi: thin lines, glow, monospace ---- */
+/* ---- 10. Console - HUD / Sci-Fi: thin lines, glow, monospace ---- */
 [data-co-layout="console"]{
   --lay-radius:4px; --lay-radius-sm:4px;
   --lay-border:1px solid color-mix(in srgb, var(--co-primary) 55%, transparent);
@@ -573,7 +573,7 @@ nav.top,nav.top *,footer.site,footer.site *{
 .verified{background:var(--ok);color:#fff}
 .rate-pill{background:var(--ink);color:#fff}
 .reportbtn{background:var(--surface);color:var(--ink-2)}
-/* white-backed chrome must keep dark text — on a dark theme these inherit
+/* white-backed chrome must keep dark text - on a dark theme these inherit
    the themed ink and render white-on-white */
 .idact .btn-w,.cover .owner{color:var(--ink)}
 #favBtn.is-on{color:var(--danger)}   /* keep the saved state legible on any theme */
@@ -750,7 +750,7 @@ footer.site{background:var(--surface-2)}
        What the company chose to publish, plus an honest statement of what
        each item does and does not prove. The distinction between "checked
        by FR Services" and "the company uploaded this" is the whole point
-       of the section — collapse it and the section is worse than nothing. -->
+       of the section - collapse it and the section is worse than nothing. -->
   <section class="pane" id="pane-docs">
     <div class="shead">
       <div>
@@ -768,11 +768,11 @@ footer.site{background:var(--surface-2)}
         <div><dt><span class="dpill dp-ok">Checked by FR Services</span></dt>
           <dd>We have seen the original and confirmed it with the issuing office. We check three documents: DTI registration, the mayor's permit and BIR 2303.</dd></div>
         <div><dt><span class="dpill dp-warn">Company-submitted</span></dt>
-          <dd>The company's own upload — either one of the three still awaiting our check, or a supporting document we do not review at all, such as an insurance policy or a vehicle OR/CR. Treat it as a claim, not proof.</dd></div>
+          <dd>The company's own upload - either one of the three still awaiting our check, or a supporting document we do not review at all, such as an insurance policy or a vehicle OR/CR. Treat it as a claim, not proof.</dd></div>
         <div><dt><span class="dpill dp-off">Expired</span></dt>
           <dd>The validity date has passed. A company cannot hide this by publishing it.</dd></div>
       </dl>
-      <p class="small muted" style="margin-bottom:0">Document numbers are shortened by default so they cannot be copied off this page and used to impersonate the company. You can ask the company for the full number, then check it directly with the issuing office — that is always the strongest test. Something wrong here? <button class="linkish" data-report-open>Report this company</button>.</p>
+      <p class="small muted" style="margin-bottom:0">Document numbers are shortened by default so they cannot be copied off this page and used to impersonate the company. You can ask the company for the full number, then check it directly with the issuing office - that is always the strongest test. Something wrong here? <button class="linkish" data-report-open>Report this company</button>.</p>
     </div>
   </section>
 
@@ -781,7 +781,7 @@ footer.site{background:var(--surface-2)}
     <div class="covgrid">
       <div>
         <h2 class="mb3">Where this company operates</h2>
-        <p class="muted mb4">This company set a <b id="cov-radius">50 km</b> service radius from <b id="cov-base">Talomo, Davao City</b>. Renters outside this area will not see them in search results — that's what keeps your results local.</p>
+        <p class="muted mb4">This company set a <b id="cov-radius">50 km</b> service radius from <b id="cov-base">Talomo, Davao City</b>. Renters outside this area will not see them in search results - that's what keeps your results local.</p>
         <div class="block-flat">
           <span class="flabel">Cities served</span>
           <div class="arealist">
@@ -849,7 +849,7 @@ footer.site{background:var(--surface-2)}
 <footer class="site">
   <div class="wrap">
     <div class="fbot" style="border-top:0;padding-top:0">
-      <span>© 2026 FR Services Fleet Services PH · Static prototype — demo data only</span>
+      <span>© 2026 FR Services Fleet Services PH · Static prototype - demo data only</span>
       <span><a href="index.html" style="text-decoration:underline">Back to search</a></span>
     </div>
   </div>
@@ -907,7 +907,7 @@ footer.site{background:var(--surface-2)}
       <p class="rm-warn">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
         <span><b>If someone is in danger, call 911 first.</b> This form is not monitored in real time.
-        Do not include passwords, OTPs or card numbers — we will never ask for them.</span>
+        Do not include passwords, OTPs or card numbers - we will never ask for them.</span>
       </p>
 
       <div class="rm-actions">
@@ -967,9 +967,9 @@ let theme = renderTheme(loadTheme(co.id));
    otherwise fall back to the seeded demo listings. */
 const units = loadFleet(co.id) || FR_UNITS[co.id] || [];
 
-document.title = co.name + ' — FR Services';
+document.title = co.name + ' - FR Services';
 document.getElementById('co-name').textContent = co.name;
-/* co-logo is owned by renderTheme() — it must not be overwritten here or
+/* co-logo is owned by renderTheme() - it must not be overwritten here or
    an uploaded logo is wiped a few lines after it is applied */
 document.getElementById('co-loc').textContent = co.loc;
 document.getElementById('co-since').textContent = 'Operating since ' + co.since;
@@ -1027,7 +1027,7 @@ const avail = u => (u.qty !== undefined ? u.qty : u.avail) || 0;
 
 /* ---- fleet ----
    A company may run several service lines. When it does, the fleet is
-   grouped under a heading per line rather than mixed into one grid — a
+   grouped under a heading per line rather than mixed into one grid - a
    renter looking for a tow truck should not have to scan past sedans. */
 const unitCat = u => u.cat || co.cat;
 
@@ -1094,7 +1094,7 @@ if (services.length){
 
 /* =====================================================================
    PUBLISHED DOCUMENTS
-   Only what the owner published, and only in the form ops.js releases it —
+   Only what the owner published, and only in the form ops.js releases it -
    masked numbers stay masked, withheld files stay withheld. Nothing here
    reaches back into the owner's private store.
    ===================================================================== */
@@ -1129,7 +1129,7 @@ function paintDocuments(){
 
   if (!docs.length){
     bar.innerHTML = '<div class="msg"><b>This company has not published any documents.</b><br>' +
-      'That is not proof of anything either way — but you can ask them for their business permit ' +
+      'That is not proof of anything either way - but you can ask them for their business permit ' +
       'before you pay a deposit, and a company that will not show it is telling you something.</div>';
     host.innerHTML = '<div class="docempty"><b>Nothing published yet</b>' +
       'Documents the company chooses to show would appear here.</div>';
@@ -1147,7 +1147,7 @@ function paintDocuments(){
          ? 'Every document below has been confirmed with the office that issued it.'
          : checked
          ? `${checked} of ${docs.length} have been confirmed with the issuing office. The rest are the company's own word for now.`
-         : 'None of these have been checked by FR Services yet — they are the company\'s own submissions.'
+         : 'None of these have been checked by FR Services yet - they are the company\'s own submissions.'
      }</div>`;
 
   host.innerHTML = docs.map(d => `
@@ -1175,7 +1175,7 @@ function paintDocuments(){
 paintDocuments();
 
 /* The About sidebar summarises the same store rather than a hardcoded list
-   — a static "Verified credentials" block goes stale the moment a permit
+   - a static "Verified credentials" block goes stale the moment a permit
    lapses, and a stale credential list is a lie with a tick beside it. */
 function paintCredSummary(){
   const host = document.getElementById('cred-list');
@@ -1189,7 +1189,7 @@ function paintCredSummary(){
   const claimed  = docs.length - checked;
   const expired  = docs.filter(d => d.state === 'expired').length;
 
-  /* Checked ones lead — this is a credentials list. But a truncated list
+  /* Checked ones lead - this is a credentials list. But a truncated list
      could show six ticks while an unverified or lapsed document sits just
      out of sight, so the tally below always states the whole picture. */
   const order = docs.slice().sort((a, b) =>
@@ -1231,7 +1231,7 @@ function paintFavourite(){
 const favBtn = document.getElementById('favBtn');
 if (favBtn) favBtn.addEventListener('click', () => {
   const out = toggleFavourite(co.id);
-  /* The store refuses when signed out even though the button is hidden —
+  /* The store refuses when signed out even though the button is hidden -
      belt and braces, because "hidden" is a CSS attribute, not a rule. */
   if (!out.ok){ paintFavourite(); return; }
   paintFavourite();
@@ -1278,7 +1278,7 @@ document.getElementById('ownerEdit').href = 'admin.html?c=' + encodeURIComponent
    postMessage. Two guards on that: it is only wired up when the URL
    explicitly says preview=1, and the payload still goes through
    normaliseTheme() inside applyTheme(), so a message from anywhere can
-   only ever produce a valid theme — never CSS or markup. */
+   only ever produce a valid theme - never CSS or markup. */
 const PREVIEW = new URLSearchParams(location.search).get('preview') === '1';
 if (PREVIEW){
   document.documentElement.classList.add('is-preview');
@@ -1338,7 +1338,7 @@ document.getElementById('rm-send').addEventListener('click', () => {
   }
   /* Prototype: this writes to browser storage so the report turns up in
      the FR Services platform queue, which is the flow worth demonstrating.
-     A real submission must be server-side — authenticated, rate-limited
+     A real submission must be server-side - authenticated, rate-limited
      per account and per IP, with the reporter's identity stored but never
      returned to the company. See ARCHITECTURE.md §13. */
   const ref = 'FR-R-' + Math.random().toString(36).slice(2, 8).toUpperCase();

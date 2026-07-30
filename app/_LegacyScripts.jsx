@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 
    Why not <Script> from next/script: those are not guaranteed to execute
    in the order they are declared, and this code depends on it absolutely
-   — data.js reads globals from theme.js, ops.js reads both, and every
+   - data.js reads globals from theme.js, ops.js reads both, and every
    page script reads all of them. One script tag at a time, each awaiting
    the last, is the browser's own ordering guarantee and the only one
    worth relying on here.
@@ -20,7 +20,7 @@ import { useEffect } from 'react';
 function loadOne(src){
   return new Promise((resolve, reject) => {
     /* A remount (React Strict Mode in dev runs effects twice) must not
-       evaluate a script a second time — these declare top-level consts,
+       evaluate a script a second time - these declare top-level consts,
        and a second run would throw on every one of them. */
     if (document.querySelector(`script[data-legacy="${src}"]`)) return resolve();
     const el = document.createElement('script');

@@ -12,7 +12,7 @@ import './globals.css';
    declared here once rather than per page.
    ===================================================================== */
 export const metadata = {
-  title: 'FR Services — Fleet Rental',
+  title: 'FR Services - Fleet Rental',
   description: 'Vehicle, heavy equipment and towing rental across the Philippines.',
   icons: { icon: '/logo.png' }
 };

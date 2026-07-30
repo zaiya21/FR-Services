@@ -1,6 +1,6 @@
 
 /* =====================================================================
-   EMERGENCY TOW — dispatch flow, NOT a rental booking flow.
+   EMERGENCY TOW - dispatch flow, NOT a rental booking flow.
    Deliberately different from booking.html: one screen, few decisions,
    large targets, broadcast-and-accept instead of quote-and-confirm.
    ===================================================================== */

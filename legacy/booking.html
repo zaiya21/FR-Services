@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Request a booking — FR Services</title>
+<title>Request a booking - FR Services</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -243,7 +243,7 @@
           <div class="opts">
             <label class="addon on" data-add="8000" data-locked="1">
               <span class="box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"><path d="M4 12l6 6L20 6"/></svg></span>
-              <span><b>Certified operator</b><br><span class="small muted">Required for this unit — TESDA-certified</span></span>
+              <span><b>Certified operator</b><br><span class="small muted">Required for this unit - TESDA-certified</span></span>
               <span class="pr">Included</span>
             </label>
             <label class="addon" data-add="4500">
@@ -309,7 +309,7 @@
 
           <div class="paynote">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
-            <span><b>This is an estimate.</b> Heavy equipment rates vary with site access and duration — the company confirms the final quote before any payment is taken.</span>
+            <span><b>This is an estimate.</b> Heavy equipment rates vary with site access and duration - the company confirms the final quote before any payment is taken.</span>
           </div>
 
           <button class="btn btn-y btn-lg btn-block" id="bk-submit">Send booking request</button>
@@ -352,7 +352,7 @@
 <footer class="site">
   <div class="wrap">
     <div class="fbot" style="border-top:0;padding-top:0">
-      <span>© 2026 FR Services Fleet Services PH · Static prototype — demo data only</span>
+      <span>© 2026 FR Services Fleet Services PH · Static prototype - demo data only</span>
       <span><a href="index.html" style="text-decoration:underline">Back to search</a></span>
     </div>
   </div>
@@ -362,7 +362,7 @@
 <script src="assets/data.js"></script>
 <script>
 const co   = byId(qs('c') || 'davao-heavy-lift') || FR_COMPANIES[4];
-/* the owner's edited fleet wins, exactly as on the storefront — otherwise
+/* the owner's edited fleet wins, exactly as on the storefront - otherwise
    a unit they created in the admin cannot be booked */
 const list = loadFleet(co.id) || FR_UNITS[co.id] || FR_UNITS['davao-heavy-lift'];
 const unit = list.find(u => u.id === qs('u')) || list[0];
@@ -371,7 +371,7 @@ const hasOperator = typeof unit.operator === 'string'
   ? unit.operator === 'included' : !!unit.operator;
 
 /* header */
-document.title = 'Book ' + unit.name + ' — FR Services';
+document.title = 'Book ' + unit.name + ' - FR Services';
 document.getElementById('bk-em').innerHTML     = unitIcon(unit.name, co.cat);
 document.getElementById('bk-name').textContent = unit.name;
 /* seeded units call it `avail`, owner-created ones `qty` */
@@ -449,7 +449,7 @@ document.querySelectorAll('#deliv-opts .opt').forEach(o => o.addEventListener('c
   document.querySelectorAll('#deliv-opts .opt').forEach(x => x.classList.remove('on'));
   o.classList.add('on'); recalc();
 }));
-/* addon checkboxes — the locked operator row is informational only */
+/* addon checkboxes - the locked operator row is informational only */
 document.querySelectorAll('.addon').forEach(a => a.addEventListener('click', e => {
   e.preventDefault();
   if (a.dataset.locked) return;

@@ -1,4 +1,4 @@
-# FR Services — Next.js
+# FR Services - Next.js
 
 The FR Services prototype as a Next.js 15 app (App Router). The user
 interface is unchanged: every page renders a DOM identical to the static
@@ -41,7 +41,7 @@ app/
     page.css          the page's own <style> block, byte for byte
 public/
   assets/             theme.js, data.js, ops.js, platform.js, auth.js,
-                      pdf.js, ph-locations.js, img/ — unchanged logic
+                      pdf.js, ph-locations.js, img/ - unchanged logic
   pages/<name>.js     each page's former inline <script>, unchanged
   logo.png
 ```
@@ -50,7 +50,7 @@ public/
 classic scripts against the same DOM ids, with the same globals and the
 same load order. React renders the markup and gets out of the way; nothing
 in `assets/` knows this is a Next.js app. That is what made an identical
-DOM achievable — a rewrite into React state and effects would have been a
+DOM achievable - a rewrite into React state and effects would have been a
 different application that merely looked similar.
 
 Three structural decisions worth knowing:
@@ -64,8 +64,8 @@ Three structural decisions worth knowing:
   both, and every page script reads all of them.
 - **Markup components are Client Components.** Only because a few forms
   carry `onsubmit="return false"`, and React will not put an event
-  handler on a Server Component. The alternative — dropping the handler
-  and re-attaching it after hydration — leaves a window where a stray
+  handler on a Server Component. The alternative - dropping the handler
+  and re-attaching it after hydration - leaves a window where a stray
   Enter key submits and navigates.
 
 ## What changed, and it is only this
@@ -73,7 +73,7 @@ Three structural decisions worth knowing:
 **Addresses.** The static build navigated between files and loaded assets
 relative to the current directory; Next serves routes from one origin.
 So `company.html?c=x` became `/company?c=x`, `assets/…` became
-`/assets/…`, and `logo.png` became `/logo.png` — in the markup, in the
+`/assets/…`, and `logo.png` became `/logo.png` - in the markup, in the
 page scripts, and in `data.js` and `auth.js`, which build links at
 runtime. Absolute URLs were left alone, so Leaflet still loads from its
 CDN. Nothing else in those files was touched.
@@ -85,8 +85,8 @@ the attribute is no longer in the serialised DOM.
 ## How "unchanged" was checked
 
 Both versions were served from the same origin, loaded headlessly, and
-their DOM dumped after all scripts had run. The full tree — every element,
-every attribute, all visible text — was compared:
+their DOM dumped after all scripts had run. The full tree - every element,
+every attribute, all visible text - was compared:
 
 ```
 /                        1754 nodes   IDENTICAL
@@ -118,7 +118,7 @@ would have shipped a subtly different page:
    expressions with HTML whitespace collapsing applied, which is what a
    browser does.
 2. **`&nbsp;` was being collapsed into an ordinary space** because `\s`
-   matches U+00A0 — so "FR&nbsp;Services" became free to wrap again.
+   matches U+00A0 - so "FR&nbsp;Services" became free to wrap again.
    Whitespace is now collapsed before entities are decoded.
 3. **A bare `data-fav` attribute became `data-fav="true"`.** HTML
    serialises a valueless attribute as `""`; React does not for `data-*`.
@@ -132,13 +132,13 @@ would have shipped a subtly different page:
 
    This one is worth dwelling on: the DOM comparison passed all ten pages
    *with the bug present*, because the serialised attribute is identical
-   either way — only the live behaviour differed. It was caught by a dev
+   either way - only the live behaviour differed. It was caught by a dev
    server warning and then confirmed by typing into every affected field
    in both versions and comparing the results.
 
 ## Not carried over
 
-The static build it was converted from is kept at `legacy/` — `*.html` and
+The static build it was converted from is kept at `legacy/` - `*.html` and
 its own copy of `assets/`. It is the reference the DOM comparison above ran
 against, which is the only reason to keep it. `ARCHITECTURE.md` describes
 the application rather than the build, so it still reads true; where it
@@ -146,7 +146,7 @@ names `assets/x.js`, the file is now `public/assets/x.js`.
 
 ## Where the app lives
 
-The Next app sits at the repository root — `package.json`, `app/` and
+The Next app sits at the repository root - `package.json`, `app/` and
 `public/` are top-level. It was briefly in an `fr-next/` subfolder; it was
 moved because Vercel's framework detection reads the repository root, and
 with a bare `index.html` there and `package.json` one level down, a

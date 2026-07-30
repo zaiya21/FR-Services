@@ -6,7 +6,7 @@ const $ = id => document.getElementById(id);
 
    The old default was a demo company id. With the fixtures gone that
    resolves to nothing, and the console would have rendered a whole
-   dashboard — charts, bookings, expense totals — for a company that does
+   dashboard - charts, bookings, expense totals - for a company that does
    not exist, which is worse than refusing: every figure on it would be a
    zero presented as a measurement.
 
@@ -23,7 +23,7 @@ const COMPANY_ID = (() => {
 
 if (!COMPANY_ID){
   const esc0 = s => String(s == null ? '' : s).replace(/[&<>"]/g, '');
-  document.title = 'Choose a company — FR Services';
+  document.title = 'Choose a company - FR Services';
   document.body.innerHTML =
     '<main style="max-width:640px;margin:12vh auto;padding:0 24px;' +
     'font-family:Inter,system-ui,sans-serif">' +
@@ -35,7 +35,7 @@ if (!COMPANY_ID){
       ? 'Nothing is registered under <b>' + esc0(ADMIN_WANT) + '</b>.'
       : ADMIN_LIST.length
         ? 'Pick the company whose dashboard you want to open.'
-        : 'This console manages a registered company — its bookings, expenses, ' +
+        : 'This console manages a registered company - its bookings, expenses, ' +
           'documents and storefront. Register one first and its dashboard ' +
           'appears here.') +
     '</p>' +
@@ -187,7 +187,7 @@ function paint(){
 
 /* =====================================================================
    FLEET
-   Works for every category — the type list and the capacity label follow
+   Works for every category - the type list and the capacity label follow
    the company's own category, so a van-hire firm never sees "bucket
    capacity" and an equipment yard never sees "seats".
 
@@ -197,7 +197,7 @@ function paint(){
    ===================================================================== */
 const CO      = typeof byId === 'function' ? byId(COMPANY_ID) : null;
 const CO_CAT  = CO ? CO.cat : 'vehicles';
-/* a company may run several service lines — the type list and the
+/* a company may run several service lines - the type list and the
    capacity label span all of them, and each listing records its own */
 const CO_CATS = (CO && typeof catsOf === 'function') ? catsOf(CO) : [CO_CAT];
 const MULTI   = CO_CATS.length > 1;
@@ -349,7 +349,7 @@ function paintDrop(){
   $('umClear').hidden = !draftPhoto;
 }
 
-/* Live "what a renter actually pays" line — a mistyped discount is far
+/* Live "what a renter actually pays" line - a mistyped discount is far
    easier to spot as a peso figure than as a percentage. */
 function calcPreview(){
   const price = Number($('um-price').value) || 0;
@@ -383,7 +383,7 @@ function paintDelivery(){
   const km = Number($('um-delpreview').value) || 0;
   const cost = deliveryCost(u, km);
   $('umDelCalc').innerHTML = cost === null
-    ? '<b>Renter sees:</b> Quoted per site — no figure shown until you send one.'
+    ? '<b>Renter sees:</b> Quoted per site - no figure shown until you send one.'
     : `<b>Renter sees:</b> ${deliveryText(u)}` +
       (mode === 'perkm' ? ` &nbsp;·&nbsp; a ${km} km job costs ${peso(cost)}` : '');
 }
@@ -418,7 +418,7 @@ $('umSave').addEventListener('click', () => {
     deliveryKm:$('um-delkm').value, deliveryFree:$('um-delfree').value,
     notes:$('um-notes').value, photo:draftPhoto
   });
-  if (!next){ $('umErr').textContent = 'Could not save — check the fields above.'; return; }
+  if (!next){ $('umErr').textContent = 'Could not save - check the fields above.'; return; }
 
   const i = fleet.findIndex(x => x.id === next.id);
   if (i >= 0) fleet[i] = next; else fleet.push(next);
@@ -437,7 +437,7 @@ $('umDelete').addEventListener('click', () => {
 uModal.addEventListener('click', e => { if (e.target.closest('[data-um-close]')) closeUnit(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !uModal.hidden) closeUnit(); });
 
-/* Delegated, because the fleet grid is re-rendered on every change — but
+/* Delegated, because the fleet grid is re-rendered on every change - but
    bound to the grid, NOT to document. Listening on document meant a
    `data-edit` button anywhere else on the page opened the unit modal:
    editing a company document popped "Add a unit" on top of it. */
@@ -465,8 +465,8 @@ function paintAudit(){
     return;
   }
   box.innerHTML = `<h3>${warnIcon()} ${w.length} thing${w.length>1?'s':''} to look at</h3>
-    <p>These combinations may be hard to read. You can still publish — but renters on a bright street may not see them.</p>
-    <ul>${w.map(x => `<li><b>${x.label}</b> — contrast ${x.ratio}:1, needs ${x.need}:1</li>`).join('')}</ul>`;
+    <p>These combinations may be hard to read. You can still publish - but renters on a bright street may not see them.</p>
+    <ul>${w.map(x => `<li><b>${x.label}</b> - contrast ${x.ratio}:1, needs ${x.need}:1</li>`).join('')}</ul>`;
 }
 const okIcon = () => '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l6 6L20 6"/></svg>';
 const warnIcon = () => '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>';
@@ -535,7 +535,7 @@ $('coverClear').addEventListener('click', () => {
 $('saveBtn').addEventListener('click', () => {
   const ok = saveTheme(COMPANY_ID, theme);
   const note = $('savedNote');
-  note.textContent = ok ? 'Published — open your page to see it live.'
+  note.textContent = ok ? 'Published - open your page to see it live.'
                         : 'Could not save (browser storage is full or blocked).';
   note.style.color = ok ? 'var(--ok)' : 'var(--danger)';
   setTimeout(() => { note.textContent = ''; }, 6000);
@@ -552,7 +552,7 @@ fitFrame();
 /* =====================================================================
    CONSOLE
    Four operational tabs plus the storefront editor above. Each tab paints
-   lazily and only when its own data changed — the storefront preview is an
+   lazily and only when its own data changed - the storefront preview is an
    iframe, and repainting it on every tab switch would flash.
    ===================================================================== */
 $('ab-name').textContent = (CO && CO.name) || COMPANY_ID;
@@ -574,11 +574,11 @@ function showTab(id){
   if (id === 'storefront') fitFrame();
   /* Keep the tab in the URL so a reload lands back where the operator was.
      Wrapped because a file:// document has an opaque origin and Chrome
-     throws a SecurityError on replaceState there — the console still works,
+     throws a SecurityError on replaceState there - the console still works,
      it just cannot remember the tab. */
   try {
     history.replaceState(null, '', '?c=' + encodeURIComponent(COMPANY_ID) + '#' + id);
-  } catch { /* file:// — no history rewriting available */ }
+  } catch { /* file:// - no history rewriting available */ }
   window.scrollTo(0, 0);
 }
 
@@ -637,7 +637,7 @@ function payPill(id){
 const SPLIT_HUES = ['#057A2F','#1D4ED8','#B8860B','#0891B2','#C2410C','#7C3AED'];
 const OTHER_HUE  = '#6B7280';
 /* A pie stays readable to about six slices, so the tail folds into a single
-   grey remainder — grey because "Other" is not an identity, it is what is
+   grey remainder - grey because "Other" is not an identity, it is what is
    left. The key beside the pie still itemises every category. */
 const PIE_MAX = 6;
 
@@ -803,7 +803,7 @@ function paintPie(hostId, keyId, rows, total){
     a += span;
   });
 
-  /* The viewBox carries side room for the leader labels — a callout for a
+  /* The viewBox carries side room for the leader labels - a callout for a
      small slice on the left extends well past the circle. */
   host.innerHTML =
     `<svg class="pie" viewBox="-78 -8 ${S + 156} ${S + 16}" role="img"
@@ -889,7 +889,7 @@ function paintOverview(){
       <td class="num"><span class="miniprog"><i style="width:${u.utilisation}%"></i></span>
           &nbsp;${pct(u.utilisation)}</td>
     </tr>`).join('')
-    : '<tr><td colspan="6" class="emptyrow">No units listed yet — add them under Storefront.</td></tr>';
+    : '<tr><td colspan="6" class="emptyrow">No units listed yet - add them under Storefront.</td></tr>';
 
   /* --- compliance --- */
   const docs = opsCompliance(COMPANY_ID, TODAY);
@@ -898,8 +898,8 @@ function paintOverview(){
                : d.state === 'none' ? 'off' : 'ok';
     return `<tr><td class="strong">${esc(d.name)}` +
            `<span class="sub">${d.published ? 'On your public page' : 'Not published'}</span></td>` +
-           `<td>${esc(d.issuer || '—')}</td>` +
-           `<td class="nowrap">${d.expires ? esc(fmtDate(d.expires)) : '—'}</td>` +
+           `<td>${esc(d.issuer || '-')}</td>` +
+           `<td class="nowrap">${d.expires ? esc(fmtDate(d.expires)) : '-'}</td>` +
            `<td class="num"><span class="st st-${tone}">${esc(d.label)}</span></td></tr>`;
   }).join('')
    : '<tr><td colspan="4" class="emptyrow">No documents on file yet.</td></tr>';
@@ -944,7 +944,7 @@ function bookingRows(){
     return true;
   });
   /* History reads newest-first; a queue of work reads soonest-first. The
-     upcoming list is a queue — showing September before tomorrow buries
+     upcoming list is a queue - showing September before tomorrow buries
      the requests that actually need answering. */
   return bkRangeId === 'upcoming'
     ? rows.slice().sort((a, b) => a.start.localeCompare(b.start) || a.ref.localeCompare(b.ref))
@@ -1036,9 +1036,9 @@ function paintExpenses(){
   $('exCount').textContent = `${rows.length} entr${rows.length === 1 ? 'y' : 'ies'} · ${fmtDate(r.from)} – ${fmtDate(r.to)}`;
   $('exKpis').innerHTML = [
     { label:'Total spend', value:money(s.expenses), note:`${rows.length} entries` },
-    { label:'Largest category', value:s.byExpCat.length ? s.byExpCat[0].label : '—',
+    { label:'Largest category', value:s.byExpCat.length ? s.byExpCat[0].label : '-',
       note:s.byExpCat.length ? pct(s.byExpCat[0].pct) + ' of spend' : '' },
-    { label:'Against revenue', value:s.revenue ? pct(Math.round(s.expenses / s.revenue * 1000) / 10) : '—',
+    { label:'Against revenue', value:s.revenue ? pct(Math.round(s.expenses / s.revenue * 1000) / 10) : '-',
       note:'cost ratio for the period' },
     { label:'Net after costs', value:money(s.net), note:`${pct(s.margin)} margin` }
   ].map(kpiCard).join('');
@@ -1051,7 +1051,7 @@ function paintExpenses(){
       <td>${esc(fmtDate(e.date))}</td>
       <td>${esc(expenseCatLabel(e.cat))}</td>
       <td class="strong">${esc(e.vendor)}${e.note ? `<span class="sub">${esc(e.note)}</span>` : ''}</td>
-      <td>${esc(e.unitName || '—')}</td>
+      <td>${esc(e.unitName || '-')}</td>
       <td>${esc(e.method)}</td>
       <td class="num strong">${esc(money(e.amount))}</td>
       <td class="num"><button class="linkbtn" data-del="${esc(e.id)}">Delete</button></td>
@@ -1088,7 +1088,7 @@ $('exAdd').addEventListener('click', () => {
     unitId, unitName: unit ? unit.name : '',
     note:   $('ex-note').value
   });
-  if (!saved){ err.textContent = 'Could not save — the ledger is full or storage is blocked.'; return; }
+  if (!saved){ err.textContent = 'Could not save - the ledger is full or storage is blocked.'; return; }
   $('ex-amount').value = ''; $('ex-vendor').value = ''; $('ex-note').value = '';
   note.textContent = 'Recorded.';
   setTimeout(() => { note.textContent = ''; }, 4000);
@@ -1101,7 +1101,7 @@ buildChips('exRange', RANGE_IDS, exRangeId, id => { exRangeId = id; exShown = EX
    DOCUMENTS
    The owner controls what is listed and what is published. They do not
    control whether it reads as verified, whether it has expired, or whether
-   the number is legible — see ops.js.
+   the number is legible - see ops.js.
    ===================================================================== */
 let dcEditing = null;
 let dmFile = null;          // pending upload for the open modal
@@ -1112,7 +1112,7 @@ $('dm-type').innerHTML =
   `<optgroup label="Checked by FR Services">` +
   DOC_TYPES.filter(t => t.reviewable)
     .map(t => `<option value="${t.id}">${esc(t.label)}</option>`).join('') +
-  `</optgroup><optgroup label="Yours to publish — not reviewed">` +
+  `</optgroup><optgroup label="Yours to publish - not reviewed">` +
   DOC_TYPES.filter(t => !t.reviewable)
     .map(t => `<option value="${t.id}">${esc(t.label)}</option>`).join('') +
   `</optgroup>`;
@@ -1145,10 +1145,10 @@ function paintDocs(){
             : 'FR Services will confirm each one with the issuing office.')
         : `<b>Registration incomplete</b>` +
           `You cannot be verified until <b style="display:inline">${reg.missing.map(m => m.label).join(', ')}</b> ` +
-          `${reg.missing.length > 1 ? 'have' : 'has'} a file attached. A typed number is not a document — there would be nothing for us to check.`) +
+          `${reg.missing.length > 1 ? 'have' : 'has'} a file attached. A typed number is not a document - there would be nothing for us to check.`) +
     `</span>` +
     `<span class="chips">${reg.items.map(i =>
-      `<span class="st st-${i.done ? 'ok' : 'off'}">${esc(i.label.replace(/\s*\(.*\)$/, ''))}${i.done ? '' : ' — no file'}</span>`
+      `<span class="st st-${i.done ? 'ok' : 'off'}">${esc(i.label.replace(/\s*\(.*\)$/, ''))}${i.done ? '' : ' - no file'}</span>`
     ).join('')}</span>`;
   const lapsed = rows.filter(d => d.state === 'expired').length;
   const soon   = rows.filter(d => d.state === 'soon').length;
@@ -1167,10 +1167,10 @@ function paintDocs(){
     <tr>
       <td class="strong">${esc(d.name)}
         ${d.file ? `<span class="sub docfile">${FILE_SVG}${esc(d.file.name)}</span>` : '<span class="sub">No file attached</span>'}</td>
-      <td>${esc(d.issuer || '—')}</td>
-      <td class="nowrap">${d.number ? esc(d.showNumber ? d.number : maskNumber(d.number)) : '—'}
+      <td>${esc(d.issuer || '-')}</td>
+      <td class="nowrap">${d.number ? esc(d.showNumber ? d.number : maskNumber(d.number)) : '-'}
         ${d.number && !d.showNumber ? '<span class="sub">masked on your page</span>' : ''}</td>
-      <td class="nowrap">${d.expires ? esc(fmtDate(d.expires)) : '—'}</td>
+      <td class="nowrap">${d.expires ? esc(fmtDate(d.expires)) : '-'}</td>
       <td>${docStatePill(d)}</td>
       <td>${docReviewPill(d.review)}
         ${d.reviewNote ? `<span class="sub revnote">${esc(d.reviewNote)}</span>` : ''}</td>
@@ -1190,7 +1190,7 @@ $('dcRows').addEventListener('change', e => {
   const t = e.target.closest('[data-pub]');
   if (!t) return;
   const saved = setDocPublished(COMPANY_ID, t.dataset.pub, t.checked);
-  $('dcErr').textContent = saved ? '' : 'Could not save — browser storage is full or blocked.';
+  $('dcErr').textContent = saved ? '' : 'Could not save - browser storage is full or blocked.';
   paintDocs();
 });
 $('dcRows').addEventListener('click', e => {
@@ -1227,7 +1227,7 @@ function openDoc(id){
 function closeDoc(){ $('dModal').hidden = true; dmFile = null; }
 document.querySelectorAll('[data-dm-close]').forEach(b => b.addEventListener('click', closeDoc));
 /* The form is taller than the viewport, so the corner button can scroll out
-   of reach — Escape and the backdrop are the ways back regardless. */
+   of reach - Escape and the backdrop are the ways back regardless. */
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && !$('dModal').hidden) closeDoc();
 });
@@ -1246,7 +1246,7 @@ function paintDocFile(){
   const drop = $('dmDrop');
   const mustHave = isReviewableType($('dm-type').value);
   drop.querySelector('.lbl').textContent =
-    dmFile ? dmFile.name : (mustHave ? 'Attach the file — required' : 'Attach the file');
+    dmFile ? dmFile.name : (mustHave ? 'Attach the file - required' : 'Attach the file');
   drop.querySelector('.sub').textContent = dmFile
     ? (dmFile.type === 'application/pdf' ? 'PDF' : 'Image') +
       ' · ' + (dmFile.size / 1024).toFixed(0) + ' KB'
@@ -1291,7 +1291,7 @@ function paintDocPreview(){
     (st ? ` It will read as <b style="display:inline">${esc(st.label)}</b>.` : '') +
     (reviewed
       ? (dcEditing ? '' : ' Marked <b style="display:inline">Awaiting review</b> until our team confirms it.')
-      : ' Shown as <b style="display:inline">Company-submitted</b> — FR Services does not review this type.');
+      : ' Shown as <b style="display:inline">Company-submitted</b> - FR Services does not review this type.');
 }
 ['dm-published','dm-shownum','dm-showfile','dm-number','dm-expires']
   .forEach(id => $(id).addEventListener('input', paintDocPreview));
@@ -1329,8 +1329,8 @@ $('dmSave').addEventListener('click', () => {
   });
   if (!saved){
     err.textContent = dmFile
-      ? 'Could not save — browser storage is full. Try a smaller scan, or remove the file from an older document.'
-      : 'Could not save — you have reached the ' + MAX_DOCS + '-document limit.';
+      ? 'Could not save - browser storage is full. Try a smaller scan, or remove the file from an older document.'
+      : 'Could not save - you have reached the ' + MAX_DOCS + '-document limit.';
     return;
   }
   closeDoc();
@@ -1423,7 +1423,7 @@ function paintReport(){
 }
 
 $('rpPrint').addEventListener('click', () => {
-  /* Build the printable copy at click time, not on every keystroke — the
+  /* Build the printable copy at click time, not on every keystroke - the
      print stylesheet is the only thing that will ever look at it. */
   $('printRoot').innerHTML = '<div class="sheet">' + sheetHTML(currentReport()) + '</div>';
   window.print();

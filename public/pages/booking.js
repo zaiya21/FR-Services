@@ -3,7 +3,7 @@
    seeded data; against a registry that starts empty they resolve to
    undefined and this page throws on `unit.name` before rendering
    anything. A booking form for a unit that does not exist is worse than a
-   page saying so — it would take a name, a date and a deposit for it. */
+   page saying so - it would take a name, a date and a deposit for it. */
 const co   = byId(qs('c'));
 const list = co ? (loadFleet(co.id) || FR_UNITS[co.id] || []) : [];
 const unit = list.find(u => u.id === qs('u')) || list[0];
@@ -12,7 +12,7 @@ if (!co || !unit){
   const why = !co
     ? 'That company is not registered on FR Services.'
     : co.name + ' has not listed any units yet, so there is nothing to book.';
-  document.title = 'Nothing to book — FR Services';
+  document.title = 'Nothing to book - FR Services';
   document.body.innerHTML =
     '<main style="max-width:620px;margin:14vh auto;padding:0 24px;' +
     'font-family:Inter,system-ui,sans-serif;text-align:center">' +
@@ -34,7 +34,7 @@ const hasOperator = typeof unit.operator === 'string'
   ? unit.operator === 'included' : !!unit.operator;
 
 /* header */
-document.title = 'Book ' + unit.name + ' — FR Services';
+document.title = 'Book ' + unit.name + ' - FR Services';
 document.getElementById('bk-em').innerHTML     = unitIcon(unit.name, co.cat);
 document.getElementById('bk-name').textContent = unit.name;
 /* seeded units call it `avail`, owner-created ones `qty` */
@@ -112,7 +112,7 @@ document.querySelectorAll('#deliv-opts .opt').forEach(o => o.addEventListener('c
   document.querySelectorAll('#deliv-opts .opt').forEach(x => x.classList.remove('on'));
   o.classList.add('on'); recalc();
 }));
-/* addon checkboxes — the locked operator row is informational only */
+/* addon checkboxes - the locked operator row is informational only */
 document.querySelectorAll('.addon').forEach(a => a.addEventListener('click', e => {
   e.preventDefault();
   if (a.dataset.locked) return;

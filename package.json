@@ -8,14 +8,14 @@
     "start": "next start",
     "lint": "next lint"
   },
-  "//deps": "next carries a caret so `npm update` picks up the 15.x security patches on its own — a pinned 15.5.4 sitting on a critical advisory is how this got noticed in the first place. react is pinned exactly: a React minor can change what renders, and identical rendering is the one thing this build must not lose.",
+  "//deps": "next carries a caret so `npm update` picks up the 15.x security patches on its own - a pinned 15.5.4 sitting on a critical advisory is how this got noticed in the first place. react is pinned exactly: a React minor can change what renders, and identical rendering is the one thing this build must not lose.",
   "dependencies": {
     "leaflet": "1.9.4",
     "next": "^15.5.22",
     "react": "19.1.1",
     "react-dom": "19.1.1"
   },
-  "//overrides": "Next pins postcss 8.4.31 and sharp ^0.34.5, and 16.x still does, so no Next upgrade clears their advisories. Both are build-time only here and nothing imports from next/ at all — no next/image, so sharp is never called. Bumped anyway, because an unfixable advisory in the report trains you to ignore the report. Minor bumps inside the same major; build output was diffed before and after.",
+  "//overrides": "Next pins postcss 8.4.31 and sharp ^0.34.5, and 16.x still does, so no Next upgrade clears their advisories. Both are build-time only here and nothing imports from next/ at all - no next/image, so sharp is never called. Bumped anyway, because an unfixable advisory in the report trains you to ignore the report. Minor bumps inside the same major; build output was diffed before and after.",
   "overrides": {
     "postcss": "8.5.25",
     "sharp": "0.35.3"

@@ -1,5 +1,5 @@
 /* =====================================================================
-   FR SERVICES — shared demo data + helpers
+   FR SERVICES - shared demo data + helpers
    NOTE: static prototype data. No API calls. Replace with real
    endpoints per ARCHITECTURE.md before this goes anywhere near users.
    ===================================================================== */
@@ -30,7 +30,7 @@ const FR_COMPANIES = [
     loc:"Ecoland, Davao City", km:3.2, rating:4.94, reviews:762, price:"1,800", bg:"#E8F6EC",
     tags:["All three services","Operator available","24/7 dispatch"],
     status:"Available now", statusType:"now", reply:"3 min", radius:80, units:19,
-    since:2008, about:"Davao's one-stop fleet partner since 2008. Self-drive and chauffeured vehicles, heavy equipment with certified operators, and round-the-clock towing and recovery — booked, billed and supported from a single account." },
+    since:2008, about:"Davao's one-stop fleet partner since 2008. Self-drive and chauffeured vehicles, heavy equipment with certified operators, and round-the-clock towing and recovery - booked, billed and supported from a single account." },
 
   /* --- vehicles --- */
   { id:"mindanao-auto", cat:"vehicles", name:"Mindanao Auto Rentals",
@@ -90,17 +90,17 @@ const FR_COMPANIES = [
 /* ---------- Filterable attributes -------------------------------------
    Kept as a separate table and merged in, so the company list above stays
    readable. `serves` is the city list each company's radius actually
-   reaches — it is what makes location search meaningful rather than
+   reaches - it is what makes location search meaningful rather than
    cosmetic. See ARCHITECTURE.md §2: rank by service area, not by distance.
 
    Service areas are "City, Province" because bare city names are not
-   unique in the Philippines — there are several Carmens, Santa Cruzes and
+   unique in the Philippines - there are several Carmens, Santa Cruzes and
    San Isidros. Without the province, a Davao provider surfaces for a
    renter in Carmen, Bohol, 700 km away. Production should key these on
    PSGC codes outright (ARCHITECTURE.md §3).
    ----------------------------------------------------------------------- */
 const CO_ATTR = {
-  /* every type across all three lines — the widest possible fixture */
+  /* every type across all three lines - the widest possible fixture */
   "fleetservice-davao": { cats:["vehicles","equipment","towing"],
                         types:["Sedan","SUV","Van","Pickup","Truck","Motorcycle",
                                "Excavator","Backhoe","Crane","Bulldozer","Dump Truck",
@@ -160,9 +160,9 @@ const CO_ATTR = {
 };
 FR_COMPANIES.forEach(c => Object.assign(c, CO_ATTR[c.id] || {}));
 
-/* Unit types offered per category — drives the "Unit type" dropdown. */
+/* Unit types offered per category - drives the "Unit type" dropdown. */
 const FR_TYPES = {
-  /* Motorcycle is a thing you rent, so it lives here — not under towing,
+  /* Motorcycle is a thing you rent, so it lives here - not under towing,
      where it only ever described what was being recovered. */
   vehicles:  ["Sedan","SUV","Van","Pickup","Truck","Motorcycle"],
   equipment: ["Excavator","Backhoe","Crane","Bulldozer","Dump Truck","Boom Lift","Compactor","Loader"],
@@ -172,11 +172,11 @@ const FR_TYPES = {
 /* ---------- Nationwide coverage ---------------------------------------
    The Davao set above stays long-form because company.html and
    booking.html read its richer fields. The rest are seeded from compact
-   tuples — enough to make national search real, and to cover the places
+   tuples - enough to make national search real, and to cover the places
    people actually search for: Boracay, Siargao, El Nido, Coron, Panglao.
 
    `km` is distance from the centre of that company's own service area,
-   not from the viewer — a Manila company is not 900 km from a Manila
+   not from the viewer - a Manila company is not 900 km from a Manila
    renter. Real distances need coordinates (ARCHITECTURE.md §2).
    ----------------------------------------------------------------------- */
 const CAT_BG = { vehicles:'#E8F6EC', equipment:'#EEF2F6', towing:'#FDECEC' };
@@ -263,7 +263,7 @@ SEED.forEach(([id, name, cat, city, prov, km, rating, reviews, price, types, ext
   });
 });
 
-/* Destinations worth surfacing before anyone types — the searches that
+/* Destinations worth surfacing before anyone types - the searches that
    actually happen. `as` is the name people use when it differs from the
    LGU: nobody searches "Malay, Aklan", they search "Boracay". */
 const FR_POPULAR = [
@@ -288,7 +288,7 @@ function splitPlace(s){
                : { name:s.slice(0, i).trim(), province:s.slice(i + 1).trim() };
 }
 
-/* Every place a company serves, deduped — the "we actually cover this"
+/* Every place a company serves, deduped - the "we actually cover this"
    list, used to surface useful options in the location picker ahead of
    the other 1,600 places we have no providers in yet. Deduped on the
    normalised name+province so "Digos" and "Digos City" collapse to one. */
@@ -304,7 +304,7 @@ const FR_COVERED = (() => {
 
 /* ---------- Filtering + sorting (single source of truth) --------------- */
 
-/* A company may run more than one service line — plenty of Philippine
+/* A company may run more than one service line - plenty of Philippine
    operators rent vehicles, hire out equipment AND run a tow truck. `cat`
    stays as the primary line (it drives the card photo and the default
    icon); `cats` is the full set. Anything without `cats` is single-line. */
@@ -352,7 +352,7 @@ function filterCompanies(f){
   return FR_COMPANIES.filter(c => {
     if (f.cat      && !catsOf(c).includes(f.cat))         return false;
     /* A multi-service company offers both towing and excavators, but not
-       an excavator *as* a towing service — so when a category and a type
+       an excavator *as* a towing service - so when a category and a type
        are both set, the type has to belong to that category. */
     if (f.cat && f.type && !(FR_TYPES[f.cat] || []).includes(f.type)) return false;
     if (!citySearchable(c, f.city, f.province))           return false;
@@ -389,7 +389,7 @@ const FR_UNITS = {
     { id:"fs-suv", name:"Toyota Fortuner SUV", cat:"vehicles", price:3300, unit:"day",
       specs:{ "Seats":"7", "Transmission":"Automatic", "Fuel":"Diesel", "Year":"2024" },
       operator:false, delivery:500, avail:6 },
-    /* free inside the city, then per km — typical for out-of-town drops */
+    /* free inside the city, then per km - typical for out-of-town drops */
     { id:"fs-van", name:"Toyota Hiace 15-Seater", cat:"vehicles", price:3800, unit:"day",
       specs:{ "Seats":"15", "Transmission":"Manual", "Fuel":"Diesel", "Year":"2023" },
       operator:true, deliveryMode:"perkm", delivery:0, deliveryFree:15, deliveryKm:45, avail:5 },
@@ -404,7 +404,7 @@ const FR_UNITS = {
       operator:false, delivery:300, avail:7 },
 
     /* --- heavy equipment rental --- */
-    /* mobilisation billed by distance — the common case for heavy plant */
+    /* mobilisation billed by distance - the common case for heavy plant */
     { id:"fs-exc", name:"Excavator 20-Ton", cat:"equipment", price:12000, unit:"day",
       specs:{ "Operating weight":"20.5 t", "Bucket":"1.0 cbm", "Model":"Komatsu PC200-8", "Fuel":"Client-supplied" },
       operator:true, deliveryMode:"perkm", delivery:0, deliveryFree:10, deliveryKm:180, avail:3 },
@@ -432,7 +432,7 @@ const FR_UNITS = {
       operator:true, delivery:2400, avail:2 },
 
     /* --- towing & recovery --- */
-    { id:"fs-flat", name:"Flatbed Tow — Light Vehicle", cat:"towing", price:1500, unit:"call-out",
+    { id:"fs-flat", name:"Flatbed Tow - Light Vehicle", cat:"towing", price:1500, unit:"call-out",
       specs:{ "Max vehicle":"2.5 t", "Base coverage":"12 km", "Per extra km":"₱65", "ETA":"12–20 min" },
       operator:true, delivery:0, avail:4 },
     { id:"fs-wheel", name:"Wheel-Lift Tow", cat:"towing", price:1200, unit:"call-out",
@@ -533,7 +533,7 @@ const FR_UNITS = {
   ],
   /* --- sample TOWING company, fully fleshed out --- */
   "rapid-response":[
-    { id:"rr-flat", name:"Flatbed Tow — Light Vehicle", cat:"towing", price:1500, unit:"call-out",
+    { id:"rr-flat", name:"Flatbed Tow - Light Vehicle", cat:"towing", price:1500, unit:"call-out",
       specs:{ "Max vehicle":"2.5 t", "Base coverage":"10 km", "Per extra km":"₱65", "ETA":"12–20 min" },
       operator:true, delivery:0, avail:3 },
     { id:"rr-wheel", name:"Wheel-Lift Tow", cat:"towing", price:1200, unit:"call-out",
@@ -582,7 +582,7 @@ const FR_UNITS = {
     { id:"df-tow", name:"Flatbed Recovery Truck", cat:"towing", price:1700, unit:"call-out",
       specs:{ "Max vehicle":"3 t", "Base coverage":"15 km", "Per extra km":"₱70", "ETA":"20–30 min" },
       operator:true, delivery:0, avail:2 },
-    { id:"df-tow-hd", name:"Heavy Duty Tow — Trucks", cat:"towing", price:5200, unit:"call-out",
+    { id:"df-tow-hd", name:"Heavy Duty Tow - Trucks", cat:"towing", price:5200, unit:"call-out",
       specs:{ "Max vehicle":"18 t", "Base coverage":"20 km", "Per extra km":"₱140", "ETA":"35–60 min" },
       operator:true, delivery:0, avail:1 }
   ]
@@ -590,7 +590,7 @@ const FR_UNITS = {
 
 /* ---------- Add-on services ------------------------------------------
    Things a company sells alongside the unit itself. Vehicle rental in
-   particular lives on these — pickup and drop-off are the difference
+   particular lives on these - pickup and drop-off are the difference
    between a booking and a lost enquiry.
    ----------------------------------------------------------------------- */
 const FR_SERVICES = {
@@ -600,13 +600,13 @@ const FR_SERVICES = {
     { id:"fs-svc-appu", name:"Airport pickup", price:600, unit:"trip", cat:"vehicles",
       note:"We meet you at Davao International arrivals with the keys and the contract." },
     { id:"fs-svc-apdo", name:"Airport drop-off", price:600, unit:"trip", cat:"vehicles",
-      note:"Leave the unit at departures — no detour back to the yard." },
+      note:"Leave the unit at departures - no detour back to the yard." },
     { id:"fs-svc-hotel", name:"Hotel or residence delivery", price:500, unit:"trip", cat:"vehicles",
       note:"Anywhere inside Davao City. We hand over at your door." },
     { id:"fs-svc-office", name:"Office or job-site delivery", price:500, unit:"trip", cat:"vehicles",
       note:"Useful for corporate accounts running a shift changeover." },
     { id:"fs-svc-return", name:"Door-to-door return pickup", price:500, unit:"trip", cat:"vehicles",
-      note:"We collect the unit wherever you finish — home, hotel or site." },
+      note:"We collect the unit wherever you finish - home, hotel or site." },
     { id:"fs-svc-outoftown", name:"Out-of-town delivery", price:0, unit:"quoted", cat:"vehicles",
       note:"Panabo, Tagum, Digos and beyond. Quoted by distance." },
     { id:"fs-svc-driver", name:"Professional driver", price:1200, unit:"day", cat:"vehicles",
@@ -655,7 +655,7 @@ const FR_SERVICES = {
     { id:"ma-svc-pickup", name:"Airport pickup", price:600, unit:"trip", cat:"vehicles",
       note:"We meet you at Davao International arrivals with the keys." },
     { id:"ma-svc-drop",   name:"Airport drop-off", price:600, unit:"trip", cat:"vehicles",
-      note:"Leave the unit at departures — no need to return to the yard." },
+      note:"Leave the unit at departures - no need to return to the yard." },
     { id:"ma-svc-hotel",  name:"Hotel or home delivery", price:500, unit:"trip", cat:"vehicles",
       note:"Within Davao City. Outside the city is quoted by distance." },
     { id:"ma-svc-return", name:"Door-to-door return pickup", price:500, unit:"trip", cat:"vehicles",
@@ -665,7 +665,7 @@ const FR_SERVICES = {
     { id:"ma-svc-seat",   name:"Child seat", price:250, unit:"day", cat:"vehicles",
       note:"Forward-facing, suits 9 months to 4 years." },
     { id:"ma-svc-fuel",   name:"Return with empty tank", price:1800, unit:"booking", cat:"vehicles",
-      note:"Skip refuelling — we handle it. Flat fee, no per-litre surprise." },
+      note:"Skip refuelling - we handle it. Flat fee, no per-litre surprise." },
     { id:"ma-svc-cdw",    name:"Damage waiver upgrade", price:450, unit:"day", cat:"vehicles",
       note:"Drops your liability cap from ₱75,000 to ₱15,000." }
   ],
@@ -696,7 +696,7 @@ const FR_REVIEWS = [
   { who:"Rico M.", when:"2 weeks ago", r:5, unit:"Excavator 20-Ton",
     body:"Dumating on time sa site sa Toril, operator was experienced and hindi nag-reklamo kahit umuulan. Second time kong mag-rent sa kanila." },
   { who:"Jen T.", when:"1 month ago", r:5, unit:"Mobile Crane 25-Ton",
-    body:"Booked for a 3-day warehouse installation. Rigger was TESDA-certified as advertised. Billing was exactly as quoted — no surprise charges." },
+    body:"Booked for a 3-day warehouse installation. Rigger was TESDA-certified as advertised. Billing was exactly as quoted - no surprise charges." },
   { who:"Arnel D.", when:"1 month ago", r:4, unit:"Backhoe Loader",
     body:"Good unit and fair pricing. Minor delay sa delivery (about 2 hours) pero they called ahead to inform. Would rent again." },
   { who:"Maricel S.", when:"2 months ago", r:5, unit:"Dump Truck 10-Wheeler",
@@ -736,7 +736,7 @@ const CITY_XY = {               // keyed by normCity(), so "Cebu City" -> cebu
 };
 
 /* Companies in one city would stack on a single point, so nudge each by a
-   small deterministic amount derived from its id — stable across reloads. */
+   small deterministic amount derived from its id - stable across reloads. */
 function attachCoords(c){
   const hit = DISTRICT_XY[c.loc.toLowerCase()] || CITY_XY[normCity(splitPlace(c.loc).name)];
   if (!hit) return;
@@ -815,7 +815,7 @@ function inCategory(cat){ return FR_COMPANIES.filter(c => c.cat === cat); }
 function qs(key){ return new URLSearchParams(location.search).get(key); }
 
 /* Placeholder photography, one per category. These are the same generated
-   originals as the hero panels, reused until a company uploads its own —
+   originals as the hero panels, reused until a company uploads its own -
    see `company_theme.gallery` in ARCHITECTURE.md §3. Because every vehicle
    company would otherwise show an identical crop, the focal point is
    shifted deterministically per company id. */
@@ -864,7 +864,7 @@ function companyCard(x){
    calling this any earlier hits the temporal dead zone and throws. */
 attachAllCoords();
 
-/* Favourite toggle — delegated, works on any page that renders cards. */
+/* Favourite toggle - delegated, works on any page that renders cards. */
 document.addEventListener('click', e => {
   const f = e.target.closest('[data-fav]');
   if (f) { f.classList.toggle('on'); e.preventDefault(); }

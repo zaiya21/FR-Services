@@ -1,8 +1,8 @@
 /* =====================================================================
-   FR SERVICES — company storefront theming
+   FR SERVICES - company storefront theming
    Shared by admin.html (editing) and company.html (rendering).
 
-   SECURITY NOTE — read before changing anything here.
+   SECURITY NOTE - read before changing anything here.
    Every value in a theme originates from a company admin, i.e. untrusted
    input. Two rules, both enforced below:
 
@@ -17,7 +17,7 @@
         "logo" is a stored-XSS vector the moment it is rendered inline or
         served from your own origin.
 
-   None of this is a substitute for server-side validation — a client can
+   None of this is a substitute for server-side validation - a client can
    skip this file entirely. See ARCHITECTURE.md §13.
    ===================================================================== */
 
@@ -36,7 +36,7 @@ const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
 function imageProblem(file){
   if (!file) return 'No file selected.';
   if (!IMAGE_TYPES.includes(file.type))
-    return 'Use a PNG, JPG or WebP. SVG is not accepted — it can carry scripts.';
+    return 'Use a PNG, JPG or WebP. SVG is not accepted - it can carry scripts.';
   if (file.size > MAX_IMAGE_BYTES)
     return 'That file is ' + (file.size / 1048576).toFixed(1) + ' MB. Maximum is 2 MB.';
   return null;
@@ -130,8 +130,8 @@ function harmonies(brand){
 }
 
 /* ---------- storefront layouts ----------
-   Ten structural skins a company can pick. These change shape — borders,
-   radii, shadows, density, grid, cover proportions — not colour; colour
+   Ten structural skins a company can pick. These change shape - borders,
+   radii, shadows, density, grid, cover proportions - not colour; colour
    stays under the owner's separate control so any layout works with any
    palette. Style directions are drawn from the ui-ux-pro-max style DB.
    `block` is the FR Services house style and the default. */
@@ -145,7 +145,7 @@ const LAYOUTS = [
   { id:'bento',      name:'Bento',       note:'Modular tiles at varied sizes, the lead unit twice as wide.' },
   { id:'paper',      name:'Paper',       note:'Matte and flat, ruled like a printed page.' },
   { id:'showcase',   name:'Showcase',    note:'Full-bleed cover, centred identity, large unit tiles.' },
-  { id:'console',    name:'Console',     note:'Technical readout. Thin lines and glow — pair with a dark backdrop.' }
+  { id:'console',    name:'Console',     note:'Technical readout. Thin lines and glow - pair with a dark backdrop.' }
 ];
 const LAYOUT_IDS = LAYOUTS.map(l => l.id);
 
@@ -153,12 +153,12 @@ const LAYOUT_IDS = LAYOUTS.map(l => l.id);
 const THEME_DEFAULT = {
   brand:   '#057a2f',
   accent:  '#f2b705',
-  bg:      '#fbfaf7',      // page backdrop — themes the whole storefront
+  bg:      '#fbfaf7',      // page backdrop - themes the whole storefront
   cover:   'gradient',     // gradient | solid | stripes | image
   coverImg: null,
   logo:    null,
   layout:  'block',
-  unitImages: {}           // { unitId: dataURL } — one photo per listed unit
+  unitImages: {}           // { unitId: dataURL } - one photo per listed unit
 };
 
 /* A company with a large fleet could otherwise push megabytes of base64
@@ -218,7 +218,7 @@ function saveTheme(id, theme){
    quote a job. Separate from the theme: appearance and inventory are
    different concerns with different validation.
 
-   Same trust posture as the theme — every field is owner-supplied and is
+   Same trust posture as the theme - every field is owner-supplied and is
    coerced into range here before it can reach the DOM or a price
    calculation. A negative rate or a 900% discount must never be storable.
    ===================================================================== */
@@ -231,7 +231,7 @@ const RATE_UNITS     = ['day', 'hour', 'call-out'];
 const UNIT_CATS = ['vehicles', 'equipment', 'towing'];
 
 /* How delivery / mobilisation is charged. A flat fee only fits short
-   hauls — equipment mobilisation and out-of-town vehicle drops are
+   hauls - equipment mobilisation and out-of-town vehicle drops are
    almost always distance-based, and some sites can only be quoted after
    someone has looked at the access. */
 const DELIVERY_MODES = ['flat', 'perkm', 'quoted'];
@@ -287,7 +287,7 @@ function normaliseUnit(raw){
   if (!FUEL_MODES.includes(u.fuel))         u.fuel = 'client';
   if (!RATE_UNITS.includes(u.unit))         u.unit = 'day';
   if (!DELIVERY_MODES.includes(u.deliveryMode)) u.deliveryMode = 'flat';
-  /* per-km with no rate set would silently behave as free — fall back */
+  /* per-km with no rate set would silently behave as free - fall back */
   if (u.deliveryMode === 'perkm' && !u.deliveryKm) u.deliveryMode = 'flat';
   if (!(typeof u.photo === 'string' && /^data:image\/(png|jpeg|webp);base64,/.test(u.photo)))
     u.photo = null;
@@ -400,7 +400,7 @@ function coverCss(t){
 
 /* ---------- contrast auditing ----------
    An owner may pick any colour. What they may not do is ship a page their
-   customers cannot read — so instead of restricting the palette, every
+   customers cannot read - so instead of restricting the palette, every
    pairing is measured and reported back to them. */
 function themeWarnings(theme){
   const t = normaliseTheme(theme);
@@ -413,7 +413,7 @@ function themeWarnings(theme){
       level: ratio < need - 1 ? 'bad' : 'warn'
     });
   };
-  /* Brand is used for more than fills — the active tab underline and other
+  /* Brand is used for more than fills - the active tab underline and other
      bare 3–4px elements sit directly on the backdrop with no border of
      their own, so WCAG 1.4.11's 3:1 applies to it. */
   push('Brand colour against the page backdrop', contrast(t.brand, t.bg), 3.0);
@@ -426,7 +426,7 @@ function themeWarnings(theme){
      to the backdrop that the button reads as an empty outline. */
   push('Accent is nearly invisible against the backdrop', contrast(t.accent, t.bg), 1.5);
 
-  /* Text is derived by bestOn(), so this should never fire — it is a
+  /* Text is derived by bestOn(), so this should never fire - it is a
      regression guard on that derivation, not a user-facing risk. */
   push('Body text against the page backdrop', contrast(bestOn(t.bg), t.bg), 4.5);
   if (contrast(t.brand, t.accent) < 1.4)

@@ -6,7 +6,7 @@
 --
 -- It exists because of how RLS goes wrong. Nobody removes a policy on
 -- purpose; someone adds "platform read for support", or turns a masking
--- view into a plain one, or adds a table and forgets RLS — and none of
+-- view into a plain one, or adds a table and forgets RLS - and none of
 -- those produce an error. The database just quietly answers questions it
 -- used to refuse. Anything checkable in SQL is checked here so that the
 -- failure is a failed deploy rather than a discovery.
@@ -124,7 +124,7 @@ begin
 
   -- 8. Every SECURITY DEFINER function pins its search_path. Without it,
   --    a caller can shadow an unqualified name and change what the
-  --    function — running with the owner's rights — actually does.
+  --    function - running with the owner's rights - actually does.
   select string_agg(p.proname, ', ' order by p.proname), count(*)
     into offenders, n
   from pg_proc p

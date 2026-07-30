@@ -1,5 +1,5 @@
 /* =====================================================================
-   OPS — the operational side of the company admin
+   OPS - the operational side of the company admin
    ---------------------------------------------------------------------
    Everything an owner needs to run the business rather than decorate it:
    bookings, expenses, utilisation, compliance, and the report model that
@@ -7,7 +7,7 @@
 
    Two rules shape this file.
 
-   1. FIGURES MUST BE STABLE. All demo data is generated, not stored — but
+   1. FIGURES MUST BE STABLE. All demo data is generated, not stored - but
       a dashboard that reshuffles on reload is worse than no dashboard, and
       a printed report has to match the screen it was printed from. So every
       value derives from a hash of the company id, never from Math.random().
@@ -18,7 +18,7 @@
 
    Owner edits (expense entries, booking status changes) persist to
    localStorage and override the generated baseline. As with theme.js, this
-   is a prototype store, not a security boundary — see ARCHITECTURE.md §7.
+   is a prototype store, not a security boundary - see ARCHITECTURE.md §7.
    ===================================================================== */
 
 /* ---------------------------------------------------------------
@@ -93,7 +93,7 @@ function opsRange(id, today){
       return { from: lastStart, to: lastEnd, label: 'Last month' };
     }
     /* Forward-looking. Pending and confirmed bookings by definition start
-       after today, so every backward window shows none of them — the one
+       after today, so every backward window shows none of them - the one
        view an operator most needs was the one they could not reach. */
     case 'upcoming': return { from: t, to: addDays(t, 60), label: 'Upcoming' };
     case 'quarter':  return { from: addDays(t, -89), to: t, label: 'Last 90 days' };
@@ -143,7 +143,7 @@ const PAY_METHODS = ['Cash', 'GCash', 'Bank transfer', 'Company card', 'Cheque']
 
 const CAT_LABEL = { vehicles:'Vehicle rental', equipment:'Heavy equipment', towing:'Towing & recovery' };
 
-/* Demo renter names. Common Philippine surnames with generic given names —
+/* Demo renter names. Common Philippine surnames with generic given names -
    no real customer data belongs in a prototype fixture. */
 const OPS_GIVEN = ['Ramon','Liza','Arnel','Marites','Joel','Cristina','Dante','Aileen',
   'Rico','Grace','Noel','Divina','Edgar','Rosalie','Ferdie','Jocelyn','Allan','Mylene',
@@ -164,8 +164,8 @@ const OPS_VENDORS = {
   fuel:        ['Petron Ecoland','Shell Matina','Caltex Buhangin','Phoenix Toril'],
   maintenance: ['Suarez Auto Works','Davao Diesel Service','Rivera Machine Shop','Apex Hydraulics'],
   parts:       ['Yamamoto Parts Supply','Southern Tyre Center','Mindanao Bearings','JR Auto Supply'],
-  wages:       ['Payroll — drivers','Payroll — operators','Overtime settlement','Field crew allowance'],
-  haulage:     ['Lowbed hire — Panabo','Lowbed hire — Digos','Escort vehicle','Toll & terminal fees'],
+  wages:       ['Payroll - drivers','Payroll - operators','Overtime settlement','Field crew allowance'],
+  haulage:     ['Lowbed hire - Panabo','Lowbed hire - Digos','Escort vehicle','Toll & terminal fees'],
   insurance:   ['Pioneer Insurance','Malayan Insurance','Standard Insurance'],
   permits:     ['LTO registration','Mayor’s permit','DOLE safety filing','LTFRB clearance'],
   admin:       ['Office rent','Internet & telco','Accounting retainer','Yard utilities']
@@ -180,7 +180,7 @@ const OPS_VENDORS = {
    console demonstrated nothing.
 
    That reasoning does not survive real registrations. Every company here is
-   one somebody signed up, so an empty fleet is not a gap in the fixtures —
+   one somebody signed up, so an empty fleet is not a gap in the fixtures -
    it is the true state of a yard whose owner has not added a unit yet, and
    every number downstream (utilisation, revenue, expenses, the printable
    report) is derived from this list. Inventing it would mean an owner's
@@ -217,7 +217,7 @@ function opsFleet(companyId){
 
   /* No saved fleet and no listings means an empty yard. It used to
      synthesise one from the marketplace card, which made every dashboard
-     look busy — including the dashboard of a company registered thirty
+     look busy - including the dashboard of a company registered thirty
      seconds ago, which would open onto invented bookings, invented
      revenue and an invented utilisation figure. An owner cannot tell a
      synthesised booking from a real one, so there must not be any. */
@@ -236,7 +236,7 @@ function hireDays(rnd, unit){
   return pick(rnd, [1,1,2,3,3,4,5,7,7,10,14]);
 }
 
-/* Status is derived from the dates, never drawn independently — otherwise
+/* Status is derived from the dates, never drawn independently - otherwise
    you get "completed" bookings that end next week. */
 function statusFor(rnd, start, end, today){
   if (start > today) return rnd() < 0.28 ? 'pending' : 'confirmed';
@@ -265,11 +265,11 @@ function genBookings(companyId, today){
   /* Volume is derived from a TARGET UTILISATION rather than picked as a
      booking count, because utilisation is the number an owner judges the
      dashboard by. Counting bookings instead produced a 71-unit yard
-     running at 3.6% — arithmetically fine and obviously fictional.
+     running at 3.6% - arithmetically fine and obviously fictional.
      Generate until the fleet is busy enough, then stop. */
   const fleetQty  = units.reduce((n, u) => n + Math.max(1, u.qty || 1), 0);
   const span      = WINDOW_BACK + WINDOW_FWD;
-  const targetUtil = 0.36 + rnd() * 0.26;               // 36–62% — a healthy yard
+  const targetUtil = 0.36 + rnd() * 0.26;               // 36–62% - a healthy yard
   const targetDays = fleetQty * span * targetUtil;
   const MAX_BOOKINGS = 3000, MAX_TRIES = 20000;
 
@@ -415,7 +415,7 @@ const MAX_EXPENSES = 600;
    attempt and they don't survive contact with a fleet of a different size:
    ₱140k of payroll is a whole business for a three-truck outfit and a
    rounding error for a forty-unit lessor. Shares sum to ~0.71, which puts
-   net margin in the high twenties — about right for plant hire. */
+   net margin in the high twenties - about right for plant hire. */
 const COST_MIX = [
   { id:'wages',       share:0.20, per:2, unit:false, note:'' },
   { id:'fuel',        share:0.15, per:9, unit:true,  note:'' },
@@ -447,7 +447,7 @@ function genExpenses(companyId, today){
   /* Which month a quarterly or annual charge falls in. Without a phase,
      `m % every === 0` is true at m = 0 for every cycle length, so the
      CURRENT month always absorbs both the quarterly premium and the annual
-     renewal — and the dashboard's default 30-day view always showed the
+     renewal - and the dashboard's default 30-day view always showed the
      worst margin of the year. The phase is per company and stable. */
   const phase = {};
   COST_MIX.forEach(mix => { if (mix.every) phase[mix.id] = between(rnd, 0, mix.every - 1); });
@@ -552,7 +552,7 @@ function removeExpense(companyId, id){
 
 /* =====================================================================
    COMPANY DOCUMENTS
-   The paperwork that stops a fleet trading if it lapses — and, once the
+   The paperwork that stops a fleet trading if it lapses - and, once the
    owner publishes it, the evidence a renter uses to decide the business is
    real.
 
@@ -573,10 +573,10 @@ function removeExpense(companyId, id){
    Verification is limited to the three documents that establish a business
    exists and is registered to trade: DTI, the mayor's permit, and BIR 2303.
    Those are the ones a platform can confirm with an issuing office and the
-   ones a renter is really asking about — "is this a real company?"
+   ones a renter is really asking about - "is this a real company?"
 
-   Everything else — insurance policies, OR/CR for individual vehicles,
-   PCAB, TESDA, DOLE — is the owner's own call on what to publish. It is
+   Everything else - insurance policies, OR/CR for individual vehicles,
+   PCAB, TESDA, DOLE - is the owner's own call on what to publish. It is
    still useful to a renter, and still shown, but it is presented as the
    company's own claim rather than something we stand behind. Reviewing a
    fleet's worth of OR/CRs would be a promise we cannot keep. */
@@ -609,7 +609,7 @@ const DOC_REVIEW = {
               blurb:'Submitted by the company. FR Services has not checked it yet.' },
   rejected: { label:'Not accepted',           tone:'off',
               blurb:'FR Services could not confirm this document.' },
-  /* Not a verdict — a statement that no verdict applies. Renters see the
+  /* Not a verdict - a statement that no verdict applies. Renters see the
      same wording as `pending` ("Company-submitted"), because from their
      side both mean the same thing: we have not vouched for this. */
   exempt:   { label:'Not reviewed',           tone:'off',
@@ -619,16 +619,16 @@ const DOC_REVIEW_IDS = Object.keys(DOC_REVIEW);
 
 const DOC_FILE_TYPES = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
 /* Deliberately small. These are base64 in localStorage, which is a ~5 MB
-   budget for the whole origin — a couple of phone photos would fill it. */
+   budget for the whole origin - a couple of phone photos would fill it. */
 const MAX_DOC_BYTES = 1.5 * 1024 * 1024;
 const MAX_DOCS = 30;
 
 function docFileProblem(file){
   if (!file) return 'No file selected.';
   if (!DOC_FILE_TYPES.includes(file.type))
-    return 'Upload a PDF, PNG, JPG or WebP. SVG is not accepted — it can carry scripts.';
+    return 'Upload a PDF, PNG, JPG or WebP. SVG is not accepted - it can carry scripts.';
   if (file.size > MAX_DOC_BYTES)
-    return 'That file is ' + (file.size / 1048576).toFixed(1) + ' MB. Maximum is 1.5 MB — ' +
+    return 'That file is ' + (file.size / 1048576).toFixed(1) + ' MB. Maximum is 1.5 MB - ' +
            'scan at a lower resolution or save the PDF as “reduced size”.';
   return null;
 }
@@ -645,7 +645,7 @@ function readDocFile(file){
 }
 
 /** Show enough to match against the real thing, not enough to copy it.
-    The tail is the last four ALPHANUMERICS, not the last four characters —
+    The tail is the last four ALPHANUMERICS, not the last four characters -
     on "123-456-789-000" the latter yields "-000", which tells a renter
     holding the paper almost nothing. */
 function maskNumber(s){
@@ -703,7 +703,7 @@ function normaliseDoc(raw, trusted){
        and the badge from ever disagreeing about what is reviewable. */
     review: reviewFor(type, trusted && DOC_REVIEW_IDS.includes(raw.review) ? raw.review : 'pending'),
     /* The reviewer's remark on the current verdict, and the trail behind
-       it. Also platform-owned — a company that could write its own
+       it. Also platform-owned - a company that could write its own
        rejection reason could write "approved, all good" into it. */
     reviewNote: trusted ? txt(raw.reviewNote, 400) : '',
     reviewLog:  trusted && Array.isArray(raw.reviewLog)
@@ -755,7 +755,7 @@ function loadDocs(companyId, today){
   } catch { /* fall through to the seed */ }
   /* Nothing stored means the company has uploaded nothing, and that is a
      real answer. This used to fall through to seedDocs(), which invented
-     a plausible set INCLUDING verified ones — so a company that had just
+     a plausible set INCLUDING verified ones - so a company that had just
      registered appeared to hold permits FR Services had checked. Of all
      the fixture data in this app that was the one piece that could not
      stay: the verified badge is the product, and a fabricated one is
@@ -784,7 +784,7 @@ function upsertDoc(companyId, entry){
 
   if (at >= 0){
     const prev = rows[at];
-    /* Carry the existing review across an edit — but only while the edit
+    /* Carry the existing review across an edit - but only while the edit
        leaves the reviewed facts alone. Otherwise an owner could get a
        permit checked, then move its expiry date and keep the tick. */
     const changed = docMateriallyChanged(prev, row);
@@ -793,7 +793,7 @@ function upsertDoc(companyId, entry){
     row.reviewNote = changed ? '' : (prev.reviewNote || '');
     if (changed && isReviewableType(row.type))
       row.reviewLog.push({ at: opsToday(), review:'pending', auto:true,
-        note:'Returned to the queue automatically — the company changed a reviewed detail.' });
+        note:'Returned to the queue automatically - the company changed a reviewed detail.' });
     row.reviewLog = row.reviewLog.slice(-MAX_REVIEW_LOG);
     rows[at] = row;
   } else if (rows.length >= MAX_DOCS){
@@ -825,7 +825,7 @@ function opsCompliance(companyId, today){
 /* =====================================================================
    REGISTRATION COMPLETENESS
    A company is only registrable once all three verified documents are on
-   file WITH A FILE ATTACHED. A typed permit number is not a document —
+   file WITH A FILE ATTACHED. A typed permit number is not a document -
    there would be nothing for a reviewer to check against the issuing
    office, which is the entire point of requiring them.
    ===================================================================== */
@@ -841,7 +841,7 @@ function registrationStatus(companyId, today){
       review:  doc ? doc.review : null,
       state:   doc ? docState(doc, t).state : null,
       /* "done" means a reviewer has something to work with, not that the
-         verdict has landed — registration should not wait on our queue. */
+         verdict has landed - registration should not wait on our queue. */
       done: !!(doc && doc.file)
     };
   });
@@ -856,7 +856,7 @@ function registrationStatus(companyId, today){
   };
 }
 
-/** What the public page may show — and only ever this. */
+/** What the public page may show - and only ever this. */
 function publishedDocs(companyId, today){
   const t = today || opsToday();
   return opsCompliance(companyId, t)
@@ -869,7 +869,7 @@ function publishedDocs(companyId, today){
       state:d.state, daysLeft:d.daysLeft, label:d.label,
       review:d.review, note:d.note,
       /* reviewNote and reviewLog are deliberately absent. A reviewer's
-         remark is written for the company and for us — it can name a
+         remark is written for the company and for us - it can name a
          suspicion, an unfinished check, or a person. None of that belongs
          on a public page, where it would read as a published accusation. */
       /* the scan itself travels only when the owner ticked that box too */
@@ -881,7 +881,7 @@ function publishedDocs(companyId, today){
 /* =====================================================================
    STATISTICS
    Revenue is recognised on the booking's START date. That is a choice, not
-   a law — but it has to be one choice, applied everywhere, or the monthly
+   a law - but it has to be one choice, applied everywhere, or the monthly
    chart and the P&L will disagree with each other.
    ===================================================================== */
 const inRange = (d, from, to) => d >= from && d <= to;
@@ -902,7 +902,7 @@ function opsStats(companyId, from, to, today){
 
   /* Utilisation: hired unit-days that fall inside the window, over the
      unit-days the fleet could theoretically have sold in it. Clipping to
-     the window matters — a 21-day hire straddling the month boundary must
+     the window matters - a 21-day hire straddling the month boundary must
      not book 21 days into a 30-day month. */
   let hiredDays = 0;
   live.forEach(b => {
@@ -914,14 +914,14 @@ function opsStats(companyId, from, to, today){
   const capacity  = fleetQty * spanDays;
   const utilisation = Math.min(100, Math.round(hiredDays / capacity * 1000) / 10);
 
-  /* By month, across the window — the shape of the business over time. */
+  /* By month, across the window - the shape of the business over time. */
   const mMap = {};
   const touch = k => (mMap[k] = mMap[k] || { key:k, label:monthLabel(k), revenue:0, expenses:0, bookings:0 });
   live.forEach(b => { const m = touch(monthKey(b.start)); m.revenue += b.total; m.bookings++; });
   exps.forEach(e => { touch(monthKey(e.date)).expenses += e.amount; });
   const byMonth = Object.values(mMap).sort((a, b) => a.key.localeCompare(b.key));
 
-  /* Per unit — the table that answers "what should I sell or buy more of". */
+  /* Per unit - the table that answers "what should I sell or buy more of". */
   const uMap = {};
   units.forEach(u => uMap[u.id] = {
     id:u.id, name:u.name, cat:u.cat, qty:Math.max(1, u.qty || 1),
@@ -985,7 +985,7 @@ function opsStats(companyId, from, to, today){
 /* =====================================================================
    TREND SERIES
    The bucket has to follow the window. Monthly buckets inside a 30-day
-   period produce two bars, one of which covers two days — arithmetically
+   period produce two bars, one of which covers two days - arithmetically
    correct and visually meaningless. Days for a fortnight, weeks for a
    quarter, months beyond that.
    ===================================================================== */
@@ -1034,7 +1034,7 @@ function opsSeries(companyId, from, to, today){
 }
 
 /* =====================================================================
-   ATTENTION — the short list an owner should act on today
+   ATTENTION - the short list an owner should act on today
    ===================================================================== */
 function opsAlerts(companyId, today){
   const t = today || opsToday();
@@ -1079,7 +1079,7 @@ function opsAlerts(companyId, today){
 /* =====================================================================
    REPORT MODEL
    One plain object; the screen preview, the print sheet and the PDF writer
-   all render from it. Adding a report means adding a case here — no
+   all render from it. Adding a report means adding a case here - no
    renderer changes.
    ===================================================================== */
 const REPORT_KINDS = [
@@ -1172,9 +1172,9 @@ function buildReport(kind, companyId, from, to, today){
     const rows = opsExpenses(companyId, t).filter(e => inRange(e.date, from, to));
     model.kpis = [
       { label:'Total spend', value:rMoney(s.expenses), note:`${rows.length} entries` },
-      { label:'Largest category', value:s.byExpCat.length ? s.byExpCat[0].label : '—',
+      { label:'Largest category', value:s.byExpCat.length ? s.byExpCat[0].label : '-',
         note:s.byExpCat.length ? rPct(s.byExpCat[0].pct) + ' of spend' : '' },
-      { label:'Against revenue', value:s.revenue ? rPct(Math.round(s.expenses / s.revenue * 1000) / 10) : '—' }
+      { label:'Against revenue', value:s.revenue ? rPct(Math.round(s.expenses / s.revenue * 1000) / 10) : '-' }
     ];
     model.tables.push({
       title:'By category',
@@ -1187,7 +1187,7 @@ function buildReport(kind, companyId, from, to, today){
       cols:[ {label:'Date',w:3}, {label:'Category',w:4}, {label:'Payee',w:5},
              {label:'Unit',w:4}, {label:'Method',w:3}, {label:'Amount',w:3,align:'right'} ],
       rows: rows.map(e => [fmtDateShort(e.date), expenseCatLabel(e.cat), e.vendor,
-                           e.unitName || '—', e.method, rMoney(e.amount)]),
+                           e.unitName || '-', e.method, rMoney(e.amount)]),
       total: ['', '', '', '', 'Total', rMoney(rows.reduce((n, e) => n + e.amount, 0))]
     });
   }
@@ -1270,7 +1270,7 @@ function buildReport(kind, companyId, from, to, today){
       rows: months.map(m => [monthLabel(m.key), String(m.n), rMoney(m.net), rMoney(m.vat), rMoney(m.net + m.vat)]),
       total: ['Total', String(rows.length), rMoney(s.revenue - s.vat), rMoney(s.vat), rMoney(s.revenue)]
     });
-    model.notes.push('Indicative only. Figures follow the booking date and have not been reconciled against issued official receipts — check with your accountant before filing.');
+    model.notes.push('Indicative only. Figures follow the booking date and have not been reconciled against issued official receipts - check with your accountant before filing.');
   }
 
   model.notes.push('Generated from FR Services company admin on ' + fmtDate(t) + '. Prototype data.');

@@ -7,7 +7,7 @@
 -- generator that happily overlapped hires on the same unit, so per-unit
 -- utilisation ran past 100% and every figure downstream inherited the lie.
 -- In a database that class of bug is preventable outright, and
--- `app.enforce_fleet_capacity` below does it — see the note there for why
+-- `app.enforce_fleet_capacity` below does it - see the note there for why
 -- it is a trigger rather than the EXCLUDE constraint you would reach for.
 --
 -- The money CHECKs. total = net + vat, and a cancelled booking bills
@@ -80,7 +80,7 @@ create table public.bookings (
 -- The obvious tool is an EXCLUDE constraint on (unit_id =, during &&),
 -- and it is the wrong one twice over. A constraint predicate cannot
 -- contain a subquery, so it has no way to reach the unit's `quantity`;
--- and even given the number, "no two rows overlap" is not the rule —
+-- and even given the number, "no two rows overlap" is not the rule -
 -- a listing of three vans may legitimately have three overlapping hires
 -- and must refuse the fourth. That is a count against a limit, which
 -- needs a trigger.
@@ -195,7 +195,7 @@ create trigger bookings_guard_amounts before update on public.bookings
 
 -- ---------------------------------------------------------------------
 -- Policies. A booking is visible to the company fulfilling it, the renter
--- who placed it, and the platform. Nobody else — this is the most
+-- who placed it, and the platform. Nobody else - this is the most
 -- sensitive table in the schema: names, addresses and money.
 -- ---------------------------------------------------------------------
 alter table public.bookings       enable row level security;

@@ -1,5 +1,5 @@
 -- =====================================================================
--- EXPENSES — the seller's own books.
+-- EXPENSES - the seller's own books.
 --
 -- This table exists to be excluded. FR Services sees marketplace activity:
 -- bookings, gross value, commission, documents, compliance. It does not
@@ -8,7 +8,7 @@
 -- two is one subpoena away from being a problem.
 --
 -- So `app.is_platform()` appears in no policy on this table. That absence
--- is the design, which is exactly why it is easy to undo by accident — a
+-- is the design, which is exactly why it is easy to undo by accident - a
 -- later "add platform read for support" would erase it in one line. The
 -- assertion in 1000 fails the migration if that happens.
 -- =====================================================================
@@ -103,5 +103,5 @@ revoke all on public.expenses from anon;
 
 comment on table public.expenses is
   'The company''s private ledger. FR Services has no read path to this
-   table by design — see the assertion in the final migration, which fails
+   table by design - see the assertion in the final migration, which fails
    the build if a policy here ever mentions the platform.';

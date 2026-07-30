@@ -1,13 +1,13 @@
 -- =====================================================================
--- STORAGE — where the document scans and the storefront images live.
+-- STORAGE - where the document scans and the storefront images live.
 --
 -- The commonest way to leak a company's paperwork is a public bucket. The
 -- documents table can mask a permit number perfectly and it will not
 -- matter if the PDF behind it is fetchable by URL. So:
 --
 --   company-documents   private. Read by the owning company, the platform,
---                       and — only for a document whose owner ticked
---                       "let renters open the file" — anyone.
+--                       and - only for a document whose owner ticked
+--                       "let renters open the file" - anyone.
 --   company-branding    public. Logos and cover images are on the
 --                       storefront by definition.
 --
@@ -65,7 +65,7 @@ using (
   and app.is_member_of((storage.foldername(name))[1]::app.slug)
 );
 
--- The platform reads everything in the bucket — that is the review queue
+-- The platform reads everything in the bucket - that is the review queue
 -- opening the attachment. It writes nothing.
 create policy "documents: platform reads all"
 on storage.objects for select to authenticated

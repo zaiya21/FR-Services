@@ -1,12 +1,12 @@
 /* =====================================================================
-   FR SERVICES — the company registry.
+   FR SERVICES - the company registry.
 
    The list of companies that exist. It starts EMPTY: every company on the
    marketplace got there by completing the registration wizard, and there
    is no fixture data behind it any more.
 
-   The demo set — 42 seeded companies with hand-written service areas and
-   fleets — was removed deliberately so that what you see is what was
+   The demo set - 42 seeded companies with hand-written service areas and
+   fleets - was removed deliberately so that what you see is what was
    actually registered. It is not gone, only unreferenced: recover it with
    `git show <the commit before this one>:public/assets/data.js` if a
    populated marketplace is ever wanted for a screenshot.
@@ -28,7 +28,7 @@ const REG_VERSION = 1;
    One key holding the whole list, not a key per company. The list is
    read on every page load and written only on registration, it will not
    plausibly exceed a few hundred entries, and a single key makes the
-   read atomic — a per-company scheme has to enumerate localStorage and
+   read atomic - a per-company scheme has to enumerate localStorage and
    can be caught mid-write with a company half-added.
    --------------------------------------------------------------------- */
 function regLoad(){
@@ -60,7 +60,7 @@ function regWrite(list){
    Adding one.
 
    Returns { ok, id } or { ok:false, error }. The id is the owner's slug,
-   uniquified rather than rejected — the second "Davao Fleet" to register
+   uniquified rather than rejected - the second "Davao Fleet" to register
    should not be turned away over a name collision.
    --------------------------------------------------------------------- */
 function regAdd(input){
@@ -75,7 +75,7 @@ function regAdd(input){
   }
   list.push(rec);
   if (!regWrite(list))
-    return { ok:false, error:'Could not save — browser storage is full or blocked.' };
+    return { ok:false, error:'Could not save - browser storage is full or blocked.' };
   return { ok:true, id: rec.id, company: rec };
 }
 
@@ -106,7 +106,7 @@ const regCount = () => regLoad().length;
 
    Everything here arrives from a form, so nothing is trusted. The record
    that comes out has every field the rest of the app reads, at the right
-   type — the alternative is `undefined` reaching `.toFixed()` three
+   type - the alternative is `undefined` reaching `.toFixed()` three
    pages away, which is how a blank field becomes a white screen.
    --------------------------------------------------------------------- */
 const REG_CATS = ['vehicles', 'equipment', 'towing'];
@@ -114,7 +114,7 @@ const REG_CATS = ['vehicles', 'equipment', 'towing'];
 /* Duplicated from data.js rather than read from it, and that is the point.
    data.js loads AFTER this file and builds FR_COMPANIES by calling
    regLoad() at parse time, so anything here that reached forward into
-   data.js would be touching a `const` in its temporal dead zone — where
+   data.js would be touching a `const` in its temporal dead zone - where
    even `typeof` throws a ReferenceError rather than returning
    "undefined", so the usual guard does not save you. Two short tables are
    cheaper than that hazard. */
@@ -173,7 +173,7 @@ function regNormalise(input){
     km: 0,
 
     /* No reviews, because there are no bookings. Not seeded with a
-       flattering 4.8 — a fake rating on a real listing is the one piece
+       flattering 4.8 - a fake rating on a real listing is the one piece
        of dishonesty a marketplace cannot come back from. */
     rating: 0,
     reviews: 0,
@@ -201,7 +201,7 @@ function regNormalise(input){
     email: String(i.email || '').trim().slice(0, 90),
 
     /* Coverage is derived from the pin and the radius at read time, not
-       stored — see servesOf() in data.js. Kept only as the base city so
+       stored - see servesOf() in data.js. Kept only as the base city so
        a company always matches a search for the place it sits in. */
     serves: [[city, province].filter(Boolean).join(', ')].filter(Boolean),
 

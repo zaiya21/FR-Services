@@ -1,17 +1,17 @@
 -- =====================================================================
--- DOCUMENTS — the verification model, in the database.
+-- DOCUMENTS - the verification model, in the database.
 --
 -- This is the table the whole trust design rests on, so the invariants
 -- are here rather than in the client. Five of them:
 --
 --   1. FR Services verifies THREE document types (DTI, mayor's permit,
---      BIR 2303) and no others. Anything else is 'exempt' — not a verdict,
+--      BIR 2303) and no others. Anything else is 'exempt' - not a verdict,
 --      a statement that no verdict applies. Enforced as an equivalence:
 --      exempt if and only if the type is not reviewable.
 --
 --   2. A company can publish and unpublish its own documents. It can
 --      never write a verdict. RLS grants the UPDATE; a trigger stops the
---      update touching the review columns — because a row-level policy
+--      update touching the review columns - because a row-level policy
 --      cannot restrict which COLUMN an allowed update changes.
 --
 --   3. Editing a reviewed fact returns the document to the queue. Get a
@@ -19,12 +19,12 @@
 --
 --   4. Expiry is derived from the date, never asserted, so no code path can
 --      claim a lapsed permit is current. A function rather than a generated
---      column — see the note on app.is_expired below.
+--      column - see the note on app.is_expired below.
 --
 --   5. A rejected document is never published.
 --
 -- The file itself lives in Storage, not here. `file_path` points at it and
--- 1100 carries the bucket policies — a public bucket would leak every
+-- 1100 carries the bucket policies - a public bucket would leak every
 -- company's paperwork regardless of what this table says.
 -- =====================================================================
 
@@ -37,7 +37,7 @@ as $$
   select t in ('dti', 'permit', 'bir');
 $$;
 
--- Expiry is derived, never stored — but NOT as a generated column. A
+-- Expiry is derived, never stored - but NOT as a generated column. A
 -- generated column's expression must be IMMUTABLE and current_date is only
 -- STABLE, so `generated always as (expires_on < current_date)` is rejected
 -- outright by Postgres. That is the right refusal for the wrong-looking
@@ -193,7 +193,7 @@ begin
     new.reviewed_at := null;
     insert into public.document_reviews (document_id, review, note, automatic, actor)
     values (new.id, 'pending',
-            'Returned to the queue automatically — the company changed a reviewed detail.',
+            'Returned to the queue automatically - the company changed a reviewed detail.',
             true, (select auth.uid()));
   end if;
 
@@ -252,7 +252,7 @@ create policy documents_delete_own on public.documents
   using (app.is_member_of(company_id) or app.is_platform());
 
 -- The trail is readable by the company it concerns and by the platform.
--- It is written only by the triggers above, which run as the table owner —
+-- It is written only by the triggers above, which run as the table owner -
 -- so there is no INSERT policy for anyone.
 create policy document_reviews_read on public.document_reviews
   for select to authenticated
@@ -269,14 +269,14 @@ create policy document_reviews_read on public.document_reviews
 --
 -- RLS filters ROWS. It cannot hide a COLUMN. So if `anon` were granted
 -- SELECT on public.documents with a policy allowing published rows, anon
--- could read those rows' `doc_number` in full and their `review_note` —
+-- could read those rows' `doc_number` in full and their `review_note` -
 -- defeating both the masking and the rule that a reviewer's remark stays
 -- internal. A row policy cannot express "these columns, not those".
 --
 -- So anon gets no privilege on the base table at all. It reads this view,
 -- which runs with the owner's rights and therefore must carry its own
 -- restriction: the WHERE clause below IS the policy. It is short and
--- total on purpose — published, on a company that is listed and not
+-- total on purpose - published, on a company that is listed and not
 -- suspended, and nothing else.
 -- ---------------------------------------------------------------------
 create or replace function app.mask_number(n text)
