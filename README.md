@@ -11,17 +11,76 @@ npm install
 npm run dev        # http://localhost:3000
 ```
 
+The platform console (`/platform`) needs a Supabase project - see
+[Platform console setup](#platform-console-setup) below. Every other route
+runs with no configuration.
+
 Platform console sign-in: `admin@frservices.ph` / `FRadmin2026!`
-A demo account. The sign-in gate is client-side only and says so on the
-form - read the security note in ARCHITECTURE.md before putting anything
-real behind it.
+A demo account, but a real one - see
+[Platform console setup](#platform-console-setup) to create it, and the
+"The sign-in gate" section of ARCHITECTURE.md for how it's secured.
 
 ## Deploying
 
 Import the repository in Vercel and press Deploy. **Leave Root Directory
 empty** - `package.json` is at the root, so framework detection finds
-Next.js on its own. No environment variables are needed; all ten routes
-prerender as static.
+Next.js on its own. Nine of the ten routes need no configuration and
+prerender as static; `/platform` needs the three Supabase environment
+variables below set in the Vercel project (Settings -> Environment
+Variables) or its sign-in gate has nothing to check a password against.
+
+## Platform console setup
+
+Everything except `/platform` runs with zero configuration - demo data in
+`public/assets/data.js`, nothing server-side. The platform console's
+sign-in gate is real, server-checked auth (see "The sign-in gate" in
+ARCHITECTURE.md), which means it needs an actual Supabase project before
+you can sign in.
+
+1. **Create a Supabase project** at [supabase.com](https://supabase.com) if
+   you don't have one, then copy `.env.example` to `.env.local` and fill in
+   the three values from Project Settings -> API:
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=
+   SUPABASE_SERVICE_ROLE_KEY=
+   ```
+   `.env.local` is gitignored - these never get committed.
+
+2. **Run the migrations** against your project:
+   ```bash
+   npm i -g supabase
+   supabase login
+   supabase link --project-ref <your-project-ref>
+   supabase db push
+   ```
+   (Project ref is in your Supabase project's URL and its Settings page.)
+   If you'd rather not install the CLI, paste the files in
+   `supabase/migrations/` into the Supabase dashboard's SQL Editor, in
+   filename order - they're numbered for exactly that.
+
+3. **Switch the "Reset Password" email template to a code, not a link.**
+   Authentication -> Email Templates -> Reset Password, in the Supabase
+   dashboard. Replace the body with something that includes `{{ .Token }}`
+   instead of `{{ .ConfirmationURL }}`, e.g.:
+   ```html
+   <h2>Reset your FR Services platform password</h2>
+   <p>Enter this code in the sign-in box. It expires in 10 minutes:</p>
+   <h1>{{ .Token }}</h1>
+   ```
+   Without this, Supabase sends its default magic-link email instead, and
+   the code field in the app will never receive anything to check.
+
+4. **Create the shipped platform account.** This is a one-time step - the
+   first platform operator can't grant themselves the role (see
+   ARCHITECTURE.md), so it's done directly with the service-role key:
+   ```bash
+   node --env-file=.env.local scripts/seed-platform-admin.mjs
+   ```
+   Creates `admin@frservices.ph` / `FRadmin2026!` in Supabase Auth and
+   marks it `role='platform'` in `public.profiles`. Safe to re-run.
+
+5. `npm run dev` and sign in at `/platform` with those credentials.
 
 ## Routes
 
@@ -43,12 +102,21 @@ app/                  routes; one folder per page
   layout.jsx          <html>, <body>, fonts, globals.css
   globals.css         the shared stylesheet
   _LegacyScripts.jsx  loads the classic scripts in order after mount
+  api/auth/            the platform console's real sign-in - Route Handlers
+                        backed by Supabase Auth, see ARCHITECTURE.md
 public/
   assets/geo.js       geolocation, distance, coordinate parsing
   assets/registry.js  the company store - empty until someone registers
+  assets/platform-auth.js  the platform console's client-side half of
+                            api/auth/ - fetch calls, nothing else
   assets/*.js         the rest of the logic - theme, data, ops, platform,
-                      auth, pdf, locations
+                      auth (marketplace nav/favourites, still demo-only),
+                      pdf, locations
   pages/*.js          each page's former inline script
+lib/supabase/          Supabase client helpers shared by api/auth/ and
+                        middleware.js
+middleware.js          keeps the platform console's session cookie fresh
+scripts/                one-off setup scripts, run by hand (not at deploy)
 supabase/
   migrations/         schema and row-level security
 legacy/               the static build this was converted from
@@ -121,11 +189,17 @@ that case separately rather than as a denial.
 
 ## Status
 
-A working prototype. Everything runs in the browser against
-`localStorage` - there is no server, no database wired up and no payment
-integration, so a registered company lives in one browser and clearing
-site data removes it. The confirmation screen says so rather than implying
-otherwise. The Supabase migrations define the schema and its security but
-nothing reads from them yet. ARCHITECTURE.md is explicit about which parts
-are demonstrations and which would have to move server-side to be real -
-the sign-in gate and the commission model foremost among them.
+A working prototype. Almost everything runs in the browser against
+`localStorage` - no database wired up, no payment integration, so a
+registered company lives in one browser and clearing site data removes it.
+The confirmation screen says so rather than implying otherwise.
+
+The one exception is the platform console's sign-in gate, which is real:
+password checking, sessions and password reset run server-side against
+Supabase Auth (see "Platform console setup" above and "The sign-in gate"
+in ARCHITECTURE.md). Nothing else reads from the database yet - the
+console's own content (bookings, documents, reports) is still the demo
+dataset in `assets/data.js` / `assets/ops.js`, and the migrations define
+the rest of the schema and its security without anything using it. The
+commission model in ARCHITECTURE.md is also still a demonstration, not
+wired to real payouts.

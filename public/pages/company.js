@@ -343,6 +343,7 @@ if (favBtn) favBtn.addEventListener('click', () => {
   paintFavourite();
 });
 paintAuthNav('authNav');
+if (typeof paintRealAuthNav === 'function') paintRealAuthNav('authNav');
 paintFavourite();
 
 /* "See all documents" jumps to the pane rather than duplicating it. */
@@ -362,11 +363,20 @@ document.getElementById('rev-list').innerHTML = FR_REVIEWS.map(r => `
     <p>${r.body}</p>
   </div>`).join('');
 
-/* ---- mobile book bar ---- */
-const cheapest = units.reduce((a,b) => a.price < b.price ? a : b);
-document.querySelector('.bookbar .p').innerHTML =
-  `${peso(cheapest.price)} <small>from / ${cheapest.unit}</small>`;
-document.querySelector('.bookbar .btn').href = `booking.html?c=${co.id}&u=${cheapest.id}`;
+/* ---- mobile book bar ----
+   A freshly registered company can genuinely have zero units - reduce()
+   with no seed throws on an empty array rather than returning undefined,
+   so this used to crash the whole page for exactly that case. Nothing to
+   book means no bar, not an error. */
+if (units.length){
+  const cheapest = units.reduce((a, b) => a.price < b.price ? a : b);
+  document.querySelector('.bookbar .p').innerHTML =
+    `${peso(cheapest.price)} <small>from / ${cheapest.unit}</small>`;
+  document.querySelector('.bookbar .btn').href = `/booking?c=${co.id}&u=${cheapest.id}`;
+} else {
+  const bar = document.querySelector('.bookbar');
+  if (bar) bar.hidden = true;
+}
 
 /* ---- tabs ---- */
 document.querySelectorAll('.cotab').forEach(t => t.addEventListener('click', () => {

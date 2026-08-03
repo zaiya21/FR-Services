@@ -1,4 +1,6 @@
 
+if (typeof paintRealAuthNav === 'function') paintRealAuthNav('authNav');
+
 /* No fallback company or fallback fleet. Both used to be guaranteed by
    seeded data; against a registry that starts empty they resolve to
    undefined and this page throws on `unit.name` before rendering

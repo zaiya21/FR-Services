@@ -20,6 +20,7 @@ import 'leaflet/dist/leaflet.css';
 import './page.css';
 import Markup from './markup';
 import LegacyScripts from './_LegacyScripts';
+import SupabaseBrowser from './_SupabaseBrowser';
 
 export const metadata = {
   title: "Rent vehicles, heavy equipment and towing anywhere in the Philippines with FR Services",
@@ -29,8 +30,12 @@ export const metadata = {
 export default function Page(){
   return (
     <>
+      <SupabaseBrowser />
       <Markup />
-      <LegacyScripts srcs={["https://unpkg.com/leaflet@1.9.4/dist/leaflet.js","/assets/geo.js","/assets/registry.js","/assets/theme.js","/assets/ph-locations.js","/assets/data.js","/assets/auth.js","/pages/index.js"]} />
+      <LegacyScripts
+        srcs={["https://unpkg.com/leaflet@1.9.4/dist/leaflet.js","/assets/geo.js","/assets/registry.js","/assets/live-registry.js","/assets/theme.js","/assets/ph-locations.js","/assets/data.js","/assets/auth.js","/assets/company-auth.js","/pages/index.js"]}
+        waitEvents={{"/assets/live-registry.js":"live-registry-ready"}}
+      />
     </>
   );
 }

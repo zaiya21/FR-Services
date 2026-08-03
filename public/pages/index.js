@@ -6,7 +6,7 @@
    ===================================================================== */
 const FILTERS = {
   cat:null, city:FR_GEO.city, province:FR_GEO.province, type:'', when:'',
-  maxKm:200, availNow:false, operator:false, delivery:false, instant:false,
+  company:'', maxKm:200, availNow:false, operator:false, delivery:false, instant:false,
   sort:'near'
 };
 
@@ -415,6 +415,7 @@ function appliedChips(){
   if (FILTERS.type)         chips.push(['type','Type',FILTERS.type]);
   if (FILTERS.when)         chips.push(['when','Needed',new Date(FILTERS.when)
                               .toLocaleDateString('en-PH',{day:'numeric',month:'short',year:'numeric'})]);
+  if (FILTERS.company)      chips.push(['company','Company',FILTERS.company]);
   if (FILTERS.maxKm < 200)  chips.push(['maxKm','Within',FILTERS.maxKm + ' km']);
   return chips.map(([k,label,val]) => `
     <span class="achip"><span class="k">${label}</span>${val}
@@ -453,7 +454,7 @@ function emptyState(){
 }
 
 function isFiltered(){
-  return !!(FILTERS.cat || FILTERS.type || FILTERS.when || FILTERS.maxKm < 200 ||
+  return !!(FILTERS.cat || FILTERS.type || FILTERS.when || FILTERS.company || FILTERS.maxKm < 200 ||
             FILTERS.availNow || FILTERS.operator || FILTERS.delivery || FILTERS.instant ||
             FILTERS.city !== FR_GEO.city);
 }
@@ -496,6 +497,7 @@ document.querySelectorAll('.panel').forEach(b => b.addEventListener('click', () 
 $('s-go').addEventListener('click', () => {
   FILTERS.type = $('s-type').value;
   FILTERS.when = $('s-when').value;
+  FILTERS.company = $('s-company').value.trim();
   heroPicker.close();
   /* typed free-text has no province, so it matches any same-named city */
   setCity($('s-loc').value.trim(), '');
@@ -504,6 +506,10 @@ $('s-go').addEventListener('click', () => {
 $('s-type').addEventListener('change', () => {
   FILTERS.type = $('s-type').value;
   paintTypeValue();
+  render();
+});
+$('s-company').addEventListener('input', () => {
+  FILTERS.company = $('s-company').value.trim();
   render();
 });
 
@@ -518,9 +524,9 @@ $('fb-sort').addEventListener('change', e => { FILTERS.sort  = e.target.value;  
 /* ---- clearing: delegated so it works on chips and the empty state ---- */
 function clearAll(){
   Object.assign(FILTERS, { cat:null, city:FR_GEO.city, province:FR_GEO.province,
-    type:'', when:'', maxKm:200,
+    type:'', when:'', company:'', maxKm:200,
     availNow:false, operator:false, delivery:false, instant:false });
-  $('s-loc').value = FILTERS.city; $('s-when').value = ''; $('fb-km').value = '200';
+  $('s-loc').value = FILTERS.city; $('s-when').value = ''; $('s-company').value = ''; $('fb-km').value = '200';
   syncTypeOptions();
   render();
 }
@@ -532,6 +538,7 @@ document.addEventListener('click', e => {
   if (k === 'city')  { FILTERS.city = ''; FILTERS.province = ''; $('s-loc').value = ''; }
   if (k === 'type')  { FILTERS.type = '';  $('s-type').value = ''; paintTypeValue(); }
   if (k === 'when')  { FILTERS.when = '';  $('s-when').value = ''; }
+  if (k === 'company'){ FILTERS.company = ''; $('s-company').value = ''; }
   if (k === 'maxKm') { FILTERS.maxKm = 200; $('fb-km').value = '200'; }
   render();
 });
@@ -676,5 +683,11 @@ if (FR_GEO.source === 'geolocation'){
 }
 initMap();
 
-/* Shows who is signed in, or the sign-in button when nobody is. */
+/* Shows who is signed in, or the sign-in button when nobody is. This first
+   call paints the marketplace's own client-only demo session (favourites);
+   the real check right after it overrides that with whoever actually holds
+   a real Supabase session - a platform operator or a registered company
+   owner - so this page never shows "Sign in" to someone who plainly isn't
+   signed out. */
 if (typeof paintAuthNav === 'function') paintAuthNav('authNav');
+if (typeof paintRealAuthNav === 'function') paintRealAuthNav('authNav');

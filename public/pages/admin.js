@@ -60,6 +60,18 @@ if (!COMPANY_ID){
 
 $('viewLive').href = '/company?c=' + encodeURIComponent(COMPANY_ID);
 
+/* Was a dead href="#" - this console had no real sign-in to sign out of
+   until the owner-account work. Real now: clears the Supabase session and
+   sends them back to the marketplace, same as the nav-wide sign-out. */
+const admSignOut = $('admSignOut');
+if (admSignOut){
+  admSignOut.addEventListener('click', async (e) => {
+    e.preventDefault();
+    if (typeof companyAuthSignOut === 'function') await companyAuthSignOut();
+    location.href = '/';
+  });
+}
+
 let theme = loadTheme(COMPANY_ID);
 
 /* preview + "view my page" both follow the company being edited */

@@ -163,7 +163,7 @@ begin
     or new.expires_on is distinct from old.expires_on
     or new.file_path  is distinct from old.file_path;
 
-  if app.is_platform() then
+  if app.is_platform() or current_user = 'service_role' then
     -- a verdict from the platform is recorded
     if new.review is distinct from old.review
     or new.review_note is distinct from old.review_note then

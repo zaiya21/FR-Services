@@ -7,7 +7,7 @@ const TODAY = opsToday();
 const pct = n => (Math.round(n * 10) / 10) + '%';
 
 /* ---------- tabs ---------- */
-const PANES = ['overview','review','companies','reports','monitoring'];
+const PANES = ['overview','review','companies','registrations','reports','monitoring'];
 let activeTab = 'overview';
 
 function showTab(id){
@@ -19,6 +19,7 @@ function showTab(id){
   if (id === 'overview')   paintOverview();
   if (id === 'review')     paintQueue();
   if (id === 'companies')  paintCompanies();
+  if (id === 'registrations') paintRegistrations();
   if (id === 'reports')    paintReports();
   if (id === 'monitoring') paintMonitoring();
   try { history.replaceState(null, '', '#' + id); } catch { /* file:// */ }
@@ -635,6 +636,168 @@ buildChips('coRange', ['today','week','month','lastmo','30','quarter','year','al
   id => { coRangeId = id; paintCompanies(); });
 
 /* =====================================================================
+   REGISTRATIONS - companies that came through the real sign-up flow
+   (app/api/companies/register), stored in the real database rather than
+   the demo registry the rest of this console still reads. A separate
+   pane and its own queries rather than folded into "Companies" above,
+   because that tab's data source (platformScan, synthesised bookings)
+   has nothing to do with these rows - merging them would mean pretending
+   one function reads two unrelated things.
+   ===================================================================== */
+function waitForSupabaseBrowser(){
+  if (window.supabaseBrowser) return Promise.resolve(window.supabaseBrowser);
+  return new Promise(resolve =>
+    window.addEventListener('supabase-browser-ready', () => resolve(window.supabaseBrowser), { once:true }));
+}
+
+async function paintRegistrations(){
+  const status = $('regStatus');
+  const rowsHost = $('regRows');
+  status.textContent = 'Loading…';
+  rowsHost.innerHTML = '';
+  $('regDocs').innerHTML = '';
+
+  const sb = await waitForSupabaseBrowser();
+  const [{ data: companies, error: coErr }, { data: reg }, { data: standing }] = await Promise.all([
+    sb.from('companies')
+      .select('id,name,city,province,listed,created_at,company_lines(line)')
+      .order('created_at', { ascending:false }),
+    sb.from('company_registration').select('*'),
+    sb.from('company_standing').select('*')
+  ]);
+
+  if (coErr){ status.textContent = 'Could not load registrations: ' + coErr.message; return; }
+  if (!companies || !companies.length){
+    status.textContent = 'No companies have registered through the real sign-up flow yet.';
+    return;
+  }
+
+  const regById = Object.fromEntries((reg || []).map(r => [r.company_id, r]));
+  const standingById = Object.fromEntries((standing || []).map(r => [r.company_id, r]));
+  /* One RPC call per company - fine at the volume a registration queue
+     actually has; batching would need a second SQL function that takes
+     an array, not worth it until this list is genuinely long. */
+  const owners = await Promise.all(companies.map(c =>
+    sb.rpc('company_owner_status', { cid: c.id }).then(r => (r.data && r.data[0]) || null)
+  ));
+
+  status.textContent = `${companies.length} compan${companies.length === 1 ? 'y' : 'ies'} registered`;
+
+  rowsHost.innerHTML = companies.map((c, i) => {
+    const r = regById[c.id] || {};
+    const s = standingById[c.id] || {};
+    const owner = owners[i];
+    const lines = (c.company_lines || []).map(l => CAT_LABEL[l.line] || l.line).join(', ') || '—';
+    const docsLabel = `${r.documents_on_file || 0}/${r.documents_required || 3}` +
+      (s.badge_ok ? ' · verified' : r.complete ? ' · awaiting review' : '');
+    const ownerCell = owner
+      ? `${esc(owner.owner_email)}<br>${owner.email_confirmed
+          ? '<span class="st st-ok">Email confirmed</span>'
+          : '<span class="st st-warn">Not confirmed yet</span>'}`
+      : '<span class="muted">No owner linked</span>';
+    return `<tr>
+      <td class="strong"><a href="/company?c=${encodeURIComponent(c.id)}" style="text-decoration:underline">${esc(c.name)}</a>
+        <span class="sub">registered ${new Date(c.created_at).toLocaleDateString('en-PH')}</span></td>
+      <td class="nowrap">${esc([c.city, c.province].filter(Boolean).join(', '))}</td>
+      <td>${esc(lines)}</td>
+      <td>${esc(docsLabel)}</td>
+      <td>${ownerCell}</td>
+      <td>${c.listed ? '<span class="st st-ok">Listed</span>' : '<span class="st st-off">Unlisted</span>'}</td>
+      <td class="num"><div class="row gap2" style="flex-wrap:wrap;justify-content:flex-end">
+        <button class="btn btn-w btn-sm" data-view-docs="${esc(c.id)}">Documents</button>
+        ${c.listed
+          ? `<button class="btn btn-w btn-sm" data-unlist="${esc(c.id)}">Unlist</button>`
+          : `<button class="btn btn-y btn-sm" data-approve="${esc(c.id)}">Approve &amp; list</button>`}
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+$('regRows').addEventListener('click', async e => {
+  const approveBtn = e.target.closest('[data-approve]');
+  const unlistBtn  = e.target.closest('[data-unlist]');
+  const docsBtn    = e.target.closest('[data-view-docs]');
+  const sb = window.supabaseBrowser;
+  if (!sb) return;
+
+  if (approveBtn){
+    approveBtn.disabled = true;
+    const { error } = await sb.from('companies').update({ listed: true }).eq('id', approveBtn.dataset.approve);
+    if (error) alert('Could not list the company: ' + error.message);
+    paintRegistrations();
+  }
+  if (unlistBtn){
+    unlistBtn.disabled = true;
+    const { error } = await sb.from('companies').update({ listed: false }).eq('id', unlistBtn.dataset.unlist);
+    if (error) alert('Could not unlist the company: ' + error.message);
+    paintRegistrations();
+  }
+  if (docsBtn) paintRegDocs(docsBtn.dataset.viewDocs);
+});
+
+let regDocsCompanyId = null;
+
+async function paintRegDocs(companyId){
+  regDocsCompanyId = companyId;
+  const host = $('regDocs');
+  host.innerHTML = '<p class="small muted">Loading documents…</p>';
+  const sb = window.supabaseBrowser;
+  const { data: docs, error } = await sb.from('documents').select('*').eq('company_id', companyId).order('doc_type');
+  if (error){ host.innerHTML = `<p class="small" style="color:var(--danger)">Could not load documents: ${esc(error.message)}</p>`; return; }
+  if (!docs || !docs.length){ host.innerHTML = '<p class="small muted">No documents on file for this company.</p>'; return; }
+
+  const rows = await Promise.all(docs.map(async d => {
+    let link = '<span class="small muted">No file attached</span>';
+    if (d.file_path){
+      const { data: signed } = await sb.storage.from('company-documents').createSignedUrl(d.file_path, 300);
+      if (signed && signed.signedUrl)
+        link = `<a href="${esc(signed.signedUrl)}" target="_blank" rel="noreferrer noopener">View file (link expires in 5 min)</a>`;
+    }
+    const label = (typeof DOC_TYPES !== 'undefined' ? (DOC_TYPES.find(t => t.id === d.doc_type) || {}).label : null) || d.doc_type;
+    const canVerdict = d.review === 'pending' || d.review === 'rejected';
+    return `<div class="block-flat mb3" data-doc-row="${esc(d.id)}">
+      <div class="row gap2" style="justify-content:space-between;flex-wrap:wrap">
+        <div>
+          <b>${esc(label)}</b> <span class="sub">${esc(d.name)}</span><br>
+          <span class="small muted">Review: ${esc(d.review)}${d.review === 'rejected' && d.review_note ? ' — ' + esc(d.review_note) : ''}</span><br>
+          ${link}
+        </div>
+        ${canVerdict ? `<div class="row gap2">
+          <button class="btn btn-y btn-sm" data-verdict="verified" data-doc="${esc(d.id)}">Approve</button>
+          <button class="btn btn-w btn-sm" data-verdict="rejected" data-doc="${esc(d.id)}">Reject</button>
+        </div>` : ''}
+      </div>
+    </div>`;
+  }));
+  host.innerHTML = `<h3 style="margin-top:var(--s5)">Documents</h3>` + rows.join('');
+}
+
+$('regDocs').addEventListener('click', async e => {
+  const b = e.target.closest('[data-verdict]');
+  if (!b) return;
+  const verdict = b.dataset.verdict;
+  let note = '';
+  if (verdict === 'rejected'){
+    note = (prompt('Reason for rejecting this document (required, the company will see this):') || '').trim();
+    if (!note) return;
+  }
+  const row = b.closest('[data-doc-row]');
+  row.style.opacity = '.5';
+  const { error } = await window.supabaseBrowser
+    .from('documents')
+    .update({ review: verdict, review_note: note })
+    .eq('id', b.dataset.doc);
+  if (error){ alert('Could not save the verdict: ' + error.message); row.style.opacity = ''; return; }
+  /* Re-paint the table (documents-on-file/verified counts changed) without
+     losing the open panel - a reviewer working through several documents
+     on one company should not have to click "Documents" again after every
+     verdict. */
+  const companyId = regDocsCompanyId;
+  await paintRegistrations();
+  if (companyId) paintRegDocs(companyId);
+});
+
+/* =====================================================================
    REPORTS
    ===================================================================== */
 $('rpReason').innerHTML += Object.keys(REPORT_REASONS)
@@ -805,8 +968,6 @@ function lockConsole(){
   document.body.classList.add('locked');
   gate.hidden = false;
   gateStep('in');
-  $('credLine').innerHTML =
-    `${esc(FR_DEFAULT_ADMIN.user)}<br>${esc(FR_DEFAULT_ADMIN.password)}`;
 }
 
 function unlockConsole(session){
@@ -840,7 +1001,7 @@ $('inForm').addEventListener('submit', async () => {
   err.textContent = '';
   $('inGo').disabled = true;
   try {
-    const r = await authSignIn($('inUser').value, $('inPass').value, $('inKeep').checked);
+    const r = await platformAuthSignIn($('inUser').value, $('inPass').value, $('inKeep').checked);
     if (!r.ok){ err.textContent = r.error; $('inPass').select(); return; }
     $('inPass').value = '';
     unlockConsole(r.session);
@@ -850,21 +1011,18 @@ $('inForm').addEventListener('submit', async () => {
 });
 
 /* --- request a code --- */
-$('askForm').addEventListener('submit', () => {
+$('askForm').addEventListener('submit', async () => {
   const user = $('askUser').value.trim();
   if (!user){ $('askErr').textContent = 'Enter the email on the account.'; return; }
-  const r = authStartReset(user);
+  const r = await platformAuthStartReset(user);
   resetFor = user;
   gateStep('new');
+  const minutes = (r && r.minutes) || PLATFORM_RESET_MINUTES;
   $('newSub').textContent =
-    `If ${user} has an account, a code has been issued for it. Codes last ${RESET_MINUTES} minutes and work once.`;
-  /* No mail server exists, so the code is shown rather than sent. Saying
-     so is better than leaving the operator waiting for an email. */
-  $('newCode').innerHTML = r.sent
-    ? `Your code is <b style="letter-spacing:.2em">${esc(r.code)}</b>.<br>` +
-      `<span style="font-weight:500">Shown here because this prototype has no mail server, so in production it would be emailed and never displayed.</span>`
-    : `<span style="font-weight:500">If that address is registered, a code has been issued. ` +
-      `We don't confirm either way, so this form can't be used to find out who has an account.</span>`;
+    `If ${user} has an account, we've emailed it a code. Codes last ${minutes} minutes and work once.`;
+  $('newCode').innerHTML =
+    `<span style="font-weight:500">We don't confirm whether that address is registered, so this form ` +
+    `can't be used to find out who has an account. Check your inbox (and spam folder).</span>`;
 });
 
 /* --- set the new password --- */
@@ -873,12 +1031,12 @@ $('newForm').addEventListener('submit', async () => {
   err.textContent = '';
   const a = $('newPass').value, b = $('newPass2').value;
   if (a !== b){ err.textContent = 'The two passwords do not match.'; return; }
-  const problem = passwordProblem(a);
+  const problem = platformPasswordProblem(a);
   if (problem){ err.textContent = problem; return; }
 
   $('newGo').disabled = true;
   try {
-    const r = await authCompleteReset(resetFor, $('newCodeIn').value, a);
+    const r = await platformAuthCompleteReset(resetFor, $('newCodeIn').value, a);
     if (!r.ok){ err.textContent = r.error; return; }
     $('newPass').value = $('newPass2').value = $('newCodeIn').value = '';
     gateStep('in');
@@ -889,15 +1047,14 @@ $('newForm').addEventListener('submit', async () => {
   }
 });
 
-$('signOut').addEventListener('click', () => {
-  authSignOut();
+$('signOut').addEventListener('click', async () => {
+  await platformAuthSignOut();
   location.reload();
 });
 
 /* ---------- boot ---------- */
 (async () => {
-  await authEnsureDefault();
-  const session = authSession();
+  const session = await platformAuthSession();
   if (session) unlockConsole(session);
   else lockConsole();
 })();

@@ -79,6 +79,23 @@ function regAdd(input){
   return { ok:true, id: rec.id, company: rec };
 }
 
+/* ---------------------------------------------------------------------
+   Merging in real companies, read from Supabase (live-registry.js).
+
+   Unlike regAdd(), these records already carry their real, authoritative
+   id - there is nothing to deduplicate and nothing to slug-suffix. An id
+   already in the local list is replaced outright (the server is the
+   source of truth for a live company); anything else is left alone, so
+   this never disturbs a locally-only company sitting at the same time.
+   --------------------------------------------------------------------- */
+function regUpsertMany(records){
+  if (!Array.isArray(records) || !records.length) return true;
+  const list = regLoad();
+  const byId = new Map(list.map(c => [c.id, c]));
+  records.forEach(r => { if (r && r.id) byId.set(r.id, r); });
+  return regWrite([...byId.values()]);
+}
+
 function regRemove(id){
   const list = regLoad().filter(c => c.id !== id);
   return regWrite(list);
@@ -206,7 +223,14 @@ function regNormalise(input){
     serves: [[city, province].filter(Boolean).join(', ')].filter(Boolean),
 
     registeredAt: Date.now(),
-    bg: REG_BG[cats[0]] || '#EEF2F6'
+    bg: REG_BG[cats[0]] || '#EEF2F6',
+
+    /* True for a company hydrated from the real Supabase database (see
+       live-registry.js), false for the old localStorage-only path. The one
+       flag every fleet/theme/expense/booking read-and-write function
+       branches on to decide whether to talk to Supabase or to
+       localStorage - see theme.js and ops.js. */
+    live: !!i.live
   };
 }
 

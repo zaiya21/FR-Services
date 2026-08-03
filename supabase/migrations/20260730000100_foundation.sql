@@ -31,7 +31,11 @@ create extension if not exists btree_gist with schema extensions;
 
 create schema if not exists app;
 revoke all on schema app from public;
-grant usage on schema app to authenticated, anon;
+-- service_role is included alongside the roles that reach these functions
+-- through RLS policies: it also needs to, indirectly, whenever a
+-- service-role write fires a trigger that checks app.is_platform() (see
+-- profiles_guard_role in 0200) - RLS bypass does not imply schema access.
+grant usage on schema app to authenticated, anon, service_role;
 
 -- ---------------------------------------------------------------------
 -- Domain vocabularies. Enums rather than text + CHECK because these are

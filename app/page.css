@@ -1,5 +1,19 @@
 
 /* =====================================================================
+   HOMEPAGE ACCENT OVERRIDE - a creamy light gray instead of the
+   harvest-gold yellow used everywhere else. Requested for this page
+   specifically, so it's redefined here rather than in globals.css: this
+   file's bytes only ship on `/`, so every other page's --accent/--yellow
+   keeps the original gold untouched. Contrast against --ink comes out
+   even higher than gold's (~12.3:1 vs 9.32:1) - a light neutral reads as
+   quiet and elegant against the brand green rather than loud, which is
+   the trade against gold's higher-energy pop. */
+:root{
+  --accent:#D9D2C0; --accent-2:#E8E3D6; --accent-tint:#F5F2EA;
+  --yellow:var(--accent); --yellow-2:var(--accent-2); --yellow-tint:var(--accent-tint);
+}
+
+/* =====================================================================
    SPLIT HERO - three vertical panels, one per category.
    Images are AI-generated originals (assets/img/), deliberately dark and
    neutral so the category color tint and the headline scrim do the work.
@@ -116,8 +130,8 @@
 .heroover .lede{font-size:clamp(15px,1.4vw,18.5px);color:rgba(255,255,255,.9);
   max-width:48ch;margin:0 0 var(--s5);text-shadow:0 2px 14px rgba(0,0,0,.75)}
 .heroover .searchblock,.heroover .btn{pointer-events:auto}
-.searchblock{display:grid;grid-template-columns:1.3fr 1fr 1fr auto;
-  gap:var(--s3);padding:var(--s4);max-width:940px;margin-inline:auto}
+.searchblock{display:grid;grid-template-columns:1.15fr .85fr .85fr .95fr auto;
+  gap:var(--s3);padding:var(--s4);max-width:1120px;margin-inline:auto}
 
 /* stat strip below the hero */
 .statstrip{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s4);
@@ -374,37 +388,16 @@
 .sfhero .pen{position:absolute;top:9px;right:9px;background:#fff;border:var(--bd-thin);
   border-radius:var(--r-pill);font-size:11px;font-weight:700;padding:3px 10px}
 .sfin{padding:var(--s4)}
-/* The logo overlaps the cover; the name must not.
-
-   This row used to carry margin-top:-34px, which lifted the logo AND the
-   name together. The text block is about 37px tall - more than the 34px
-   lift minus the 16px padding it was cancelling - so the company name ended
-   up sitting on the green gradient, unreadable.
-
-   Two separate lifts now. The logo's own negative margin is not what
-   positions it: under align-items:flex-end a 56px box always occupies the
-   56px above the row's bottom edge, so it reaches into the cover by itself.
-   The margin is there to collapse its contribution to the row height, so
-   the row is sized by the text instead of by the logo.
-
-   Because flex-end ties both bottoms to the same line, the name's clearance
-   below the cover and the logo's overlap above it are not independent: they
-   share whatever slack exists between the logo's height and the text
-   block's. At the original 56px against a 49px text block that slack was
-   7px total, so there was no setting where both looked deliberate - moving
-   the row down to clear the name pulled the logo down with it. Measured, not
-   guessed: -8px gave the name 8px of air and left the logo 2px BELOW the
-   cover, overlapping nothing.
-
-   So the logo is 68px, which buys 19px of slack, and the row is lifted 6px.
-   That lands at 10px of clearance for the name and 9px of logo over the
-   cover. A bigger brand mark in a panel selling "it looks like your brand"
-   is no loss. */
-.sfid{display:flex;gap:var(--s3);align-items:flex-end;
-  margin-top:-6px;margin-bottom:var(--s4)}
+/* Clear air between the cover and the logo, not an overlap - the negative
+   margins this used to carry made a 9px overlap that most people never
+   even noticed. Explicit positive gap instead, easy to see and easy to
+   tune: .sfin's own 16px padding plus 32px more here, roughly two lines
+   of text worth of breathing room. */
+.sfid{display:flex;gap:var(--s3);align-items:center;
+  margin-top:32px;margin-bottom:var(--s4)}
 .sflogo{width:68px;height:68px;border-radius:17px;background:var(--accent);
   border:var(--bd);display:grid;place-items:center;color:var(--ink);
-  margin-top:-34px;flex-shrink:0}
+  flex-shrink:0}
 .sflogo svg{width:34px;height:34px}
 .sfnm span svg{width:11px;height:11px;vertical-align:-1px;color:var(--accent)}
 .sfhero .pen svg{width:11px;height:11px;vertical-align:-1px}

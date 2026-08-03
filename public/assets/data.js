@@ -245,6 +245,7 @@ function filterCompanies(f){
     if (f.cat && f.type && !(FR_TYPES[f.cat] || []).includes(f.type)) return false;
     if (!citySearchable(c, f.city, f.province))           return false;
     if (f.type     && !(c.types || []).includes(f.type))  return false;
+    if (f.company  && !c.name.toLowerCase().includes(f.company.toLowerCase())) return false;
     /* Distance is live now, so read it live: c.km is a cache that is only
        correct after frRedistance(), and a filter that silently used a
        stale value would drop companies the renter is standing next to. */

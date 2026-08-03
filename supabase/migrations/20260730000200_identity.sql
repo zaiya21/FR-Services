@@ -59,6 +59,17 @@ as $$
   );
 $$;
 
+/* Every guard trigger below (and the equivalents in trust.sql, bookings.sql,
+   companies.sql, documents.sql) checks app.is_platform() as its escape
+   hatch. That checks auth.uid(), which is NULL for a service-role request -
+   there is no JWT user to be. A trigger guarding a column RLS cannot reach
+   still fires for a service-role write, so each of those checks is written
+   as `app.is_platform() or current_user = 'service_role'`.
+
+   This has to live in the CALLING trigger, not in is_platform() itself:
+   is_platform() is SECURITY DEFINER, so current_user inside it would report
+   the function's owner, not whoever is actually calling it. */
+
 create or replace function app.is_member_of(target app.slug)
 returns boolean
 language sql
@@ -85,8 +96,12 @@ $$;
 
 revoke all on function app.is_platform(), app.is_member_of(app.slug),
                       app.my_companies() from public;
+-- service_role too - a service-role write can still fire a trigger
+-- (profiles_guard_role, companies_guard_trust, ...) that calls these, and
+-- bypassing RLS does not imply the schema/function grants a plain query
+-- would otherwise need.
 grant execute on function app.is_platform(), app.is_member_of(app.slug),
-                          app.my_companies() to authenticated, anon;
+                          app.my_companies() to authenticated, anon, service_role;
 
 -- ---------------------------------------------------------------------
 -- Nobody grants themselves a role.
@@ -97,7 +112,8 @@ language plpgsql
 set search_path = ''
 as $$
 begin
-  if new.role is distinct from old.role and not app.is_platform() then
+  if new.role is distinct from old.role
+     and not (app.is_platform() or current_user = 'service_role') then
     raise exception
       'role is assigned by FR Services, not by the account holder'
       using errcode = '42501';
@@ -172,3 +188,12 @@ create trigger on_auth_user_created
 
 grant select, update on public.profiles        to authenticated;
 grant select          on public.company_members to authenticated;
+
+-- Postgres grants a new public-schema table's default privileges to every
+-- role, anon included - every other table in this schema explicitly
+-- revokes that (see companies.sql, documents.sql, bookings.sql,
+-- expenses.sql, trust.sql). profiles was missed: an account's role and
+-- membership have no business being writable, or even readable, by a
+-- visitor holding only the anon key.
+revoke all on public.profiles        from anon;
+revoke all on public.company_members from anon;

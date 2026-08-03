@@ -136,7 +136,9 @@
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:190px}
 .sfhero{height:84px;border-bottom:var(--bd);transition:background .2s var(--ease)}
 .sfin{padding:var(--s4)}
-.sfid{display:flex;gap:var(--s3);align-items:flex-end;margin-top:-32px;margin-bottom:var(--s4)}
+/* Clear air between the cover and the logo, not an overlap - matching
+   app/page.css's copy of this same component. */
+.sfid{display:flex;gap:var(--s3);align-items:center;margin-top:32px;margin-bottom:var(--s4)}
 .sflogo{width:54px;height:54px;border-radius:15px;border:var(--bd);
   display:grid;place-items:center;color:var(--ink);transition:background .2s var(--ease)}
 .sflogo svg{width:28px;height:28px}

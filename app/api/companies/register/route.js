@@ -1,0 +1,201 @@
+import { NextResponse } from 'next/server';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
+import { createClient as createSsrClient } from '../../../../lib/supabase/server';
+import { passwordProblem } from '../../../../lib/password-rules';
+
+const REG_CATS = ['vehicles', 'equipment', 'towing'];
+const DOC_TYPES = ['dti', 'permit', 'bir', 'insurance', 'lto', 'ltfrb', 'pcab', 'tesda', 'dole', 'other'];
+const DOC_LABELS = {
+  dti: 'DTI registration', permit: "Mayor's permit", bir: 'BIR 2303',
+  insurance: 'Insurance certificate', lto: 'LTO registration (OR/CR)',
+  ltfrb: 'Tow operator accreditation', pcab: 'PCAB contractor licence',
+  tesda: 'Operator certifications', dole: 'DOLE registration', other: 'Supporting document'
+};
+const MAX_FILE_BYTES = 1572864; // 1.5 MB, matches the storage bucket + documents.file_bytes check
+const ALLOWED_MIME = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
+
+function slugify(s){
+  return String(s || '').toLowerCase().trim()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 48);
+}
+
+/** Every check the real `companies` row's own CHECK constraints will make -
+ *  done here first so a bad field comes back as a sentence, not a
+ *  Postgres error code. */
+function companyProblem(c){
+  if (!c || typeof c !== 'object') return 'Missing company details.';
+  const name = String(c.name || '').trim();
+  if (name.length < 2 || name.length > 120) return 'Company name is required.';
+  const cats = Array.isArray(c.cats) ? c.cats.filter(x => REG_CATS.includes(x)) : [];
+  if (!cats.length) return 'Choose at least one service you offer.';
+  const lat = Number(c.lat), lon = Number(c.lon);
+  if (!isFinite(lat) || lat < -90 || lat > 90) return 'Coordinates are required so renters can find you on the map.';
+  if (!isFinite(lon) || lon < -180 || lon > 180) return 'Coordinates are required so renters can find you on the map.';
+  const city = String(c.city || '').trim();
+  const province = String(c.province || '').trim();
+  if (city.length < 2 || city.length > 80) return 'City is required.';
+  if (province.length < 2 || province.length > 80) return 'Province is required.';
+  return null;
+}
+
+export async function POST(request){
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  const form = await request.formData().catch(() => null);
+  if (!form) return NextResponse.json({ ok: false, error: 'Malformed submission.' }, { status: 400 });
+
+  const ownerName = String(form.get('ownerName') || '').trim().slice(0, 120);
+  const ownerEmail = String(form.get('ownerEmail') || '').trim().toLowerCase();
+  const ownerPassword = String(form.get('ownerPassword') || '');
+  let company;
+  try { company = JSON.parse(form.get('company') || '{}'); }
+  catch { return NextResponse.json({ ok: false, error: 'Malformed company details.' }, { status: 400 }); }
+
+  if (ownerName.length < 2)
+    return NextResponse.json({ ok: false, error: 'Your full name is required.', field: 1 }, { status: 400 });
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(ownerEmail))
+    return NextResponse.json({ ok: false, error: 'Enter a valid email address.', field: 1 }, { status: 400 });
+  const pwProblem = passwordProblem(ownerPassword);
+  if (pwProblem) return NextResponse.json({ ok: false, error: pwProblem, field: 1 }, { status: 400 });
+
+  const coProblem = companyProblem(company);
+  if (coProblem) return NextResponse.json({ ok: false, error: coProblem }, { status: 400 });
+
+  // Files: never trust the client's declared type/size.
+  const files = [];
+  for (const type of DOC_TYPES){
+    const f = form.get('doc_' + type);
+    if (!f || typeof f === 'string') continue;
+    if (f.size < 1 || f.size > MAX_FILE_BYTES)
+      return NextResponse.json({ ok: false, error: `${DOC_LABELS[type]} must be under 1.5 MB.` }, { status: 400 });
+    if (!ALLOWED_MIME.includes(f.type))
+      return NextResponse.json({ ok: false, error: `${DOC_LABELS[type]} must be a PDF, PNG, JPEG or WebP.` }, { status: 400 });
+    files.push({ type, file: f });
+  }
+  const hasAllRequired = ['dti', 'permit', 'bir'].every(t => files.some(f => f.type === t));
+  if (!hasAllRequired)
+    return NextResponse.json({ ok: false, error: 'DTI registration, mayor\'s permit and BIR 2303 all need a file.' }, { status: 400 });
+
+  const admin = createSupabaseClient(url, serviceKey, { auth: { autoRefreshToken: false, persistSession: false } });
+
+  // The real "Confirm signup" email - only signUp() triggers it, not the
+  // admin API's createUser(). This has to be the cookie-aware @supabase/ssr
+  // client, not a bare supabase-js one: PKCE stores a code_verifier that
+  // only this visitor's browser (via a cookie on this response) can carry
+  // forward to /auth/confirm, which is a separate request days-or-minutes
+  // later. A verifier generated by a throwaway server-side client has
+  // nowhere to persist to and the later exchange fails silently.
+  const origin = new URL(request.url).origin;
+  const ssr = await createSsrClient();
+  const { data: signUpData, error: signUpError } = await ssr.auth.signUp({
+    email: ownerEmail,
+    password: ownerPassword,
+    options: {
+      data: { full_name: ownerName },
+      emailRedirectTo: `${origin}/auth/confirm`
+    }
+  });
+  if (signUpError){
+    const taken = /already registered|already exists/i.test(signUpError.message);
+    return NextResponse.json(
+      { ok: false, error: taken ? 'That email already has an account. Sign in at /admin instead.' : signUpError.message, field: 1 },
+      { status: 400 }
+    );
+  }
+  const ownerId = signUpData.user.id;
+
+  // Unique id, same collision handling as the old client-side registry:
+  // -2, -3, ... rather than rejecting the second "Davao Fleet".
+  const base = slugify(company.slug) || slugify(company.name) || 'company';
+  let id = base;
+  {
+    const { data: existing } = await admin.from('companies').select('id').like('id', `${base}%`);
+    const taken = new Set((existing || []).map(r => r.id));
+    if (taken.has(id)){
+      let n = 2;
+      while (taken.has(`${id}-${n}`)) n++;
+      id = `${id}-${n}`;
+    }
+  }
+
+  const cats = company.cats.filter(x => REG_CATS.includes(x));
+  const { error: coError } = await admin.from('companies').insert({
+    id,
+    name: String(company.name).trim(),
+    about: String(company.about || '').trim().slice(0, 2000),
+    city: String(company.city).trim(),
+    province: String(company.province).trim(),
+    lat: Number(company.lat), lon: Number(company.lon),
+    service_radius_km: Math.max(1, Math.min(500, Math.round(Number(company.radius) || 25))),
+    operating_since: Number(company.since) || null,
+    listed: false
+  });
+  if (coError)
+    return NextResponse.json({ ok: false, error: 'Could not create the company: ' + coError.message }, { status: 500 });
+
+  const cleanup = async (msg) => {
+    // Best-effort: a company with no owner/lines is worse than no company.
+    await admin.from('companies').delete().eq('id', id);
+    return NextResponse.json({ ok: false, error: msg }, { status: 500 });
+  };
+
+  const { error: memberError } = await admin.from('company_members')
+    .insert({ company_id: id, user_id: ownerId, role: 'owner' });
+  if (memberError) return await cleanup('Could not link your account to the company: ' + memberError.message);
+
+  const { error: linesError } = await admin.from('company_lines')
+    .insert(cats.map(line => ({ company_id: id, line })));
+  if (linesError) return await cleanup('Could not save your service lines: ' + linesError.message);
+
+  const city = String(company.city).trim(), province = String(company.province).trim();
+  if (city && province){
+    await admin.from('company_service_areas').insert({ company_id: id, city, province });
+  }
+
+  await admin.from('company_themes').insert({
+    company_id: id,
+    brand: /^#[0-9a-f]{6}$/i.test(company.brand || '') ? company.brand : '#057A2F',
+    accent: /^#[0-9a-f]{6}$/i.test(company.accent || '') ? company.accent : '#F2B705'
+  });
+
+  // Documents - uploaded with the service key because the owner has no
+  // session yet (email unconfirmed); RLS would refuse them one anyway.
+  const docFailures = [];
+  for (const { type, file } of files){
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 100);
+    const path = `${id}/${type}-${Date.now()}-${safeName}`;
+    const { error: upError } = await admin.storage.from('company-documents')
+      .upload(path, bytes, { contentType: file.type, upsert: false });
+    if (upError){
+      // One bad file must not lose the whole registration, but a silent
+      // failure here is worse than a loud one - this is exactly the class
+      // of bug that shows up as "the platform says 0/3" with no way to
+      // tell why.
+      console.error(`register ${id}: storage upload failed for ${type}:`, upError.message);
+      docFailures.push({ type, stage: 'upload', error: upError.message });
+      continue;
+    }
+
+    const { error: insError } = await admin.from('documents').insert({
+      company_id: id,
+      doc_type: type,
+      name: DOC_LABELS[type] || type,
+      file_path: path,
+      file_name: file.name.slice(0, 120),
+      file_bytes: bytes.byteLength,
+      file_mime: file.type
+    });
+    if (insError){
+      console.error(`register ${id}: documents insert failed for ${type}:`, insError.message);
+      docFailures.push({ type, stage: 'insert', error: insError.message });
+    }
+  }
+
+  return NextResponse.json({ ok: true, id, ownerEmail, docFailures });
+}

@@ -42,7 +42,7 @@ language plpgsql
 set search_path = ''
 as $$
 begin
-  if not app.is_platform() then
+  if not (app.is_platform() or current_user = 'service_role') then
     raise exception 'reports are triaged by FR Services Trust & Safety'
       using errcode = '42501';
   end if;

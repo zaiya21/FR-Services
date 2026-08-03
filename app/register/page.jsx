@@ -16,7 +16,7 @@ export default function Page(){
   return (
     <>
       <Markup />
-      <LegacyScripts srcs={["https://unpkg.com/leaflet@1.9.4/dist/leaflet.js","/assets/geo.js","/assets/registry.js","/assets/theme.js","/assets/ph-locations.js","/assets/data.js","/assets/ops.js","/assets/platform.js","/pages/register.js"]} />
+      <LegacyScripts srcs={["https://unpkg.com/leaflet@1.9.4/dist/leaflet.js","/assets/geo.js","/assets/registry.js","/assets/theme.js","/assets/ph-locations.js","/assets/data.js","/assets/ops.js","/assets/platform.js","/assets/company-auth.js","/pages/register.js"]} />
     </>
   );
 }

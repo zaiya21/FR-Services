@@ -1,4 +1,6 @@
 
+if (typeof paintRealAuthNav === 'function') paintRealAuthNav('authNav');
+
 /* ---------- wizard navigation ---------- */
 let step = 1;
 const LAST = 4;
@@ -54,23 +56,44 @@ document.querySelectorAll('.wstep').forEach(s =>
   }));
 
 /* =====================================================================
-   SUBMIT - this now actually creates the company.
+   SUBMIT - creates a real account and a real company row.
 
-   It used to show a reference number and throw the form away, which was
-   honest enough while the marketplace ran on fixtures. With the fixtures
-   gone, "submit" has to mean something: the record goes into the registry,
-   the documents go into the company's own document store as pending, and
-   the company appears on the marketplace with its pin on the map.
+   Everything server-side, in one request: the owner's Supabase Auth
+   account (which is what sends the real confirmation email), the company
+   and its child rows, and the three required documents, uploaded to
+   Storage for real. Nothing here is trusted - app/api/companies/register
+   re-validates every field, the same discipline as the platform sign-in.
 
-   Still local storage, not a server. What that means concretely is stated
-   on the confirmation screen rather than implied - a registration that
-   quietly lives in one browser is a fact the owner should know.
+   Unlisted until FR Services approves it (see /platform's Registrations
+   view) - registering no longer means instantly appearing in search.
    ===================================================================== */
-function submitRegistration(){
+function ownerFieldsProblem(){
+  const val = id => (document.getElementById(id) || {}).value || '';
+  const name = val('r-owner-name').trim();
+  const email = val('r-owner-email').trim();
+  const pass = val('r-owner-pass');
+  const pass2 = val('r-owner-pass2');
+  if (name.length < 2) return { field:1, msg:'Your full name is required.' };
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { field:1, msg:'Enter a valid email address.' };
+  if (pass !== pass2) return { field:1, msg:'The two passwords do not match.' };
+  const problem = (typeof companyPasswordProblem === 'function') ? companyPasswordProblem(pass) : null;
+  if (problem) return { field:1, msg: problem };
+  return null;
+}
+
+async function submitRegistration(){
   const val = id => (document.getElementById(id) || {}).value || '';
   const cats = [...document.querySelectorAll('.cpick.on')].map(c => c.dataset.c);
 
-  const rec = {
+  const ownerProblem = ownerFieldsProblem();
+  if (ownerProblem){
+    document.getElementById('ownerErr').textContent = ownerProblem.msg;
+    goto(1);
+    document.getElementById('ownerErr').scrollIntoView({ block:'center', behavior:'smooth' });
+    return;
+  }
+
+  const company = {
     name:     val('r-name').trim(),
     slug:     val('r-slug').trim() || val('r-name').trim(),
     cats,
@@ -83,78 +106,78 @@ function submitRegistration(){
     phone:    val('r-phone').trim(),
     email:    val('r-email').trim(),
     about:    val('r-addr').trim(),
-    open247:  false,
-    delivery: true,
-    operator: cats.includes('equipment') || cats.includes('towing'),
-    types:    [],
-    tags:     []
+    brand, accent
   };
 
-  const out = regAdd(rec);
+  const fd = new FormData();
+  fd.append('ownerName', val('r-owner-name').trim());
+  fd.append('ownerEmail', val('r-owner-email').trim());
+  fd.append('ownerPassword', val('r-owner-pass'));
+  fd.append('company', JSON.stringify(company));
+  for (const type of Object.keys(regFiles)) fd.append('doc_' + type, regFiles[type]);
+
+  const submitBtn = document.getElementById('w-next');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Submitting…';
+
+  let out;
+  try {
+    const res = await fetch('/api/companies/register', { method:'POST', body: fd });
+    out = await res.json();
+  } catch (e) {
+    out = { ok:false, error:'Could not reach the server. Check your connection and try again.' };
+  }
+  submitBtn.disabled = false;
+  submitBtn.textContent = 'Submit for verification';
+
   if (!out.ok){
-    /* A failure here loses the whole form, so it is reported where the eye
-       already is rather than in a corner of step 3. */
     const err = document.getElementById('docErr');
     if (err) err.textContent = 'Could not complete registration: ' + out.error;
     coordMsg('err', 'Could not complete registration: ' + out.error);
-    if (/coordinate/i.test(out.error)) goto(3); else goto(1);
+    if (/coordinate/i.test(out.error || '')) goto(3);
+    else if (out.field === 1 || /email|password|name/i.test(out.error || '')){
+      document.getElementById('ownerErr').textContent = out.error;
+      goto(1);
+    } else goto(1);
     return;
   }
 
-  /* The three permits go in as pending - the same queue the platform
-     console reviews. Files are held in memory by this wizard and cannot
-     survive the page, so what is recorded is the fact of the upload and
-     its filename, which is what the reviewer's queue keys on. */
-  try {
-    if (typeof saveDocs === 'function' && typeof normaliseDoc === 'function'){
-      const docs = Object.keys(regFiles).map(type => normaliseDoc({
-        type,
-        name: (DOC_TYPES.find(d => d.id === type) || {}).label || type,
-        file: { name: regFiles[type].name, size: regFiles[type].size,
-                type: regFiles[type].type },
-        published: false
-      }, false));
-      if (docs.length) saveDocs(out.id, docs);
-    }
-  } catch (e) {
-    /* Documents failing to persist must not lose the company - the owner
-       can re-upload from the admin console, but cannot re-register. */
-  }
-
-  /* Save the theme the owner picked in step 4, so their storefront opens
-     in their own colours rather than the default green. */
-  try {
-    if (typeof saveTheme === 'function')
-      saveTheme(out.id, { brand, accent });
-  } catch (e) {}
-
   document.getElementById('done-ref').textContent = out.id.slice(0, 4).toUpperCase();
-  const ph = rec.phone;
+  const ph = company.phone;
   if (ph) document.getElementById('done-phone').textContent = ph;
 
-  /* Two links that were not here before, because they are the whole point
-     of registering: the storefront that now exists, and the console that
-     manages it. */
   const done = document.getElementById('r-done');
   const extra = document.createElement('div');
-  extra.className = 'row gap2 mt4';
-  extra.style.flexWrap = 'wrap';
+  extra.className = 'row gap3';
+  extra.style.cssText = 'flexWrap:wrap;justifyContent:center';
   extra.innerHTML =
-    '<a class="btn btn-y" href="/company?c=' + encodeURIComponent(out.id) + '">' +
-      'View your storefront</a>' +
-    '<a class="btn btn-w" href="/admin?c=' + encodeURIComponent(out.id) + '">' +
-      'Open your dashboard</a>' +
-    '<a class="btn btn-i" href="/">See yourself on the marketplace</a>';
-  done.appendChild(extra);
+    '<a class="btn btn-i btn-lg" href="/">Browse the marketplace</a>' +
+    '<a class="btn btn-w btn-lg" href="/">Back to home</a>';
 
   const note = document.createElement('p');
   note.className = 'small muted mt3';
   note.style.lineHeight = '1.6';
   note.textContent =
-    'Saved in this browser. This prototype has no server yet, so your company ' +
-    'is visible on this device only, and clearing site data removes it. Your yard ' +
-    'is pinned at ' + formatCoords(COORD.lat, COORD.lon) + '.';
-  done.appendChild(note);
+    'We\'ve emailed ' + out.ownerEmail + ' a confirmation link. Click it, then sign in at ' +
+    '/admin to reach your dashboard - that\'s also where our team\'s document review shows up. ' +
+    'Your company will not appear on the marketplace until both your email is confirmed and ' +
+    'your documents are verified.';
+  done.insertBefore(note, done.querySelector('.timeline'));
+
+  if (out.docFailures && out.docFailures.length){
+    const warn = document.createElement('p');
+    warn.className = 'small mt3';
+    warn.style.cssText = 'line-height:1.6;color:var(--danger, #B91C1C);font-weight:600';
+    warn.textContent =
+      (out.docFailures.length === 1 ? 'One document' : out.docFailures.length + ' documents') +
+      ' did not save (' + out.docFailures.map(f => f.type).join(', ') + '). ' +
+      'Everything else about your registration went through - sign in at /admin once your ' +
+      'email is confirmed and re-upload it there.';
+    done.insertBefore(warn, done.querySelector('.timeline'));
+  }
+
+  const oldLinks = done.querySelector('.row.gap3');
+  if (oldLinks) oldLinks.replaceWith(extra); else done.appendChild(extra);
 
   document.getElementById('wiz').style.display = 'none';
   done.classList.add('on');
@@ -258,7 +281,9 @@ document.getElementById('p2').addEventListener('change', e => {
   if (!f) return;
   const problem = (typeof docFileProblem === 'function') ? docFileProblem(f) : null;
   if (problem){ document.getElementById('docErr').textContent = problem; return; }
-  regFiles[input.dataset.file] = { name:f.name, size:f.size, type:f.type };
+  /* The actual File, not just its metadata - submitRegistration() uploads
+     these bytes for real now that there is somewhere real to put them. */
+  regFiles[input.dataset.file] = f;
   document.getElementById('docErr').textContent = '';
   paintDocs();
 });

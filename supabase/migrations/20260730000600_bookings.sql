@@ -168,7 +168,7 @@ language plpgsql
 set search_path = ''
 as $$
 begin
-  if app.is_platform() then return new; end if;
+  if app.is_platform() or current_user = 'service_role' then return new; end if;
 
   if new.rate_per_day   is distinct from old.rate_per_day
   or new.hire_total     is distinct from old.hire_total

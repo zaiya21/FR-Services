@@ -555,7 +555,19 @@ The seeded fixture now produces a realistic mix - roughly 70% approved, 25% awai
 
 ### The sign-in gate
 
-`platform.html` opens behind a sign-in box - a modal over the console, not a separate landing page. Three steps live in the same card: **sign in**, **request a reset code**, **choose a new password**. `assets/auth.js` holds the logic.
+`platform.html` opens behind a sign-in box - a modal over the console, not a separate landing page. Three steps live in the same card: **sign in**, **request a reset code**, **choose a new password**.
+
+**This is now real, server-side auth**, not the client-only prototype this section used to describe. Password checking, sessions and password reset moved to Supabase Auth, reached through five Route Handlers under `app/api/auth/`:
+
+| Route | Does |
+|---|---|
+| `POST /api/auth/sign-in` | Checks the password against Supabase Auth, then checks `profiles.role = 'platform'` before issuing a session - a real account that isn't a platform operator is rejected with the same generic message as a wrong password |
+| `GET /api/auth/session` | Reads the current session from its cookie; used on page load to decide gate vs. console |
+| `POST /api/auth/sign-out` | Clears the session |
+| `POST /api/auth/reset-request` | Triggers Supabase's emailed OTP for the account, if one exists |
+| `POST /api/auth/reset-confirm` | Verifies the OTP and sets the new password |
+
+The browser side is `public/assets/platform-auth.js` - `platformAuthSignIn`, `platformAuthSession`, `platformAuthSignOut`, `platformAuthStartReset`, `platformAuthCompleteReset` - each a thin `fetch` to the route above. It is deliberately a separate file from `assets/auth.js`, which still runs the marketplace-wide "Sign in" nav button and saved companies on renter-facing pages: that is a different, still-client-only feature this change did not touch, because there is still no renter sign-up (§ "Saving a company requires an account").
 
 Shipped account, printed in the box itself because a demo nobody can enter is not a demo:
 
@@ -564,22 +576,19 @@ admin@frservices.ph
 FRadmin2026!
 ```
 
-While locked, the console is blurred *and* unpainted - `showTab()` never runs without a session, so no marketplace data sits in the DOM behind the blur. Locking a page whose data is already rendered is theatre.
+It is a real Supabase Auth account, created once by `scripts/seed-platform-admin.mjs` against your project (service-role key, run from your own machine - see `README.md` for the exact command), and promoted to `role='platform'` in `public.profiles`. `app/api/auth/session` and `sign-in` both refuse anyone whose profile isn't `platform`, which is what makes the role column in `supabase/migrations/…_identity.sql` load-bearing rather than aspirational.
 
-**This is a gate, not a lock, and the UI says so.** There is no server: the thing checking the password is the same thing asking for it, and anyone can open devtools and write a session object. A warning to that effect sits under the form. What is still worth doing, and is done:
+While locked, the console is still blurred *and* unpainted - `showTab()` never runs without a session, so no marketplace data sits in the DOM behind the blur. That property didn't need to change: the tab content was always populated at runtime from the demo dataset in `assets/data.js` / `assets/ops.js`, never baked into the server-rendered HTML, so there was nothing for a real server-side redirect to additionally protect. Wiring `/platform`'s data - bookings, documents, reports - to the actual database is separate work, not yet done; see `supabase/README.md`.
 
-- **The password is never stored in any form.** Only a salted SHA-256 digest, via `crypto.subtle` (Chrome treats `file://` as a secure context). If `subtle` is missing the fallback digest labels itself `weak-` so nobody mistakes it for one. A test asserts the plaintext appears nowhere in `localStorage`, on both paths - because operators reuse passwords, and leaking one here leaks it elsewhere.
-- **Failed attempts lock the account** for 60 seconds after 5 tries, so the shape of rate limiting is in the prototype.
-- **The failure message is identical** whether the account is unknown or the password is wrong, and a reset request for an unregistered address reports success without issuing a code. Otherwise either form doubles as a way to enumerate who has an account.
-- **Comparison is constant-time-ish** (`safeEqual` xors the whole string rather than exiting early).
-- **Sessions expire** - 12 hours, or 14 days behind an explicit "keep me signed in". Changing a password ends every session.
-- **Reset codes are six digits, single-use, and expire in 10 minutes.**
+What is real now, matching the list this section used to say was still owed to a server:
 
-There is no mail server, so the reset code is **displayed** with a line saying exactly why. Pretending an email went out would leave the operator waiting for one that never arrives.
+- **The password is checked server-side**, over TLS, by Supabase Auth - never a client-computed digest compared in the browser.
+- **The session is a `Secure` cookie set server-side**, not the JS-visible `localStorage` record the client-only prototype used. It is *not* `httpOnly` - that's a deliberate @supabase/ssr default, kept as-is because the same cookie is what lets a signed-in company owner's browser talk to Postgres directly under RLS (see `app/_SupabaseBrowser.jsx`); the boundary here is RLS and a short-lived, auto-refreshed access token, not cookie secrecy. `remember me` sets it to 14 days; otherwise it's cut to 12 hours by the cookie's own `maxAge`, refreshed on every request by `middleware.js` so a session doesn't silently die mid-shift.
+- **The failure message is identical** whether the account doesn't exist, the password is wrong, or the account is real but not a platform operator - the sign-in route rejects all three the same way and re-signs-out anyone who fails the role check.
+- **Reset codes are six digits, single-use, and expire in 10 minutes** - now genuinely emailed via Supabase's recovery-OTP flow (the "Reset Password" email template is configured to send `{{ .Token }}` rather than a magic link, to keep the same code-entry UX). Nothing is displayed on screen anymore; there is a mail server now.
+- **Rate limiting** is Supabase Auth's own, project-wide, rather than the prototype's 60-second, 5-attempt local counter. That counter is gone - it was never a real defense (anyone could clear `localStorage`), and the real thing replacing it doesn't expose a countdown the UI can show, so the sign-in error simply says "too many attempts" when Supabase reports a rate limit.
 
-The console shows a **"Still on the shipped password"** badge next to the operator name until the password is changed, and the badge clears on change.
-
-**The migration to a real server** is the whole of this: password over TLS only, stored under a slow KDF (argon2id or bcrypt - *not* SHA-256, which is far too fast to resist an offline attack), session as an opaque httpOnly cookie, rate limiting per-account *and* per-IP, reset tokens emailed and single-use. None of that can be prototyped client-side, which is exactly why the warning is on the form rather than in a comment.
+The remaining gap: bootstrapping. The very first platform account can't grant itself the `platform` role (`profiles_guard_role` in the migration forbids self-promotion by design), so it's done once with the service-role key via `scripts/seed-platform-admin.mjs`, run by a human with access to the Supabase project - not by the app at runtime. Every platform account after that is created the same, deliberate way: by someone who already holds the role.
 
 ### How FR Services earns
 

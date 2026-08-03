@@ -104,7 +104,7 @@ language plpgsql
 set search_path = ''
 as $$
 begin
-  if app.is_platform() then return new; end if;
+  if app.is_platform() or current_user = 'service_role' then return new; end if;
 
   if new.rating       is distinct from old.rating
   or new.review_count is distinct from old.review_count then
