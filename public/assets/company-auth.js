@@ -53,12 +53,24 @@ async function companyAuthSignOut(){
  * Leaves the host untouched when nobody is signed in, so it still shows
  * whatever that page's own markup (or auth.js's paintAuthNav, on the pages
  * that call it for favourites) already put there.
+ *
+ * Also the thing that removes #bootOverlay on the pages that have one
+ * (see app/page.css) - that overlay exists purely to cover the moment
+ * between first paint and this function's own answer, so nobody sees the
+ * nav render as signed-out and then flip to signed-in a second later.
+ * Removed unconditionally, on every path below: there's no sign-in
+ * decision to render here like /platform's or /admin's gates make, just a
+ * real check to wait out either way.
  */
 async function paintRealAuthNav(hostId){
+  const removeBootOverlay = () => {
+    const overlay = document.getElementById('bootOverlay');
+    if (overlay) overlay.remove();
+  };
   const host = document.getElementById(hostId || 'authNav');
-  if (!host) return null;
+  if (!host){ removeBootOverlay(); return null; }
   const session = await companyAuthSession();
-  if (!session) return null;
+  if (!session){ removeBootOverlay(); return null; }
 
   const esc = s => String(s == null ? '' : s).replace(/[<>&"]/g, c => ({ '<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;' }[c]));
   const SHIELD_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
@@ -99,6 +111,7 @@ async function paintRealAuthNav(hostId){
     }
   }
 
+  removeBootOverlay();
   return session;
 }
 
