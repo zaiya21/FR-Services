@@ -35,8 +35,13 @@ export async function DELETE(request, { params }){
   const { data: { user } } = await ssr.auth.getUser();
   if (!user) return NextResponse.json({ ok: false, error: 'Sign in required.' }, { status: 401 });
 
-  const { data: isPlatform } = await ssr.rpc('is_platform');
-  if (!isPlatform)
+  // Not app.is_platform() over RPC: PostgREST on this project only exposes
+  // the public schema (see 20260803000100_owner_status_public_schema.sql),
+  // so app.* is unreachable by name over HTTP no matter how it's called.
+  // A plain read of the caller's own profiles row needs none of that - the
+  // row-level "id = auth.uid()" policy alone lets them read it.
+  const { data: profile } = await ssr.from('profiles').select('role').eq('id', user.id).single();
+  if (!profile || profile.role !== 'platform')
     return NextResponse.json({ ok: false, error: 'Only FR Services staff can remove a company.' }, { status: 403 });
 
   const admin = createSupabaseClient(
