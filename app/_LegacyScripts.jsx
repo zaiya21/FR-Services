@@ -23,19 +23,33 @@ function loadOne(src, waitEvent){
        evaluate a script a second time - these declare top-level consts,
        and a second run would throw on every one of them. */
     if (document.querySelector(`script[data-legacy="${src}"]`)) return resolve();
+
+    /* The waitEvent listener must be armed BEFORE the script can possibly
+       run, not inside onload. onload fires once the script's own top-level
+       synchronous code has run - but if that code has no real await left
+       to reach (e.g. live-registry.js on a bare /admin visit, where
+       window.supabaseBrowser is already set and there's no ?c= to fetch),
+       its whole body runs synchronously and it can dispatch its ready
+       event *during* that same synchronous run, before onload even fires.
+       Attaching the listener in onload would then be listening for an
+       event that already happened - a permanent, silent hang. Tracking
+       both flags and resolving once both are true handles either order. */
+    let scriptLoaded = false;
+    let eventFired = false;
+    if (waitEvent){
+      window.addEventListener(waitEvent, () => {
+        eventFired = true;
+        if (scriptLoaded) resolve();
+      }, { once:true });
+    }
+
     const el = document.createElement('script');
     el.src = src;
     el.async = false;
     el.dataset.legacy = src;
     el.onload = () => {
-      /* onload fires once the script's own top-level synchronous code has
-         run - not once any async work it kicked off has resolved. A script
-         named in `waitEvents` signals real completion itself, by dispatching
-         this event, so the loader can block the *next* script on it (e.g.
-         live-registry.js finishing its Supabase fetch before data.js reads
-         localStorage). Every other script is unaffected - this is opt-in. */
-      if (waitEvent) window.addEventListener(waitEvent, () => resolve(), { once:true });
-      else resolve();
+      scriptLoaded = true;
+      if (!waitEvent || eventFired) resolve();
     };
     el.onerror = () => reject(new Error('failed to load ' + src));
     document.body.appendChild(el);

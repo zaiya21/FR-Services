@@ -16,10 +16,8 @@
    paint, so it doubles as the gate's home.
    ===================================================================== */
 (async () => {
-  console.log('[admin-gate] starting');
   const overlay = document.getElementById('bootOverlay');
   if (!overlay){
-    console.log('[admin-gate] no #bootOverlay found - letting admin.js run unguarded');
     window.dispatchEvent(new Event('admin-gate-ready'));
     return;
   }
@@ -85,32 +83,25 @@
        is just blank" looks like: renderMessage() never gets a chance to
        run. A page must never wait indefinitely on something outside its
        own control; 5 seconds and then fail visibly instead. */
-    console.log('[admin-gate] waiting for window.supabaseBrowser...');
     sb = await new Promise(resolve => {
       window.addEventListener('supabase-browser-ready', () => resolve(window.supabaseBrowser), { once:true });
       setTimeout(() => resolve(window.supabaseBrowser || null), 5000);
     });
   }
-  console.log('[admin-gate] supabaseBrowser:', !!sb, 'companyAuthSession fn:', typeof companyAuthSession);
   if (!sb || typeof companyAuthSession !== 'function'){
-    console.log('[admin-gate] failing: no db client or company-auth.js missing');
     renderMessage('Something went wrong', 'Reload the page. If this keeps happening, the database connection did not start correctly.');
     return;
   }
 
   const wantId = new URLSearchParams(location.search).get('c');
-  console.log('[admin-gate] wantId:', wantId, '- checking session...');
   const session = await companyAuthSession();
-  console.log('[admin-gate] session:', session);
 
   if (!session){
-    console.log('[admin-gate] no session - rendering sign-in form');
     renderSignIn();
     return;
   }
 
   if (session.role === 'platform'){
-    console.log('[admin-gate] platform account - refusing');
     renderMessage(
       'This isn’t FR Services’ console',
       'You’re signed in as FR Services staff. A company’s dashboard belongs to its own owner - use <a href="/platform">/platform</a> for marketplace-wide oversight.',
@@ -120,8 +111,7 @@
   }
 
   if (!wantId){
-    const { data, error } = await sb.from('company_members').select('company_id').eq('user_id', session.id);
-    console.log('[admin-gate] own memberships:', data, 'error:', error);
+    const { data } = await sb.from('company_members').select('company_id').eq('user_id', session.id);
     const ids = (data || []).map(r => r.company_id);
     if (ids.length === 1){
       location.replace('/admin?c=' + encodeURIComponent(ids[0]));
@@ -144,13 +134,12 @@
     return;
   }
 
-  const { data: membership, error: memErr } = await sb
+  const { data: membership } = await sb
     .from('company_members')
     .select('company_id')
     .eq('user_id', session.id)
     .eq('company_id', wantId)
     .maybeSingle();
-  console.log('[admin-gate] membership for', wantId, ':', membership, 'error:', memErr);
 
   if (!membership){
     renderMessage(
@@ -161,7 +150,6 @@
     return;
   }
 
-  console.log('[admin-gate] approved - removing overlay');
   overlay.remove();
   window.dispatchEvent(new Event('admin-gate-ready'));
   } // end runGate
