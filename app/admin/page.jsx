@@ -14,8 +14,8 @@ export default function Page(){
       <SupabaseBrowser />
       <Markup />
       <LegacyScripts
-        srcs={["/assets/page-transition.js","/assets/geo.js","/assets/registry.js","/assets/live-registry.js","/assets/theme.js","/assets/ph-locations.js","/assets/data.js","/assets/ops.js","/assets/pdf.js","/assets/company-auth.js","/pages/admin.js"]}
-        waitEvents={{"/assets/live-registry.js":"live-registry-ready"}}
+        srcs={["/assets/page-transition.js","/assets/geo.js","/assets/registry.js","/assets/live-registry.js","/assets/theme.js","/assets/ph-locations.js","/assets/data.js","/assets/ops.js","/assets/pdf.js","/assets/company-auth.js","/assets/admin-gate.js","/pages/admin.js"]}
+        waitEvents={{"/assets/live-registry.js":"live-registry-ready","/assets/admin-gate.js":"admin-gate-ready"}}
       />
     </>
   );

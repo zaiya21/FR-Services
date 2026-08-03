@@ -6,6 +6,19 @@
    badge, rating, reviews, report link) are NOT editable from this screen
    by design - see ARCHITECTURE.md §4.
    ===================================================================== */
+/* Same technique as /platform's gate - see admin-gate.js and markup.jsx. */
+.boot-overlay{position:fixed;inset:0;z-index:500;background:var(--bg,#FBFAF7);
+  display:flex;align-items:center;justify-content:center;padding:24px}
+.admin-gate-card{max-width:400px;width:100%;background:var(--surface,#fff);
+  border:var(--bd);border-radius:var(--r-lg);box-shadow:var(--off);padding:var(--s5)}
+.admin-gate-card h2{font-family:'Space Grotesk',sans-serif;font-size:22px;margin:0 0 10px}
+.admin-gate-card p{color:var(--ink-2,#4A4F63);line-height:1.6;margin:0 0 18px}
+.admin-gate-card label{display:block;margin-bottom:14px;font-size:13px;font-weight:600}
+.admin-gate-card input[type="email"],.admin-gate-card input[type="password"]{
+  display:block;width:100%;margin-top:6px;padding:10px 12px;border-radius:10px;
+  border:1.5px solid var(--hair,#ccc);font-size:15px;font-weight:400}
+.admin-gate-card .gerr{color:var(--danger,#B91C1C);font-weight:600;font-size:13.5px;margin-bottom:12px}
+.admin-gate-card .glinks{margin-top:16px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 .adminbar{background:var(--ink);color:#fff;border-bottom:var(--bd)}
 .adminbar .wrap{display:flex;align-items:center;gap:var(--s4);
   padding:var(--s3) var(--s5);flex-wrap:wrap}
