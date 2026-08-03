@@ -82,11 +82,22 @@ async function paintRealAuthNav(hostId){
     if (listBtn) listBtn.hidden = true;
   }
 
-  /* The "Admin" nav link starts hidden in the markup - anyone signed in
-     (platform staff or a company owner) gets it, an anonymous visitor
-     never sees it at all. */
+  /* This nav link starts hidden in the markup as "Admin" -> /admin - an
+     anonymous visitor never sees it at all. Signed in as a company owner,
+     that's the right destination. Signed in as FR Services staff, /admin
+     refuses them outright (see admin-gate.js), so the link has to point
+     them to /platform instead, worded for what it actually opens. */
   const adminLink = document.getElementById('adminNavLink');
-  if (adminLink) adminLink.hidden = false;
+  if (adminLink){
+    adminLink.hidden = false;
+    if (session.role === 'platform'){
+      adminLink.textContent = 'Platform';
+      adminLink.href = '/platform';
+    } else {
+      adminLink.textContent = 'Admin';
+      adminLink.href = '/admin';
+    }
+  }
 
   return session;
 }
