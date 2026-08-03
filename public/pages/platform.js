@@ -713,6 +713,7 @@ async function paintRegistrations(){
         ${c.listed
           ? `<button class="btn btn-w btn-sm" data-unlist="${esc(c.id)}">Unlist</button>`
           : `<button class="btn btn-y btn-sm" data-approve="${esc(c.id)}">Approve &amp; list</button>`}
+        <button class="btn btn-r btn-sm" data-remove="${esc(c.id)}" data-remove-name="${esc(c.name)}">Remove</button>
       </div></td>
     </tr>`;
   }).join('');
@@ -722,6 +723,7 @@ $('regRows').addEventListener('click', async e => {
   const approveBtn = e.target.closest('[data-approve]');
   const unlistBtn  = e.target.closest('[data-unlist]');
   const docsBtn    = e.target.closest('[data-view-docs]');
+  const removeBtn  = e.target.closest('[data-remove]');
   const sb = window.supabaseBrowser;
   if (!sb) return;
 
@@ -738,7 +740,37 @@ $('regRows').addEventListener('click', async e => {
     paintRegistrations();
   }
   if (docsBtn) paintRegDocs(docsBtn.dataset.viewDocs);
+  if (removeBtn) removeCompany(removeBtn.dataset.remove, removeBtn.dataset.removeName, removeBtn);
 });
+
+/**
+ * A hard, permanent delete - the company row, its profile, documents,
+ * fleet, theme, expenses and trust records all go with it (cascades - see
+ * app/api/companies/[id]/route.js). Typing the company's exact name back
+ * is the confirmation, not a plain OK/Cancel - the one existing dialog in
+ * this flow (the document-rejection reason) is a `prompt()` too, so this
+ * matches the app's own pattern rather than inventing a modal just here.
+ */
+async function removeCompany(id, name, btn){
+  const typed = prompt(
+    `This permanently deletes "${name}" - its profile, documents, fleet, theme, expenses and trust records. ` +
+    `This cannot be undone.\n\nType the company's name exactly to confirm:`
+  );
+  if (typed === null) return;
+  if (typed.trim() !== name){
+    alert('That did not match the company name. Nothing was removed.');
+    return;
+  }
+  btn.disabled = true;
+  const res = await fetch(`/api/companies/${encodeURIComponent(id)}`, { method: 'DELETE' })
+    .then(r => r.json()).catch(() => ({ ok: false, error: 'Something went wrong. Try again.' }));
+  if (!res.ok){
+    alert('Could not remove the company: ' + res.error);
+    btn.disabled = false;
+    return;
+  }
+  paintRegistrations();
+}
 
 let regDocsCompanyId = null;
 
