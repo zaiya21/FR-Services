@@ -7,7 +7,7 @@ const TODAY = opsToday();
 const pct = n => (Math.round(n * 10) / 10) + '%';
 
 /* ---------- tabs ---------- */
-const PANES = ['overview','review','companies','registrations','reports','monitoring'];
+const PANES = ['overview','review','companies','registrations','reports','monitoring','staff'];
 let activeTab = 'overview';
 
 function showTab(id){
@@ -22,6 +22,7 @@ function showTab(id){
   if (id === 'registrations') paintRegistrations();
   if (id === 'reports')    paintReports();
   if (id === 'monitoring') paintMonitoring();
+  if (id === 'staff')      paintStaff();
   try { history.replaceState(null, '', '#' + id); } catch { /* file:// */ }
   window.scrollTo(0, 0);
 }
@@ -832,6 +833,53 @@ $('regDocs').addEventListener('click', async e => {
   const companyId = regDocsCompanyId;
   await paintRegistrations();
   if (companyId) paintRegDocs(companyId);
+});
+
+/* =====================================================================
+   STAFF - who else can sign in to this console.
+
+   Reads and writes both go through /api/platform/staff (service-role
+   backed), not window.supabaseBrowser directly: an email address only
+   exists in auth.users, which RLS never exposes even to a platform
+   session, and creating a new sign-in is the Auth admin API, not a table
+   insert. See app/api/platform/staff/route.js.
+   ===================================================================== */
+async function paintStaff(){
+  const status = $('stStatus');
+  status.textContent = 'Loading…';
+  $('stRows').innerHTML = '';
+
+  const res = await fetch('/api/platform/staff').then(r => r.json())
+    .catch(() => ({ ok:false, error:'Something went wrong. Try again.' }));
+  if (!res.ok){ status.textContent = 'Could not load staff: ' + res.error; return; }
+
+  status.textContent = `${res.staff.length} staff account${res.staff.length === 1 ? '' : 's'}`;
+  $('stRows').innerHTML = res.staff.map(s => `<tr>
+    <td class="strong">${esc(s.fullName || '—')}</td>
+    <td>${esc(s.email)}</td>
+    <td class="nowrap">${new Date(s.createdAt).toLocaleDateString('en-PH')}</td>
+  </tr>`).join('');
+}
+
+$('stAddForm').addEventListener('submit', async () => {
+  const err = $('stAddErr'), ok = $('stAddOk'), btn = $('stAddGo');
+  err.textContent = ''; ok.textContent = '';
+  const fullName = $('stName').value.trim();
+  const email = $('stEmail').value.trim();
+  const password = $('stPass').value;
+
+  btn.disabled = true;
+  const res = await fetch('/api/platform/staff', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fullName, email, password })
+  }).then(r => r.json()).catch(() => ({ ok:false, error:'Something went wrong. Try again.' }));
+  btn.disabled = false;
+
+  if (!res.ok){ err.textContent = res.error; return; }
+  ok.textContent = res.note || `${res.email} can now sign in here.`;
+  $('stAddForm').reset();
+  paintStaff();
 });
 
 /* =====================================================================
