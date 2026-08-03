@@ -81,6 +81,13 @@ async function paintRealAuthNav(hostId){
     const listBtn = document.getElementById('listCompanyBtn');
     if (listBtn) listBtn.hidden = true;
   }
+
+  /* The "Admin" nav link starts hidden in the markup - anyone signed in
+     (platform staff or a company owner) gets it, an anonymous visitor
+     never sees it at all. */
+  const adminLink = document.getElementById('adminNavLink');
+  if (adminLink) adminLink.hidden = false;
+
   return session;
 }
 
