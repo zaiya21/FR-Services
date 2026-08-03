@@ -154,7 +154,7 @@ header{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.92);backdro
 .sf-url{margin-left:var(--s3);font-size:11.5px;color:var(--ink-2);background:#fff;border:1px solid var(--line);border-radius:var(--r-pill);padding:3px 11px}
 .sf-hero{height:96px;background:linear-gradient(120deg,#0F766E,#059669 60%,#34D399)}
 .sf-body{padding:var(--s4)}
-.sf-id{display:flex;gap:var(--s3);align-items:flex-end;margin-top:-38px;margin-bottom:var(--s4)}
+.sf-id{display:flex;gap:var(--s3);align-items:center;margin-top:40px;margin-bottom:var(--s4)}
 .sf-logo{width:56px;height:56px;border-radius:15px;background:#fff;border:3px solid #fff;box-shadow:var(--sh-1);display:grid;place-items:center;font-weight:800;color:var(--brand);font-size:18px}
 .sf-name{padding-bottom:5px}
 .sf-name strong{display:block;font-size:15px;font-weight:800}

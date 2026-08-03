@@ -165,7 +165,7 @@ nav{position:sticky;top:0;z-index:80;background:var(--bg);border-bottom:var(--bd
 .sfhero{height:92px;background:linear-gradient(115deg,var(--indigo),var(--violet) 60%,var(--coral));border-bottom:2.5px solid var(--ink);position:relative}
 .sfhero .pen{position:absolute;top:9px;right:9px;background:#fff;border:2px solid var(--ink);border-radius:var(--r-pill);font-size:11px;font-weight:700;padding:3px 10px}
 .sfin{padding:var(--s4)}
-.sfid{display:flex;gap:var(--s3);align-items:flex-end;margin-top:-34px;margin-bottom:var(--s4)}
+.sfid{display:flex;gap:var(--s3);align-items:center;margin-top:40px;margin-bottom:var(--s4)}
 .sflogo{width:56px;height:56px;border-radius:15px;background:var(--yellow);border:2.5px solid var(--ink);display:grid;place-items:center;font-size:26px}
 .sfnm strong{display:block;font-family:'Space Grotesk',sans-serif;font-size:16px}
 .sfnm span{font-size:12px;color:var(--ink-2);font-weight:600}
