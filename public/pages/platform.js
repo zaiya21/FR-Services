@@ -646,8 +646,12 @@ buildChips('coRange', ['today','week','month','lastmo','30','quarter','year','al
    ===================================================================== */
 function waitForSupabaseBrowser(){
   if (window.supabaseBrowser) return Promise.resolve(window.supabaseBrowser);
-  return new Promise(resolve =>
-    window.addEventListener('supabase-browser-ready', () => resolve(window.supabaseBrowser), { once:true }));
+  return new Promise(resolve => {
+    window.addEventListener('supabase-browser-ready', () => resolve(window.supabaseBrowser), { once:true });
+    // Never wait forever on a signal that might not come - same fix as
+    // live-registry.js and admin-gate.js.
+    setTimeout(() => resolve(window.supabaseBrowser || null), 5000);
+  });
 }
 
 async function paintRegistrations(){
@@ -658,6 +662,7 @@ async function paintRegistrations(){
   $('regDocs').innerHTML = '';
 
   const sb = await waitForSupabaseBrowser();
+  if (!sb){ status.textContent = 'Could not connect to the database. Reload the page.'; return; }
   const [{ data: companies, error: coErr }, { data: reg }, { data: standing }] = await Promise.all([
     sb.from('companies')
       .select('id,name,city,province,listed,created_at,company_lines(line)')

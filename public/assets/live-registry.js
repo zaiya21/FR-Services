@@ -23,10 +23,14 @@
 
   let sb = window.supabaseBrowser;
   if (!sb){
+    /* Not just "may have already fired" - if it never fires at all, this
+       used to wait forever, holding up every script after it (including,
+       on /admin, the gate that decides whether anything is shown at all).
+       5 seconds, then give up and let the page fall back to whatever
+       localStorage already had. */
     sb = await new Promise(resolve => {
       window.addEventListener('supabase-browser-ready', () => resolve(window.supabaseBrowser), { once:true });
-      // supabase-browser-ready may have already fired by the time we got here
-      setTimeout(() => { if (window.supabaseBrowser) resolve(window.supabaseBrowser); }, 0);
+      setTimeout(() => resolve(window.supabaseBrowser || null), 5000);
     });
   }
   if (!sb){ done(); return; }

@@ -67,9 +67,14 @@
 
   let sb = window.supabaseBrowser;
   if (!sb){
+    /* This used to wait forever if the ready event never fired for any
+       reason - a real hang, not an error, which is exactly what "the page
+       is just blank" looks like: renderMessage() never gets a chance to
+       run. A page must never wait indefinitely on something outside its
+       own control; 5 seconds and then fail visibly instead. */
     sb = await new Promise(resolve => {
       window.addEventListener('supabase-browser-ready', () => resolve(window.supabaseBrowser), { once:true });
-      setTimeout(() => { if (window.supabaseBrowser) resolve(window.supabaseBrowser); }, 0);
+      setTimeout(() => resolve(window.supabaseBrowser || null), 5000);
     });
   }
   if (!sb || typeof companyAuthSession !== 'function'){
