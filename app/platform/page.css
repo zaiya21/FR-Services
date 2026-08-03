@@ -5,6 +5,12 @@
    deliberate: a dark bar and a distinct accent, so nobody confuses the
    screen that can approve documents with the screen a seller uses.
    ===================================================================== */
+/* Visible from first paint, removed the instant the session check resolves
+   (see markup.jsx and the boot sequence at the bottom of platform.js) -
+   see that no chrome shaped like "the platform console" can ever be on
+   screen before the gate-vs-console decision is made. */
+.boot-overlay{position:fixed;inset:0;z-index:350;background:var(--bg,#FBFAF7)}
+
 .pbar{background:#0B0C12;color:#fff;border-bottom:var(--bd)}
 .pbar .wrap{display:flex;align-items:center;gap:var(--s4);
   padding:var(--s3) var(--s5);flex-wrap:wrap}

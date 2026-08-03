@@ -1057,4 +1057,8 @@ $('signOut').addEventListener('click', async () => {
   const session = await platformAuthSession();
   if (session) unlockConsole(session);
   else lockConsole();
+  // Whichever way that went, the decision is made - safe to reveal
+  // whatever's underneath now.
+  const overlay = $('bootOverlay');
+  if (overlay) overlay.remove();
 })();

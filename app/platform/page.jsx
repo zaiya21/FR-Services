@@ -13,7 +13,7 @@ export default function Page(){
     <>
       <SupabaseBrowser />
       <Markup />
-      <LegacyScripts srcs={["/assets/geo.js","/assets/registry.js","/assets/theme.js","/assets/ph-locations.js","/assets/data.js","/assets/ops.js","/assets/platform.js","/assets/platform-auth.js","/pages/platform.js"]} />
+      <LegacyScripts srcs={["/assets/page-transition.js","/assets/geo.js","/assets/registry.js","/assets/theme.js","/assets/ph-locations.js","/assets/data.js","/assets/ops.js","/assets/platform.js","/assets/platform-auth.js","/pages/platform.js"]} />
     </>
   );
 }
