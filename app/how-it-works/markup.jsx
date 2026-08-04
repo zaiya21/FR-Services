@@ -71,7 +71,7 @@ export default function Markup(){
             </nav>
             <div className="stepbody">
 
-              <article className="stepsec reveal" id="step-browse-1" data-step="browse-1">
+              <article className="stepsec reveal on in" id="step-browse-1" data-step="browse-1">
                 <span className="stepnum lg">1</span>
                 <h2>We find your area</h2>
                 <p>
@@ -88,7 +88,7 @@ export default function Markup(){
                 </div>
               </article>
 
-              <article className="stepsec reveal" id="step-browse-2" data-step="browse-2">
+              <article className="stepsec reveal" id="step-browse-2" data-step="browse-2" hidden>
                 <span className="stepnum lg">2</span>
                 <h2>Browse what matches</h2>
                 <p>
@@ -105,7 +105,7 @@ export default function Markup(){
                 </div>
               </article>
 
-              <article className="stepsec reveal" id="step-browse-3" data-step="browse-3">
+              <article className="stepsec reveal" id="step-browse-3" data-step="browse-3" hidden>
                 <span className="stepnum lg">3</span>
                 <h2>Compare at a glance</h2>
                 <p>
@@ -116,7 +116,7 @@ export default function Markup(){
                 <div className="demo demo-compare" id="demoCompare"></div>
               </article>
 
-              <article className="stepsec reveal" id="step-browse-4" data-step="browse-4">
+              <article className="stepsec reveal" id="step-browse-4" data-step="browse-4" hidden>
                 <span className="stepnum lg">4</span>
                 <h2>Open their page, then book</h2>
                 <p>
@@ -159,7 +159,7 @@ export default function Markup(){
             </nav>
             <div className="stepbody">
 
-              <article className="stepsec reveal" id="step-company-1" data-step="company-1">
+              <article className="stepsec reveal on in" id="step-company-1" data-step="company-1">
                 <span className="stepnum lg">1</span>
                 <h2>Search that company by name</h2>
                 <p>
@@ -174,7 +174,7 @@ export default function Markup(){
                 </div>
               </article>
 
-              <article className="stepsec reveal" id="step-company-2" data-step="company-2">
+              <article className="stepsec reveal" id="step-company-2" data-step="company-2" hidden>
                 <span className="stepnum lg">2</span>
                 <h2>Open their storefront</h2>
                 <p>
@@ -193,7 +193,7 @@ export default function Markup(){
                 </div>
               </article>
 
-              <article className="stepsec reveal" id="step-company-3" data-step="company-3">
+              <article className="stepsec reveal" id="step-company-3" data-step="company-3" hidden>
                 <span className="stepnum lg">3</span>
                 <h2>Pick a unit and dates - the price updates as you go</h2>
                 <p>
@@ -220,7 +220,7 @@ export default function Markup(){
                 </div>
               </article>
 
-              <article className="stepsec reveal" id="step-company-4" data-step="company-4">
+              <article className="stepsec reveal" id="step-company-4" data-step="company-4" hidden>
                 <span className="stepnum lg">4</span>
                 <h2>Send the request</h2>
                 <p>
@@ -260,7 +260,7 @@ export default function Markup(){
             </nav>
             <div className="stepbody">
 
-              <article className="stepsec reveal" id="step-tow-1" data-step="tow-1">
+              <article className="stepsec reveal on in" id="step-tow-1" data-step="tow-1">
                 <span className="stepnum lg">1</span>
                 <h2>Tell us what happened</h2>
                 <p>
@@ -287,7 +287,7 @@ export default function Markup(){
                 </div>
               </article>
 
-              <article className="stepsec reveal" id="step-tow-2" data-step="tow-2">
+              <article className="stepsec reveal" id="step-tow-2" data-step="tow-2" hidden>
                 <span className="stepnum lg">2</span>
                 <h2>We broadcast to every nearby truck at once</h2>
                 <p>
@@ -302,7 +302,7 @@ export default function Markup(){
                 </div>
               </article>
 
-              <article className="stepsec reveal" id="step-tow-3" data-step="tow-3">
+              <article className="stepsec reveal" id="step-tow-3" data-step="tow-3" hidden>
                 <span className="stepnum lg">3</span>
                 <h2>First to accept, on the way</h2>
                 <p>

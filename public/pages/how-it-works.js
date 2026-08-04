@@ -18,8 +18,7 @@ const reduceMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matche
 /* =====================================================================
    TABS - role="tablist" with roving tabindex and arrow-key activation,
    per the ARIA APG pattern. Picking a tab shows that flow's panel and
-   scrolls to its first step - the tabs are an entry point into the same
-   content laid out top to bottom, not a separate view.
+   scrolls to whichever step is currently active inside it.
    ===================================================================== */
 const tabs = Array.from(document.querySelectorAll('.howtab'));
 const panels = Array.from(document.querySelectorAll('.flowpanel'));
@@ -34,8 +33,8 @@ function setActiveTab(flow, opts){
   });
   panels.forEach(p => { p.hidden = p.dataset.flow !== flow; });
   if (opts.scroll){
-    const first = document.querySelector(`.flowpanel[data-flow="${flow}"] .stepsec`);
-    if (first) first.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' });
+    const visible = document.querySelector(`.flowpanel[data-flow="${flow}"] .stepsec:not([hidden])`);
+    if (visible) visible.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' });
   }
 }
 
@@ -55,56 +54,66 @@ tabs.forEach((t, i) => {
 });
 
 /* =====================================================================
-   STEP RAIL + SCROLL-REVEAL
-
-   One observer for both jobs: every .stepsec is also a .reveal target.
-   A hidden flow panel's sections can never intersect (the `hidden`
-   attribute removes them from layout), so one observer safely covers all
-   three flows without needing to be rebuilt on tab switch.
-
-   The active step is recomputed from a persistent set of currently-
-   intersecting sections, not from the callback's own entry batch - a
-   batch only reports elements whose state just CHANGED, so reading it
-   alone would miss sections that were already visible and stayed that
-   way.
+   STEP RAIL - one step visible at a time per flow, switched by clicking
+   its number. This never scrolls the page - only .stepsec's own opacity
+   changes - and only one step is ever laid out at once (the rest carry
+   the `hidden` attribute, not just opacity:0), so nothing shifts height
+   or jumps around while switching. The outgoing step fades out FIRST and
+   is hidden, then the incoming one is unhidden and faded in - never both
+   present at once, which is what a true overlapping crossfade in normal
+   document flow would otherwise briefly do (both laid out, page height
+   jumping twice).
    ===================================================================== */
-const stepSections = Array.from(document.querySelectorAll('.stepsec'));
 const railButtons = Array.from(document.querySelectorAll('.railstep'));
+const FADE_MS = 220;
 
 function setActiveStep(stepId){
   railButtons.forEach(b => b.classList.toggle('on', b.dataset.step === stepId));
 }
 
-if ('IntersectionObserver' in window){
-  const active = new Set();
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      entry.target.classList.toggle('in', entry.isIntersecting || entry.target.classList.contains('in'));
-      if (entry.isIntersecting) active.add(entry.target);
-      else active.delete(entry.target);
-    });
-    if (active.size){
-      const top = Array.from(active).reduce((a, b) =>
-        a.getBoundingClientRect().top < b.getBoundingClientRect().top ? a : b);
-      setActiveStep(top.dataset.step);
-    }
-  }, { rootMargin: '-20% 0px -60% 0px', threshold: 0.01 });
-  stepSections.forEach(s => io.observe(s));
-} else {
-  stepSections.forEach(s => s.classList.add('in'));
+function goToStep(flow, stepId){
+  const panel = document.querySelector(`.flowpanel[data-flow="${flow}"]`);
+  if (!panel) return;
+  const current = panel.querySelector('.stepsec.on');
+  const next = document.getElementById('step-' + stepId);
+  if (!next || next === current) return;
+
+  setActiveStep(stepId);
+
+  const showNext = () => {
+    next.hidden = false;
+    next.classList.add('on');
+    void next.offsetWidth; // force a reflow so the .in transition actually runs
+    requestAnimationFrame(() => next.classList.add('in'));
+  };
+
+  if (!current){ showNext(); return; }
+
+  current.classList.remove('in');
+  if (reduceMotion()){
+    current.hidden = true;
+    current.classList.remove('on');
+    showNext();
+  } else {
+    setTimeout(() => {
+      current.hidden = true;
+      current.classList.remove('on');
+      showNext();
+    }, FADE_MS);
+  }
 }
 
 railButtons.forEach(b => b.addEventListener('click', () => {
-  const sec = document.getElementById('step-' + b.dataset.step);
-  if (sec) sec.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' });
+  const panel = b.closest('.flowpanel');
+  if (panel) goToStep(panel.dataset.flow, b.dataset.step);
 }));
 
 /* =====================================================================
-   AUTOPLAY - steps through the active flow every few seconds. Off by
-   default (and the control hidden) under reduced motion; the interval
-   re-reads whichever step is currently marked active rather than
-   tracking its own pointer, so a manual rail/tab click is never fought
-   on the next tick.
+   AUTOPLAY - steps through the active flow every few seconds using the
+   same goToStep() fade, never a scroll. Off by default (and the control
+   hidden) under reduced motion; the interval re-reads whichever step is
+   currently marked active rather than tracking its own pointer, so a
+   manual rail/tab click is never fought on the next tick.
    ===================================================================== */
 let playing = !reduceMotion();
 let playTimer = null;
@@ -118,13 +127,12 @@ function currentFlow(){
   return on ? on.dataset.flow : 'browse';
 }
 function advanceStep(){
-  const order = stepOrder(currentFlow());
+  const flow = currentFlow();
+  const order = stepOrder(flow);
   if (!order.length) return;
   const activeBtn = railButtons.find(b => b.classList.contains('on') && order.includes(b.dataset.step));
   const idx = activeBtn ? order.indexOf(activeBtn.dataset.step) : -1;
-  const next = order[(idx + 1) % order.length];
-  const sec = document.getElementById('step-' + next);
-  if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  goToStep(flow, order[(idx + 1) % order.length]);
 }
 function schedulePlay(){
   clearInterval(playTimer);

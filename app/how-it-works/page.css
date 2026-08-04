@@ -75,9 +75,13 @@
 .stepsec > p{color:var(--ink-2);font-size:15px;line-height:1.65;margin:0 0 var(--s5);
   max-width:68ch}
 
-/* scroll-reveal - off entirely under reduced motion, see bottom of file */
-.reveal{opacity:0;transform:translateY(14px);transition:opacity .5s var(--ease),
-  transform .5s var(--ease)}
+/* Step fade - matches how-it-works.js's FADE_MS (220ms): the outgoing
+   step's fade-out has to fully finish before it's hidden and the next one
+   unhidden, or this transition and that timer drift apart and the switch
+   either snaps or leaves a visible gap. Off entirely under reduced
+   motion, see bottom of file. */
+.reveal{opacity:0;transform:translateY(10px);transition:opacity .22s var(--ease),
+  transform .22s var(--ease)}
 .reveal.in{opacity:1;transform:translateY(0)}
 
 .flowcta{display:flex;justify-content:center;padding-top:var(--s3)}
