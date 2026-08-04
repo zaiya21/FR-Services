@@ -136,7 +136,7 @@ function advanceStep(){
 }
 function schedulePlay(){
   clearInterval(playTimer);
-  if (playing) playTimer = setInterval(advanceStep, 4500);
+  if (playing) playTimer = setInterval(advanceStep, 15000);
 }
 function paintPlayBtn(){
   if (!playBtn) return;
