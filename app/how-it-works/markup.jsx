@@ -35,15 +35,12 @@ export default function Markup(){
 
           <div className="howtabs" role="tablist" aria-label="Choose a flow to walk through">
             <button className="howtab on" id="tab-browse" role="tab" aria-selected="true" aria-controls="flow-browse" data-flow="browse">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
               Browse &amp; match
             </button>
             <button className="howtab" id="tab-company" role="tab" aria-selected="false" tabIndex={-1} aria-controls="flow-company" data-flow="company">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 21h18" /><path d="M5 21V7l7-4 7 4v14" /><path d="M9 21v-6h6v6" /></svg>
               Go straight to a company
             </button>
             <button className="howtab" id="tab-tow" role="tab" aria-selected="false" tabIndex={-1} aria-controls="flow-tow" data-flow="tow">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M2 17h12v-5H6l-2 3H2zM14 8h4l3 4v5h-7z" /><path d="M14 12l5-6" /></svg>
               Emergency towing
             </button>
           </div>
