@@ -47,3 +47,65 @@ document.getElementById('btn-dispatch').addEventListener('click', () => {
   });
   setTimeout(() => stage('stage-matched'), 350 + tows.length * 550 + 1400);
 });
+
+/* =====================================================================
+   LIVE MAP - Leaflet + OpenStreetMap, towing companies only.
+
+   Was a decorative, hand-drawn SVG city with six pins at fixed percentage
+   positions - not a real map, and not tied to any real company. This is
+   the same real-map technique the homepage's #fleetmap already uses (see
+   initMap()/syncMap() in public/pages/index.js): real tiles, real
+   coordinates, and markers built only from `tows` (above), which is
+   already filtered to inCategory('towing') - a vehicle-rental or
+   equipment company never appears here, by construction, not by a filter
+   bolted on afterward.
+   ===================================================================== */
+const escMap = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+
+function initTowMap(){
+  const host = document.getElementById('towmap');
+  const stat = document.getElementById('towMapStat');
+  if (!host) return;
+
+  if (!window.L){
+    host.insertAdjacentHTML('afterend',
+      '<div class="mapempty">Map library unavailable offline.<br>The list below is unaffected.</div>');
+    if (stat) stat.remove();
+    return;
+  }
+
+  const map = L.map(host, { scrollWheelZoom: true, zoomControl: true, attributionControl: true })
+    .setView([FR_GEO.lat, FR_GEO.lon], 12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+
+  const pin = html => L.divIcon({ html, className: '', iconSize: [0, 0] });
+  const pts = [[FR_GEO.lat, FR_GEO.lon]];
+  L.marker([FR_GEO.lat, FR_GEO.lon], {
+    icon: pin('<span class="gpin you">You</span>'),
+    interactive: false, zIndexOffset: 1000
+  }).addTo(map);
+
+  /* Capped the same way the homepage caps its own map (24 there; towing
+     is normally a much smaller list, but a nationwide fetch is still
+     possible) - dozens of overlapping pins help nobody. */
+  const list = tows.filter(t => typeof t.lat === 'number').slice(0, 30);
+  list.forEach(t => {
+    L.marker([t.lat, t.lon], { icon: pin(
+      `<a class="gpin tow" href="/company?c=${encodeURIComponent(t.id)}" title="${escMap(t.name)} - ${escMap(t.loc)} · ${t.km} km">${escMap(t.name)}</a>`
+    )}).addTo(map);
+    pts.push([t.lat, t.lon]);
+  });
+
+  if (pts.length > 1) map.fitBounds(pts, { padding: [40, 40], maxZoom: 14 });
+  else map.setView([FR_GEO.lat, FR_GEO.lon], 11);
+
+  if (stat){
+    stat.innerHTML = !list.length
+      ? 'No towing companies registered near here yet'
+      : `<b>${list.length}</b> towing ${list.length === 1 ? 'company' : 'companies'} shown · tap a pin to open it`;
+  }
+}
+initTowMap();
