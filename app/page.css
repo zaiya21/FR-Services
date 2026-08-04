@@ -331,8 +331,14 @@
 .sos .btn{margin-left:auto}
 
 /* map band */
+/* nav.top is sticky (globals.css) - a bare #how anchor jump scrolls this
+   section flush to the viewport top, right under the nav, which reads as
+   "overshooting" past where the section actually starts. scroll-margin-top
+   leaves room for the nav so the jump lands with the section's own heading
+   fully in view instead of clipped behind it. */
 .mapband{margin-top:var(--s8);background:var(--surface);border:var(--bd);
   border-radius:var(--r-lg);box-shadow:var(--off);overflow:hidden;
+  scroll-margin-top:calc(var(--nav-h) + var(--s5));
   display:grid;grid-template-columns:1fr 1.15fr}
 .mapinfo{padding:var(--s6)}
 .mapinfo h2{margin-bottom:var(--s3);font-size:clamp(22px,2.6vw,30px)}
