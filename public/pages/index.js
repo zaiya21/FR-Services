@@ -691,3 +691,18 @@ initMap();
    signed out. */
 if (typeof paintAuthNav === 'function') paintAuthNav('authNav');
 if (typeof paintRealAuthNav === 'function') paintRealAuthNav('authNav');
+
+/* nav.top and .filterbar (page.css) are both position:sticky and stack
+   when scrolled, covering the top of the viewport with both, not just the
+   nav - #how's scroll-margin-top needs their combined height or the "How
+   it works" link still lands the section half-covered by the filter bar.
+   Measured, not hardcoded: .filterbar's chips wrap to a second row on
+   narrow viewports, which changes its height. */
+function measureStickyTop(){
+  const nav = document.querySelector('nav.top');
+  const bar = document.querySelector('.filterbar');
+  const h = (nav ? nav.offsetHeight : 0) + (bar ? bar.offsetHeight : 0);
+  document.documentElement.style.setProperty('--stickytop', h + 'px');
+}
+measureStickyTop();
+window.addEventListener('resize', measureStickyTop);
