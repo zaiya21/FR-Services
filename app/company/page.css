@@ -336,7 +336,6 @@
   .statstrip .tile:nth-child(4),.statstrip .tile:nth-child(5){grid-column:span 1}
 }
 @media (max-width:720px){
-  .cover{height:150px}
   .colog{width:78px;height:78px;border-radius:20px}
   .colog svg{width:38px;height:38px}
   .idbar{gap:var(--s4)}
@@ -571,6 +570,20 @@ body{background:var(--co-bg);color:var(--co-ink)}
 [data-co-layout="console"] .cotab.on{border-bottom-color:var(--co-primary);
   text-shadow:0 0 12px color-mix(in srgb, var(--co-primary) 60%, transparent)}
 [data-co-layout="console"] .uspecs{font-size:12px}
+
+/* Cover height on mobile, for every layout at once - deliberately last
+   in the file, after every [data-co-layout] block above sets its own
+   --lay-cover-h. .cover{height:var(--lay-cover-h)} lives up near :root
+   (so this can't just be "add a mobile override next to it" - a plain
+   .cover{height:150px} in the 720px query above USED to be here, and
+   silently lost every time: same selector, same specificity, and the
+   unconditional rule near :root came later in the file, so it always
+   won regardless of viewport. Overriding the variable itself instead of
+   racing the rule that reads it fixes that for every layout, including
+   editorial/showcase/glass whose desktop covers are 300-420px tall. */
+@media (max-width:720px){
+  :root{ --lay-cover-h:150px; }
+}
 
 /* --- exempt: platform-owned trust cluster, fixed in every theme --- */
 .verified,.rate-pill,.reportbtn,.vpop,.rmodal,.rm-card,.bookbar,

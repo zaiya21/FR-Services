@@ -13,7 +13,7 @@ export default function Page(){
       <SupabaseBrowser />
       <Markup />
       <LegacyScripts
-        srcs={["/assets/page-transition.js","/assets/geo.js","/assets/registry.js","/assets/theme.js","/assets/live-registry.js","/assets/ph-locations.js","/assets/data.js","/assets/company-auth.js","/pages/booking.js"]}
+        srcs={["/assets/page-transition.js","/assets/nav-toggle.js","/assets/geo.js","/assets/registry.js","/assets/theme.js","/assets/live-registry.js","/assets/ph-locations.js","/assets/data.js","/assets/company-auth.js","/pages/booking.js"]}
         waitEvents={{"/assets/live-registry.js":"live-registry-ready"}}
       />
     </>

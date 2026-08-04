@@ -11,7 +11,7 @@ export default function Markup(){
             <span className="m"><img src="/logo.png" alt="FR Services" /></span>
             <span className="wm">FR Services<small>Fleet Rental</small></span>
           </a>
-          <div className="nlinks">
+          <div className="nlinks" id="navLinks">
             <a href="/">Rent</a>
             <a href="/#how">How it works</a>
             <a href="/register">For companies</a>
@@ -20,6 +20,9 @@ export default function Markup(){
           </div>
           <div className="nright">
             <span className="nauth" id="authNav"><a className="btn btn-i" href="/platform">Sign in</a></span>
+            <button className="navToggle" id="navToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+            </button>
           </div>
         </div>
       </nav>

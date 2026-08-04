@@ -132,6 +132,16 @@ nav.top{position:sticky;top:0;z-index:80;background:var(--bg);border-bottom:var(
 .authwho{font-size:13.5px;font-weight:700;max-width:170px;overflow:hidden;
   text-overflow:ellipsis;white-space:nowrap}
 .nright{margin-left:auto;display:flex;align-items:center;gap:var(--s3);flex-shrink:0}
+
+/* Mobile menu button - hidden by default (desktop shows .nlinks inline
+   as normal); the ≤720px media query below both reveals this and hides
+   .nlinks, and nav.top.navopen is what public/assets/nav-toggle.js
+   toggles on click to bring .nlinks back as a dropdown instead of a row.
+   See that file for the open/close behaviour - this is layout only. */
+#navToggle{display:none;align-items:center;justify-content:center;
+  width:40px;height:40px;flex:none;border:var(--bd-thin);border-color:var(--hair);
+  border-radius:var(--r-sm);background:transparent;color:var(--ink);cursor:pointer}
+#navToggle:hover{border-color:var(--ink)}
 .avat{width:40px;height:40px;border-radius:12px;background:var(--indigo-tint);
   border:var(--bd);display:grid;place-items:center;font-weight:700;font-size:13.5px;
   font-family:'Space Grotesk',sans-serif}
@@ -322,6 +332,18 @@ footer.site{border-top:var(--bd);padding:var(--s6) 0 var(--s5);margin-top:var(--
 @media (max-width:720px){
   .wrap,.wrap-sm{padding:0 var(--s4)}
   .nlinks{display:none}
+  #navToggle{display:flex}
+  /* nav.top is already position:sticky, which - like any positioned
+     element - is a valid containing block, so this anchors to the nav
+     bar itself rather than the page. Fixed, not absolute: .nbar carries
+     .wrap's own side padding, and an absolutely-positioned panel would
+     inherit that inset instead of running edge-to-edge. */
+  nav.top.navopen .nlinks{display:flex;flex-direction:column;gap:2px;
+    position:fixed;top:var(--nav-h);left:0;right:0;max-height:calc(100vh - var(--nav-h));
+    overflow-y:auto;margin:0;padding:var(--s4) var(--s5);
+    background:var(--bg);border-bottom:var(--bd);box-shadow:var(--off)}
+  nav.top.navopen .nlinks a{padding:var(--s3) 0;border-bottom:var(--bd-thin);border-color:var(--hair)}
+  nav.top.navopen .nlinks a:last-child{border-bottom:0}
   .nright .hide-sm{display:none}
   .cards{grid-template-columns:1fr}
   .grid3,.grid2{grid-template-columns:1fr}

@@ -205,5 +205,6 @@ footer .wrap{display:flex;justify-content:space-between;gap:var(--s4);flex-wrap:
   .cards{grid-template-columns:1fr}
   .hero{padding:var(--s6) 0 var(--s5)}
   .section{padding-top:var(--s7)}
+  .sfrow{grid-template-columns:repeat(2,1fr)}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

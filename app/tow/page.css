@@ -5,6 +5,17 @@
    large targets, broadcast-and-accept instead of quote-and-confirm.
    ===================================================================== */
 body{background:var(--ink);color:#fff}
+
+/* This page's nav is dark (see the inline style on <nav> in markup.jsx),
+   unlike every other page's - #navToggle and the mobile dropdown
+   (globals.css) assume the light theme by default, so both get
+   recoloured here to actually be visible against it. */
+#navToggle{border-color:#33364A;color:#fff}
+#navToggle:hover{border-color:#fff}
+@media (max-width:720px){
+  nav.top.navopen .nlinks{background:var(--ink);border-bottom:2.5px solid #33364A}
+  nav.top.navopen .nlinks a{color:#C3C7D6;border-bottom-color:#33364A}
+}
 .sos-head{border-bottom:2.5px solid #33364A;background:var(--c-tow)}
 .sos-head .wrap{display:flex;align-items:center;gap:var(--s4);
   padding:var(--s4) var(--s5);flex-wrap:wrap}
@@ -180,4 +191,11 @@ body{background:var(--ink);color:#fff}
   .vtypes{grid-template-columns:repeat(2,1fr)}
   .sos-head .hot{margin-left:0;width:100%;justify-content:center}
   .tgrid{padding-top:var(--s5)}
+  /* three ETA/distance/fare tiles at ~110px each on a phone squeezed
+     the numbers - two-up reads fine since there's an odd one out anyway */
+  .detabs{grid-template-columns:repeat(2,1fr)}
+  /* matches #coordMap's own mobile shrink on /register - a fixed 340px
+     map plus the picker/chips/button above and below it otherwise pushes
+     the whole form well below the fold on a short phone screen */
+  .tmap{height:220px}
 }

@@ -341,7 +341,7 @@
 }
 @media (max-width:720px){
   .tiles{grid-template-columns:repeat(2,1fr)}
-  .crow{gap:var(--s3)}
+  .crow{grid-template-columns:1fr;gap:var(--s3)}
 }
 
 /* =====================================================================

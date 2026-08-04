@@ -33,7 +33,7 @@ export default function Page(){
       <SupabaseBrowser />
       <Markup />
       <LegacyScripts
-        srcs={["/assets/page-transition.js","https://unpkg.com/leaflet@1.9.4/dist/leaflet.js","/assets/geo.js","/assets/registry.js","/assets/theme.js","/assets/live-registry.js","/assets/ph-locations.js","/assets/data.js","/assets/auth.js","/assets/company-auth.js","/pages/index.js"]}
+        srcs={["/assets/page-transition.js","/assets/nav-toggle.js","https://unpkg.com/leaflet@1.9.4/dist/leaflet.js","/assets/geo.js","/assets/registry.js","/assets/theme.js","/assets/live-registry.js","/assets/ph-locations.js","/assets/data.js","/assets/auth.js","/assets/company-auth.js","/pages/index.js"]}
         waitEvents={{"/assets/live-registry.js":"live-registry-ready"}}
       />
     </>

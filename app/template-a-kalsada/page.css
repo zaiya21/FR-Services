@@ -197,5 +197,6 @@ footer .wrap{display:flex;justify-content:space-between;gap:var(--s4);flex-wrap:
   .trust .wrap{grid-template-columns:1fr}
   .grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:var(--s4) var(--s3)}
   .results{padding:0 var(--s4) var(--s7)}
+  .sf-row{grid-template-columns:repeat(2,1fr)}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
