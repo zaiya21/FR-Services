@@ -169,8 +169,11 @@ nav.top{position:sticky;top:0;z-index:80;background:var(--bg);border-bottom:var(
 /* Locating, and exact - the tag stops claiming a guess is a fix. */
 .geo .tag.live{background:#fff;color:var(--indigo);border-color:#fff}
 .geo .tag.exact{background:var(--brand-2, #2E9A33);color:#fff;border-color:#fff}
-.geomsg{padding:0 var(--s5)}
-.geomsg:not(:empty){padding:0 var(--s5) 11px;font-size:13px;line-height:1.5;
+/* Left padding is var(--s5) *plus* the tag's own 10px internal padding
+   (.geo .tag above) - the tag pill starts at var(--s5), but "GPS" itself
+   starts 10px further in than that, which is what this has to match. */
+.geomsg{padding:0 var(--s5) 0 calc(var(--s5) + 10px)}
+.geomsg:not(:empty){padding:0 var(--s5) 11px calc(var(--s5) + 10px);font-size:13px;line-height:1.5;
   color:rgba(255,255,255,.92);max-width:74ch}
 .geomsg b{font-weight:700;color:#fff}
 
