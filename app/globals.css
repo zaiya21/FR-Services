@@ -169,12 +169,19 @@ nav.top{position:sticky;top:0;z-index:80;background:var(--bg);border-bottom:var(
 /* Locating, and exact - the tag stops claiming a guess is a fix. */
 .geo .tag.live{background:#fff;color:var(--indigo);border-color:#fff}
 .geo .tag.exact{background:var(--brand-2, #2E9A33);color:#fff;border-color:#fff}
-/* Left padding is var(--s5) *plus* the tag's own 10px internal padding
-   (.geo .tag above) - the tag pill starts at var(--s5), but "GPS" itself
-   starts 10px further in than that, which is what this has to match. */
-.geomsg{padding:0 var(--s5) 0 calc(var(--s5) + 10px)}
+/* .geo .wrap (above) is centred - max-width:1240px;margin:0 auto, from
+   the base .wrap rule - so on anything wider than ~1290px, "GPS" isn't
+   just var(--s5) from the edge, it's however much that centering
+   pushed .wrap in, plus var(--s5). .geomsg was never given that same
+   centering, only matching padding - which lined up by coincidence
+   below 1290px and diverged, further as the screen widens, above it.
+   max-width+margin:auto here is what actually fixes it at every width,
+   not just the value of the padding. Left padding is var(--s5) *plus*
+   the tag's own 10px internal padding (.geo .tag above), since the tag
+   pill starts at var(--s5) but "GPS" the text starts 10px inside that. */
+.geomsg{max-width:1240px;margin:0 auto;padding:0 var(--s5) 0 calc(var(--s5) + 10px)}
 .geomsg:not(:empty){padding:0 var(--s5) 11px calc(var(--s5) + 10px);font-size:13px;line-height:1.5;
-  color:rgba(255,255,255,.92);max-width:74ch}
+  color:rgba(255,255,255,.92)}
 .geomsg b{font-weight:700;color:#fff}
 
 /* ---------- 6. FORM FIELDS ---------- */
