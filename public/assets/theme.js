@@ -173,8 +173,10 @@ function normaliseTheme(raw){
   t.bg     = safeColor(t.bg,     THEME_DEFAULT.bg);
   if (!['gradient','solid','stripes','image'].includes(t.cover)) t.cover = 'gradient';
   if (!LAYOUT_IDS.includes(t.layout))                            t.layout = THEME_DEFAULT.layout;
-  // data URLs only, and only for the raster types we allow
-  const okImg = v => typeof v === 'string' && /^data:image\/(png|jpeg|webp);base64,/.test(v);
+  // a raster data URL (the local/demo path) or a real https:// URL (a
+  // live company's photo, already uploaded to Storage - see saveTheme)
+  const okImg = v => typeof v === 'string' &&
+    (/^data:image\/(png|jpeg|webp);base64,/.test(v) || /^https:\/\//.test(v));
   if (!okImg(t.logo))     t.logo = null;
   if (!okImg(t.coverImg)) t.coverImg = null;
 
@@ -196,20 +198,88 @@ function normaliseTheme(raw){
   return t;
 }
 
-/* ---------- persistence (prototype only) ----------
-   localStorage stands in for the `company_theme` table. It is per-browser
-   and trivially editable by the visitor, which is fine for a prototype and
-   unacceptable in production: the server must own the theme and re-validate
-   it on write. */
+/* ---------- persistence ----------
+   localStorage stands in for a company_theme row for a local/demo
+   company - per-browser, trivially editable by the visitor, fine for a
+   prototype. A LIVE company (registered for real - see registry.js's
+   `.live` flag) has a real public.company_themes row instead; RLS
+   already scopes writes to a signed-in member of that company
+   (themes_write). Either way, the *local* copy below is still what
+   every synchronous reader (loadTheme, and every page's own top-level
+   code) actually reads - see live-registry.js's header comment on why
+   that has to stay synchronous. A live save writes Supabase first, then
+   mirrors the result into the same local cache, so the two can never
+   show different values inside one browser. */
 const THEME_KEY = id => 'fr.theme.' + String(id).replace(/[^a-z0-9-]/gi, '');
 
 function loadTheme(id){
   try { return normaliseTheme(JSON.parse(localStorage.getItem(THEME_KEY(id)))); }
   catch { return normaliseTheme(null); }
 }
-function saveTheme(id, theme){
+
+/** Local-cache write only, no Supabase - used by saveTheme's own local
+ *  path and, for a live company, by live-registry.js to seed the cache
+ *  from a fresh fetch without that seed itself round-tripping back to
+ *  Supabase as if it were an edit. */
+function seedThemeLocal(id, theme){
   try { localStorage.setItem(THEME_KEY(id), JSON.stringify(normaliseTheme(theme))); return true; }
   catch { return false; }                     // quota / private mode
+}
+
+/* ---------- live <-> local field mapping (theme + fleet) --------------
+   The DB uses snake_case columns and a Storage *path* for images; the
+   local shape everything else in this app already reads (admin.js,
+   company.js, booking.js) uses camelCase and a resolved, displayable
+   URL. Defined once, here, since theme.js is the first script to load
+   that needs it (see the reordering note in live-registry.js) - both
+   the write path below and live-registry.js's seed-from-Supabase path
+   call these same functions, so the translation can't drift between
+   the two directions.
+   ------------------------------------------------------------------- */
+function brandingUrl(sb, path){
+  return path ? sb.storage.from('company-branding').getPublicUrl(path).data.publicUrl : null;
+}
+function themeFromDb(row, sb){
+  if (!row) return normaliseTheme(null);
+  return normaliseTheme({
+    brand: row.brand, accent: row.accent, bg: row.bg,
+    cover: row.cover, layout: row.layout,
+    logo: brandingUrl(sb, row.logo_path), coverImg: brandingUrl(sb, row.cover_path),
+    _logoPath: row.logo_path || null, _coverPath: row.cover_path || null
+  });
+}
+function themeToDb(t){
+  return {
+    brand: t.brand, accent: t.accent, bg: t.bg, cover: t.cover, layout: t.layout,
+    logo_path: t._logoPath || null, cover_path: t._coverPath || null
+  };
+}
+
+/**
+ * Saves a theme. For a local/demo company this only ever touched
+ * localStorage and still does. For a live company it upserts
+ * `company_themes` under RLS via window.supabaseBrowser, then mirrors
+ * the saved row back into the local cache so every synchronous reader
+ * sees the same thing immediately, without a reload.
+ *
+ * `theme._logoPath`/`_coverPath` (see themeFromDb/bindUpload) carry the
+ * Storage path for whatever the visible `logo`/`coverImg` URL currently
+ * is - this function never uploads anything itself, only persists
+ * whichever path the upload step already produced.
+ */
+async function saveTheme(id, theme){
+  const clean = normaliseTheme(theme);
+  const co = typeof byId === 'function' ? byId(id) : null;
+  if (!(co && co.live)) return seedThemeLocal(id, clean);
+
+  const sb = window.supabaseBrowser;
+  if (!sb) return false;              // can't reach the database right now
+  const { data, error } = await sb.from('company_themes')
+    .upsert(Object.assign({ company_id: id }, themeToDb(clean)), { onConflict: 'company_id' })
+    .select().single();
+  if (error){ console.error('saveTheme:', error.message); return false; }
+  seedThemeLocal(id, themeFromDb(data, sb));
+  return true;
 }
 
 /* =====================================================================
@@ -289,7 +359,10 @@ function normaliseUnit(raw){
   if (!DELIVERY_MODES.includes(u.deliveryMode)) u.deliveryMode = 'flat';
   /* per-km with no rate set would silently behave as free - fall back */
   if (u.deliveryMode === 'perkm' && !u.deliveryKm) u.deliveryMode = 'flat';
-  if (!(typeof u.photo === 'string' && /^data:image\/(png|jpeg|webp);base64,/.test(u.photo)))
+  // a raster data URL (the local/demo path) or a real https:// URL (a
+  // live company's photo, already uploaded to Storage - see saveFleet)
+  if (!(typeof u.photo === 'string' &&
+        (/^data:image\/(png|jpeg|webp);base64,/.test(u.photo) || /^https:\/\//.test(u.photo))))
     u.photo = null;
   return u.name ? u : null;          // a listing with no name is not a listing
 }
@@ -297,7 +370,11 @@ function normaliseUnit(raw){
 const MAX_UNITS = 60;
 const fleetKey = id => 'fr.fleet.' + String(id).replace(/[^a-z0-9-]/gi, '');
 
-/** Returns the owner's stored fleet, or null if they've never edited it. */
+/** Returns the owner's stored fleet, or null if they've never edited it.
+ *  Always synchronous, always localStorage - see saveTheme's comment
+ *  above on why a live company's real fleet reaches this same cache via
+ *  live-registry.js's seeding instead of this function talking to
+ *  Supabase directly. */
 function loadFleet(companyId){
   try {
     const raw = JSON.parse(localStorage.getItem(fleetKey(companyId)));
@@ -305,13 +382,84 @@ function loadFleet(companyId){
     return raw.slice(0, MAX_UNITS).map(normaliseUnit).filter(Boolean);
   } catch { return null; }
 }
-function saveFleet(companyId, units){
+
+/** Local-cache write only, no Supabase - same role as seedThemeLocal. */
+function seedFleetLocal(companyId, units){
   try {
     const clean = (Array.isArray(units) ? units : []).slice(0, MAX_UNITS)
       .map(normaliseUnit).filter(Boolean);
     localStorage.setItem(fleetKey(companyId), JSON.stringify(clean));
-    return true;
-  } catch { return false; }
+    return clean;
+  } catch { return null; }
+}
+
+function unitFromDb(row, sb){
+  return normaliseUnit({
+    id: row.id, cat: row.line, name: row.name, type: row.unit_type, model: row.model,
+    year: row.year == null ? '' : row.year, capacity: row.capacity,
+    price: row.price, unit: row.rate_unit, qty: row.quantity,
+    operator: row.operator, fuel: row.fuel, minDays: row.min_days,
+    deliveryMode: row.delivery_mode, delivery: row.delivery_fee,
+    deliveryKm: row.delivery_per_km, deliveryFree: row.delivery_free_km,
+    d3: row.discount_3d, d7: row.discount_7d, d30: row.discount_30d,
+    photo: brandingUrl(sb, row.photo_path), notes: row.notes,
+    _photoPath: row.photo_path || null
+  });
+}
+function unitToDb(u, companyId){
+  return {
+    company_id: companyId, line: u.cat, name: u.name, unit_type: u.type, model: u.model,
+    year: u.year === '' ? null : Number(u.year), capacity: u.capacity,
+    price: u.price, rate_unit: u.unit, quantity: u.qty,
+    discount_3d: u.d3, discount_7d: u.d7, discount_30d: u.d30,
+    operator: u.operator, fuel: u.fuel, min_days: u.minDays,
+    delivery_mode: u.deliveryMode, delivery_fee: u.delivery,
+    delivery_per_km: u.deliveryKm, delivery_free_km: u.deliveryFree,
+    photo_path: u._photoPath || null, notes: u.notes
+  };
+}
+
+/**
+ * Saves a fleet. Local/demo path unchanged (whole array overwrites the
+ * local cache, same as always). Live path cannot do that: `units.id` is
+ * a server-generated uuid, not the client-assignable string id the
+ * local path uses, so a unit already in the DB (its id matches an
+ * existing row) is updated, one with no matching row is inserted (and
+ * gets a real id back), and any DB row not present in `units` anymore
+ * is deleted - the closest real-write equivalent of "the local array is
+ * now the whole truth" without actually being able to delete-and-
+ * reinsert everything under a stable id. Returns the synced array (with
+ * real ids for anything newly created) so the caller can carry on
+ * editing/deleting against ids that actually exist.
+ */
+async function saveFleet(companyId, units){
+  const clean = (Array.isArray(units) ? units : []).slice(0, MAX_UNITS).map(normaliseUnit).filter(Boolean);
+  const co = typeof byId === 'function' ? byId(companyId) : null;
+  if (!(co && co.live)) return seedFleetLocal(companyId, clean);
+
+  const sb = window.supabaseBrowser;
+  if (!sb) return clean;              // can't reach the database right now
+
+  const { data: existing, error: readErr } = await sb.from('units').select('id').eq('company_id', companyId);
+  if (readErr){ console.error('saveFleet:', readErr.message); return clean; }
+  const existingIds = new Set((existing || []).map(r => r.id));
+  const keepIds = new Set(clean.filter(u => existingIds.has(u.id)).map(u => u.id));
+  const toDelete = [...existingIds].filter(id => !keepIds.has(id));
+  if (toDelete.length) await sb.from('units').delete().in('id', toDelete);
+
+  const synced = [];
+  for (const u of clean){
+    const row = unitToDb(u, companyId);
+    const isExisting = existingIds.has(u.id);
+    const { data, error } = isExisting
+      ? await sb.from('units').update(row).eq('id', u.id).select().single()
+      : await sb.from('units').insert(row).select().single();
+    if (error){ console.error('saveFleet:', error.message); synced.push(u); continue; }
+    synced.push(unitFromDb(data, sb));
+  }
+
+  seedFleetLocal(companyId, synced);
+  return synced;
 }
 
 /** Best rate for a given number of days, applying the owner's tiers. */

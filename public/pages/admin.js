@@ -222,6 +222,33 @@ const CAP_HINT  = { vehicles:'e.g. 15 seats', equipment:'e.g. 20 t / 1.0 cbm',
 const esc = s => String(s == null ? '' : s)
   .replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
+/* For a local/demo company, a picked photo has always just been read to
+   a data URL and held in memory until Save (see readImage() in
+   theme.js). A live company has no blob column to hold that in - only
+   a Storage *path* (units.photo_path, company_themes.logo_path/
+   cover_path) - so for a live company the file uploads right here, the
+   moment it's picked, to the same company-branding bucket the
+   registration wizard and live-registry.js's seeding already use.
+   Returns the URL to show immediately (`url`) and, for a live company,
+   the path Save actually needs to persist (`path`, null otherwise -
+   saveFleet/saveTheme fall back to the data URL itself when there's no
+   path, exactly today's local-company behaviour). */
+async function uploadBranding(file, kind){
+  const problem = imageProblem(file);
+  if (problem) throw new Error(problem);
+  if (!(CO && CO.live)) return { url: await readImage(file), path: null };
+
+  const sb = window.supabaseBrowser;
+  if (!sb) throw new Error('Could not reach the database. Try again.');
+  const ext = (file.type.split('/')[1] || 'jpg').replace('jpeg', 'jpg');
+  const path = `${COMPANY_ID}/${kind}-${Date.now()}.${ext}`;
+  const { error } = await sb.storage.from('company-branding')
+    .upload(path, file, { contentType: file.type, upsert: false });
+  if (error) throw new Error(error.message);
+  const url = sb.storage.from('company-branding').getPublicUrl(path).data.publicUrl;
+  return { url, path };
+}
+
 /* Seed once from the demo listings, then it belongs to the owner. */
 function seedFleet(){
   const demo = (typeof FR_UNITS !== 'undefined' && FR_UNITS[COMPANY_ID]) || [];
@@ -290,6 +317,7 @@ function paintUnits(){
 /* ---- the add / edit box ---- */
 const uModal = $('uModal');
 let draftPhoto = null;
+let draftPhotoPath = null;   // Storage path behind draftPhoto, for a live company (see saveFleet)
 
 function openUnit(id){
   editingId = id || null;
@@ -341,6 +369,7 @@ function openUnit(id){
   $('um-notes').value    = v.notes;
 
   draftPhoto = v.photo;
+  draftPhotoPath = v._photoPath || null;
   paintDrop();
   calcPreview();
   paintDelivery();
@@ -352,7 +381,7 @@ function openUnit(id){
 function closeUnit(){
   uModal.hidden = true;
   document.body.style.overflow = '';
-  editingId = null; draftPhoto = null;
+  editingId = null; draftPhoto = null; draftPhotoPath = null;
 }
 function paintDrop(){
   const d = $('umDrop');
@@ -407,13 +436,18 @@ $('umFile').addEventListener('change', async e => {
   const file = e.target.files && e.target.files[0];
   if (!file) return;
   $('umErr').textContent = '';
-  try { draftPhoto = await readImage(file); paintDrop(); }
+  try {
+    const kind = 'unit-' + (editingId || ('new-' + Date.now()));
+    const { url, path } = await uploadBranding(file, kind);
+    draftPhoto = url; draftPhotoPath = path;
+    paintDrop();
+  }
   catch (ex) { $('umErr').textContent = ex.message; }
   finally { e.target.value = ''; }
 });
-$('umClear').addEventListener('click', () => { draftPhoto = null; paintDrop(); });
+$('umClear').addEventListener('click', () => { draftPhoto = null; draftPhotoPath = null; paintDrop(); });
 
-$('umSave').addEventListener('click', () => {
+$('umSave').addEventListener('click', async () => {
   const name = $('um-name').value.trim();
   if (!name){
     $('umErr').textContent = 'Give the unit a name renters will recognise.';
@@ -428,20 +462,20 @@ $('umSave').addEventListener('click', () => {
     operator:$('um-operator').value, fuel:$('um-fuel').value, minDays:$('um-mindays').value,
     deliveryMode:$('um-delmode').value, delivery:$('um-delivery').value,
     deliveryKm:$('um-delkm').value, deliveryFree:$('um-delfree').value,
-    notes:$('um-notes').value, photo:draftPhoto
+    notes:$('um-notes').value, photo:draftPhoto, _photoPath:draftPhotoPath
   });
   if (!next){ $('umErr').textContent = 'Could not save. Check the fields above.'; return; }
 
   const i = fleet.findIndex(x => x.id === next.id);
   if (i >= 0) fleet[i] = next; else fleet.push(next);
-  saveFleet(COMPANY_ID, fleet);
+  fleet = await saveFleet(COMPANY_ID, fleet);
   closeUnit();
   paint();
 });
 
-$('umDelete').addEventListener('click', () => {
+$('umDelete').addEventListener('click', async () => {
   fleet = fleet.filter(x => x.id !== editingId);
-  saveFleet(COMPANY_ID, fleet);
+  fleet = await saveFleet(COMPANY_ID, fleet);
   closeUnit();
   paint();
 });
@@ -453,14 +487,14 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && !uModal.hi
    bound to the grid, NOT to document. Listening on document meant a
    `data-edit` button anywhere else on the page opened the unit modal:
    editing a company document popped "Add a unit" on top of it. */
-$('unitPhotos').addEventListener('click', e => {
+$('unitPhotos').addEventListener('click', async e => {
   if (e.target.closest('#addUnit')){ openUnit(null); return; }
   const ed = e.target.closest('[data-edit]');
   if (ed){ openUnit(ed.dataset.edit); return; }
   const del = e.target.closest('[data-unit-del]');
   if (del){
     fleet = fleet.filter(x => x.id !== del.dataset.unitDel);
-    saveFleet(COMPANY_ID, fleet);
+    fleet = await saveFleet(COMPANY_ID, fleet);
     paint();
   }
 });
@@ -517,13 +551,16 @@ document.addEventListener('click', e => {
 
 /* ---------- uploads ---------- */
 function bindUpload(inputId, errId, key, onDone){
+  const pathKey = key === 'logo' ? '_logoPath' : '_coverPath';
   $(inputId).addEventListener('change', async e => {
     const err = $(errId);
     err.textContent = '';
     const file = e.target.files && e.target.files[0];
     if (!file) return;
     try {
-      theme[key] = await readImage(file);      // validates type + size, rejects SVG
+      const { url, path } = await uploadBranding(file, key === 'logo' ? 'logo' : 'cover');
+      theme[key] = url;
+      theme[pathKey] = path;
       if (onDone) onDone();
       paint();
     } catch (ex) {
@@ -536,25 +573,26 @@ function bindUpload(inputId, errId, key, onDone){
 bindUpload('logoFile',  'logoErr',  'logo');
 bindUpload('coverFile', 'coverErr', 'coverImg', () => { theme.cover = 'image'; });
 
-$('logoClear').addEventListener('click', () => { theme.logo = null; paint(); });
+$('logoClear').addEventListener('click', () => { theme.logo = null; theme._logoPath = null; paint(); });
 $('coverClear').addEventListener('click', () => {
   theme.coverImg = null;
+  theme._coverPath = null;
   if (theme.cover === 'image') theme.cover = 'gradient';
   paint();
 });
 
 /* ---------- save / reset ---------- */
-$('saveBtn').addEventListener('click', () => {
-  const ok = saveTheme(COMPANY_ID, theme);
+$('saveBtn').addEventListener('click', async () => {
+  const ok = await saveTheme(COMPANY_ID, theme);
   const note = $('savedNote');
   note.textContent = ok ? 'Published. Open your page to see it live.'
                         : 'Could not save (browser storage is full or blocked).';
   note.style.color = ok ? 'var(--ok)' : 'var(--danger)';
   setTimeout(() => { note.textContent = ''; }, 6000);
 });
-$('resetBtn').addEventListener('click', () => {
+$('resetBtn').addEventListener('click', async () => {
   theme = normaliseTheme(null);
-  saveTheme(COMPANY_ID, theme);
+  await saveTheme(COMPANY_ID, theme);
   paint();
 });
 
