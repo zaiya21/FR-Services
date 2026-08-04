@@ -83,10 +83,15 @@ function initTowMap(){
 
   const pin = html => L.divIcon({ html, className: '', iconSize: [0, 0] });
   const pts = [[FR_GEO.lat, FR_GEO.lon]];
-  L.marker([FR_GEO.lat, FR_GEO.lon], {
-    icon: pin('<span class="gpin you">You</span>'),
-    interactive: false, zIndexOffset: 1000
-  }).addTo(map);
+  /* Only drawn for a real GPS fix - see the same reasoning in the
+     homepage's syncMap() (public/pages/index.js). Without one, "here" is
+     just the default city centre, not a claim this pin should make. */
+  if (FR_GEO.source === 'geolocation'){
+    L.marker([FR_GEO.lat, FR_GEO.lon], {
+      icon: pin('<span class="gpin you"><img src="/logo.png" alt="You are here" /></span>'),
+      interactive: false, zIndexOffset: 1000
+    }).addTo(map);
+  }
 
   /* Capped the same way the homepage caps its own map (24 there; towing
      is normally a much smaller list, but a nationwide fetch is still

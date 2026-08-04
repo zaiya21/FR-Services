@@ -108,9 +108,14 @@ body{background:var(--ink);color:#fff}
   text-decoration:none;box-shadow:0 0 12px rgba(0,0,0,.4);
   transition:transform .16s var(--ease),background .16s var(--ease)}
 .gpin:hover,.gpin:focus-visible{background:var(--c-tow);transform:translate(-50%,-50%) scale(1.08);z-index:600}
-.gpin.you{background:var(--c-tow);cursor:default;
-  box-shadow:0 0 0 5px rgba(251,107,74,.25),0 0 18px rgba(251,107,74,.8)}
-.gpin.you:hover{background:var(--c-tow);transform:translate(-50%,-50%)}
+/* Only ever rendered for a confirmed GPS fix (see initTowMap() in
+   tow.js) - a round badge carrying the FR Services mark, not a text
+   pill, since this one marks the viewer rather than a nearby truck. */
+.gpin.you{background:#fff;cursor:default;width:34px;height:34px;padding:3px;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 0 5px rgba(251,107,74,.25),0 0 18px rgba(251,107,74,.5)}
+.gpin.you img{width:100%;height:100%;object-fit:contain;border-radius:50%}
+.gpin.you:hover{background:#fff;transform:translate(-50%,-50%)}
 .tmapstat{position:absolute;left:var(--s4);bottom:var(--s4);z-index:500;
   background:rgba(10,14,19,.82);border:2px solid #33364A;border-radius:var(--r-sm);
   padding:7px 12px;font-size:12px;color:#C3C7D6;backdrop-filter:blur(6px)}

@@ -372,12 +372,16 @@
   transform:translate(-50%,-50%) scale(1.09);z-index:600}
 .gpin.tow{background:var(--c-tow);color:#fff}
 .gpin.tow:hover{background:#991B1B}
-.gpin.you{background:var(--brand);color:#fff;cursor:default;box-shadow:var(--off-sm)}
-.gpin.you:hover{background:var(--brand);transform:translate(-50%,-50%)}
-/* A confirmed device fix, distinguished from the approximate one. The ring
-   is drawn on the pin as well as the accuracy circle beneath it, because at
-   a tight zoom the circle can be smaller than the pin and vanish. */
-.gpin.you.fix{box-shadow:0 0 0 3px rgba(5,122,47,.28),var(--off-sm)}
+/* Only ever rendered for a confirmed GPS fix (see syncMap() in
+   index.js) - a round badge carrying the FR Services mark, not a text
+   pill, since this one marks the viewer rather than a company. The ring
+   is drawn on the pin as well as the accuracy circle beneath it, because
+   at a tight zoom the circle can be smaller than the pin and vanish. */
+.gpin.you{background:#fff;cursor:default;width:34px;height:34px;padding:3px;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 0 3px rgba(5,122,47,.28),var(--off-sm)}
+.gpin.you img{width:100%;height:100%;object-fit:contain;border-radius:50%}
+.gpin.you:hover{background:#fff;transform:translate(-50%,-50%)}
 .mapnote{position:absolute;left:var(--s4);bottom:var(--s4);z-index:500;margin:0;
   background:rgba(255,255,255,.94);border:var(--bd-thin);border-radius:var(--r-pill);
   padding:5px 13px;font-size:12px;font-weight:600;color:var(--ink-2);

@@ -598,22 +598,27 @@ function syncMap(){
   const here = [FR_GEO.lat, FR_GEO.lon];
   const exact = FR_GEO.source === 'geolocation';
 
-  /* The accuracy circle is the honest part of an "exact location" claim: a
-     ±2 km fix drawn as a 12-pixel dot is a lie told with a marker. Drawn
-     only for a real fix, and only when it is big enough to mean something
-     at this zoom - a 20 m circle is smaller than the pin over it. */
-  if (exact && FR_GEO.accuracy > 40){
-    L.circle(here, {
-      radius: FR_GEO.accuracy,
-      color: '#057A2F', weight: 1.5, opacity: .5,
-      fillColor: '#057A2F', fillOpacity: .10, interactive: false
+  /* Only drawn for a real GPS fix - "You are here" pointing at a city-
+     centre guess is a claim the pin can't back up. The accuracy circle
+     is the same honesty check one level further: a ±2 km fix drawn as a
+     12-pixel dot is a lie told with a marker, so it only appears once it
+     is big enough to mean something at this zoom - a 20 m circle is
+     smaller than the pin over it. `here` still counts toward fitBounds
+     below either way, fix or not, so the view still centres on the
+     user's area even with nothing drawn there yet. */
+  if (exact){
+    if (FR_GEO.accuracy > 40){
+      L.circle(here, {
+        radius: FR_GEO.accuracy,
+        color: '#057A2F', weight: 1.5, opacity: .5,
+        fillColor: '#057A2F', fillOpacity: .10, interactive: false
+      }).addTo(PINS);
+    }
+    L.marker(here, {
+      icon: pin('<span class="gpin you"><img src="/logo.png" alt="You are here" /></span>'),
+      interactive: false, zIndexOffset: 1000
     }).addTo(PINS);
   }
-  L.marker(here, {
-    icon: pin('<span class="gpin you' + (exact ? ' fix' : '') + '">' +
-              (exact ? 'You are here' : 'You') + '</span>'),
-    interactive: false, zIndexOffset: 1000
-  }).addTo(PINS);
   pts.push(here);
 
   /* Providers currently in the result set - capped so a nationwide search
